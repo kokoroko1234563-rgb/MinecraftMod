@@ -38,6 +38,21 @@ public final class Signature {
         if (!Syntax.isValidName(def.name())) {
             throw new ProofException("Invalid name: " + def.name());
         }
+        return defineChecked(def);
+    }
+
+    /**
+     * Like {@link #define}, but for names the kernel makes (structure symbols such as
+     * "Monoid.op", instantiated templates), which players cannot type.
+     */
+    public Definition defineInternal(Definition def) {
+        if (def.name().isBlank() || def.name().startsWith("#")) {
+            throw new ProofException("Invalid internal name: " + def.name());
+        }
+        return defineChecked(def);
+    }
+
+    private Definition defineChecked(Definition def) {
         if (definitions.containsKey(def.name())) {
             throw new ProofException(def.name() + " is already defined");
         }
@@ -56,9 +71,86 @@ public final class Signature {
                     throw new ProofException("The body may only mention the parameters " + p.params());
                 }
             }
+            case Definition.Abstract a -> {}
         }
         definitions.put(def.name(), def);
         return def;
+    }
+
+    /**
+     * The abstract symbols a definition rests on, directly or through other definitions. A
+     * definition with any is a template: interpreting its structure instantiates it.
+     */
+    public Set<String> abstractsUsed(String name) {
+        Set<String> out = new java.util.LinkedHashSet<>();
+        collectAbstracts(name, out, new HashSet<>());
+        return out;
+    }
+
+    private void collectAbstracts(String name, Set<String> out, Set<String> seen) {
+        if (!seen.add(name)) {
+            return;
+        }
+        Definition def = definitions.get(name);
+        switch (def) {
+            case null -> {}
+            case Definition.Abstract a -> out.add(a.name());
+            case Definition.Explicit e -> namesIn(e.body()).forEach(n -> collectAbstracts(n, out, seen));
+            case Definition.PrimitiveRecursive r -> {
+                namesIn(r.base()).forEach(n -> collectAbstracts(n, out, seen));
+                namesIn(r.step()).forEach(n -> collectAbstracts(n, out, seen));
+            }
+            case Definition.Predicate p -> namesIn(p.body()).forEach(n -> collectAbstracts(n, out, seen));
+        }
+    }
+
+    /** Names of the functions and properties a term mentions. */
+    public static Set<String> namesIn(Term t) {
+        Set<String> out = new java.util.LinkedHashSet<>();
+        addNames(t, out);
+        return out;
+    }
+
+    /** Names of the functions and properties a statement mentions. */
+    public static Set<String> namesIn(Formula f) {
+        Set<String> out = new java.util.LinkedHashSet<>();
+        addNames(f, out);
+        return out;
+    }
+
+    private static void addNames(Term t, Set<String> out) {
+        switch (t) {
+            case Zero z -> {}
+            case Var v -> {}
+            case Succ s -> addNames(s.arg(), out);
+            case App a -> {
+                out.add(a.function());
+                a.args().forEach(x -> addNames(x, out));
+            }
+        }
+    }
+
+    private static void addNames(Formula f, Set<String> out) {
+        switch (f) {
+            case Eq e -> {
+                addNames(e.left(), out);
+                addNames(e.right(), out);
+            }
+            case And a -> {
+                addNames(a.left(), out);
+                addNames(a.right(), out);
+            }
+            case Implies i -> {
+                addNames(i.premise(), out);
+                addNames(i.conclusion(), out);
+            }
+            case Exists ex -> addNames(ex.body(), out);
+            case Bottom b -> {}
+            case Pred p -> {
+                out.add(p.name());
+                p.args().forEach(x -> addNames(x, out));
+            }
+        }
     }
 
     private void checkRecursive(Definition.PrimitiveRecursive r) {
@@ -117,6 +209,17 @@ public final class Signature {
         }
     }
 
+    /** Whether the definition is a function: defined, or an abstract structure operation. */
+    public static boolean isFunction(Definition def) {
+        return def instanceof Definition.Explicit || def instanceof Definition.PrimitiveRecursive
+                || (def instanceof Definition.Abstract a && !a.predicate());
+    }
+
+    /** Whether the definition is a property or relation: defined, or an abstract structure relation. */
+    public static boolean isPredicate(Definition def) {
+        return def instanceof Definition.Predicate || (def instanceof Definition.Abstract a && a.predicate());
+    }
+
     /** Names starting with '#' are reserved for comparing statements up to renaming. */
     private static void checkVarName(String name) {
         if (name.isEmpty() || name.startsWith("#")) {
@@ -126,7 +229,7 @@ public final class Signature {
 
     private void checkArity(App a) {
         Definition def = definitions.get(a.function());
-        if (!(def instanceof Definition.Explicit) && !(def instanceof Definition.PrimitiveRecursive)) {
+        if (!isFunction(def)) {
             throw new ProofException("Unknown function: " + a.function());
         }
         if (def.params().size() != a.args().size()) {
@@ -156,7 +259,8 @@ public final class Signature {
             }
             case Bottom b -> {}
             case Pred p -> {
-                if (!(definitions.get(p.name()) instanceof Definition.Predicate def)) {
+                Definition def = definitions.get(p.name());
+                if (!isPredicate(def)) {
                     throw new ProofException("Unknown property or relation: " + p.name());
                 }
                 if (def.params().size() != p.args().size()) {

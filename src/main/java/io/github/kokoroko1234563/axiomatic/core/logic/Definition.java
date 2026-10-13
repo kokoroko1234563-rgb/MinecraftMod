@@ -9,7 +9,7 @@ import java.util.List;
  * <p>{@code symbol} is an optional infix symbol used only for display, such as "+".
  */
 public sealed interface Definition
-        permits Definition.Explicit, Definition.PrimitiveRecursive, Definition.Predicate {
+        permits Definition.Explicit, Definition.PrimitiveRecursive, Definition.Predicate, Definition.Abstract {
 
     String name();
 
@@ -44,6 +44,18 @@ public sealed interface Definition
 
         public String recursionParam() {
             return params.get(params.size() - 1);
+        }
+    }
+
+    /**
+     * An abstract symbol of a structure, such as a monoid's operation: a function (or, if
+     * {@code predicate}, a relation) with no defining statements. All that is known about it
+     * are its structure's axioms, so theorems about it hold for every interpretation that
+     * satisfies them (see {@link Kernel#interpret}).
+     */
+    record Abstract(String name, List<String> params, boolean predicate, String symbol) implements Definition {
+        public Abstract {
+            params = List.copyOf(params);
         }
     }
 

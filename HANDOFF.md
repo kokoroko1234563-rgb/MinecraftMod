@@ -85,6 +85,10 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   decider whose link depends on that same conjecture.
 - **Background checks** run when a conjectural card is used in a Compiled Machine (the card's
   statement is computed for those inputs). Instances reached by other routes are not watched yet.
+- **Structures** are theory interpretation: abstract symbols (`Monoid.op`, `Monoid.e`,
+  `Equivalence.R`, `Order.R`, names players cannot type) have no defining statements, only
+  their structure's axioms (dependency `structure:NAME`). Instantiated templates are named
+  like `pow⟨Monoid.e:=zeroC,Monoid.op:=add⟩`. Save format is version 2 (reads version 1).
 - **Theorems on items/saves are trusted on load** via `Kernel.restoreSaved` (single-player).
 - Design-doc typo: under Structures, "- - over the even numbers" means "+ over the even numbers".
 - The doc's "prime path" table (7 stages) was missing from the copy we have; ask the owner for it.
@@ -96,7 +100,11 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - [~] Proof checker core. Done: Peano axioms 3–4, equality, induction, ∧, →, ∃ intro/elim,
       hypotheses and discharge, explicit / primitive-recursive / predicate definitions,
       conjectures, step counting, deciders + link theorems, Test Bench range checks, printer.
-      **Not yet**: monoid / equivalence / order certificates (structures)
+      Structures done: built-in Monoid / Equivalence / Order with abstract symbols and axioms,
+      generic theorems, `Kernel.interpret` (applies a generic theorem to concrete definitions
+      whose laws are proven; templates such as a generic `pow` are instantiated — pow over
+      addition computes multiplication), Library structure certificates (mapping read off the
+      laws). Monoids are over all of ℕ only (no subsets yet)
 - [x] Energy: Coal Dynamo, copper cables, energy per step
 - [~] Vanilla crafting recipes: done for the machines that exist (dynamo, cable, Zero Source,
       Successor, Duplicator, Test Bench, Circuit Board)
@@ -137,8 +145,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 ## Suggested next steps
 
 1. Statement Conveyor (unlocks after zero_add), Containment Chamber multiblock.
-2. Structures in the core: monoid / equivalence / order certificates and the fast-powering
-   theorem "for any monoid" (needed from prime path stage 2).
+2. A Structure Bench in game (show axioms, certify from laws, apply generic theorems); the
+   Rewriter using a certified equivalence (≡ mod n) at prime path stage 5.
 3. A real GUI for the Library (it prints to chat now).
 3. Notebook (Modonomicon) given on first join: needs `maven.blamejared.com`/`modmaven.dev` allowed.
 4. Theorem cards and compact blocks; Prime Core recipe; Graph Lens.

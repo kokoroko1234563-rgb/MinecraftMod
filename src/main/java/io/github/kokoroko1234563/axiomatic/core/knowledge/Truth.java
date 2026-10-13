@@ -111,7 +111,10 @@ public final class Truth {
             dependencies.addAll(link.dependencies());
             return Value.of(evaluator.apply(link.function(), args).equals(BigInteger.ONE));
         }
-        Definition.Predicate def = (Definition.Predicate) signature.get(name);
+        if (!(signature.get(name) instanceof Definition.Predicate def)) {
+            // An abstract relation has no meaning of its own to compute.
+            return Value.UNKNOWN;
+        }
         Map<String, BigInteger> env = new HashMap<>();
         for (int i = 0; i < args.size(); i++) {
             env.put(def.params().get(i), args.get(i));
@@ -138,7 +141,8 @@ public final class Truth {
             // Not finding a witness never shows an ∃ false.
             case Formula.Exists ex -> false;
             // Definitions cannot refer to themselves, so unfolding always ends.
-            case Formula.Pred p -> d.get(p.name()) != null || canBeFalse(body(sig, p), sig, d);
+            case Formula.Pred p -> d.get(p.name()) != null
+                    || (sig.get(p.name()) instanceof Definition.Predicate && canBeFalse(body(sig, p), sig, d));
         };
     }
 
@@ -149,7 +153,8 @@ public final class Truth {
             case Formula.And a -> canBeTrue(a.left(), sig, d) && canBeTrue(a.right(), sig, d);
             case Formula.Implies i -> canBeFalse(i.premise(), sig, d) || canBeTrue(i.conclusion(), sig, d);
             case Formula.Exists ex -> canBeTrue(ex.body(), sig, d);
-            case Formula.Pred p -> d.get(p.name()) != null || canBeTrue(body(sig, p), sig, d);
+            case Formula.Pred p -> d.get(p.name()) != null
+                    || (sig.get(p.name()) instanceof Definition.Predicate && canBeTrue(body(sig, p), sig, d));
         };
     }
 

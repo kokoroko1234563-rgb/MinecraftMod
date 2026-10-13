@@ -3,6 +3,7 @@ package io.github.kokoroko1234563.axiomatic.core.knowledge;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,6 +64,19 @@ public final class Library {
     }
 
     private record Entry(Formula statement, Status status) {}
+
+    /**
+     * A structure certificate: these concrete definitions form a monoid (or equivalence, or
+     * order), with the proofs of its laws. Generic theorems apply to it with no new proof.
+     */
+    public record StructureCert(String structure, Map<String, String> mapping, List<Theorem> laws) {
+        public StructureCert {
+            mapping = Map.copyOf(mapping);
+            laws = List.copyOf(laws);
+        }
+    }
+
+    private final List<StructureCert> certificates = new java.util.ArrayList<>();
 
     private final Map<String, Entry> statuses = new LinkedHashMap<>();
     private final Map<String, Theorem> named = new LinkedHashMap<>();
@@ -127,6 +141,36 @@ public final class Library {
     /** Puts back a saved named theorem without re-recording its status. */
     public void restoreTheorem(String name, Theorem thm) {
         named.put(name, thm);
+    }
+
+    // ---- Structure certificates -----------------------------------------------------------
+
+    /**
+     * Certifies a structure from proven laws, reading off which definitions play its symbols.
+     * Throws if the laws are not the structure's axioms for some concrete definitions.
+     */
+    public StructureCert certifyStructure(Kernel kernel, String structure, List<Theorem> laws) {
+        var s = kernel.structure(structure);
+        Map<String, String> mapping = io.github.kokoroko1234563.axiomatic.core.logic.Structures.inferMapping(s,
+                laws.stream().map(Theorem::formula).toList());
+        if (mapping == null) {
+            throw new ProofException("These are not the " + structure + " laws, in order");
+        }
+        // The kernel's interpretation rule re-checks everything: an axiom maps to its law.
+        kernel.interpret(kernel.structureAxiom(structure, 0), structure, mapping, laws);
+        StructureCert cert = new StructureCert(structure, mapping, laws);
+        certificates.removeIf(c -> c.structure().equals(structure) && c.mapping().equals(cert.mapping()));
+        certificates.add(cert);
+        return cert;
+    }
+
+    public List<StructureCert> certificates() {
+        return List.copyOf(certificates);
+    }
+
+    /** Puts back a saved certificate. */
+    public void restoreCertificate(StructureCert cert) {
+        certificates.add(cert);
     }
 
     // ---- Named theorems -------------------------------------------------------------------

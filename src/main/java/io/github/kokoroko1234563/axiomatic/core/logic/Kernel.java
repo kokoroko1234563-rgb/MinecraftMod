@@ -32,6 +32,7 @@ public final class Kernel {
 
     private final Signature signature;
     private long nextId = 1;
+    private Map<String, Structures.Structure> structures;
 
     public Kernel(Signature signature) {
         this.signature = signature;
@@ -116,6 +117,8 @@ public final class Kernel {
                 Formula atom = new Formula.Pred(name, params);
                 yield List.of(Formula.implies(atom, p.body()), Formula.implies(p.body(), atom));
             }
+            // Abstract symbols have no defining statements; only their structure's axioms.
+            case Definition.Abstract a -> List.of();
         };
         return statements.stream().map(f -> new Theorem(f, List.of(), dep, 1)).toList();
     }
@@ -131,6 +134,38 @@ public final class Kernel {
         }
         signature.checkFormula(f);
         return new Theorem(f, List.of(), Set.of("conjecture:" + name), 1);
+    }
+
+    // ---- Structures -----------------------------------------------------------------------
+
+    /** A built-in structure (Monoid, Equivalence, Order); declares its abstract symbols on first use. */
+    public Structures.Structure structure(String name) {
+        if (structures == null) {
+            structures = Structures.standard(signature);
+        }
+        Structures.Structure s = structures.get(name);
+        if (s == null) {
+            throw new ProofException("Unknown structure: " + name);
+        }
+        return s;
+    }
+
+    /** Axiom {@code i} of a structure, for proving generic theorems ("for any monoid …"). */
+    public Theorem structureAxiom(String structure, int i) {
+        Structures.Structure s = structure(structure);
+        if (i < 0 || i >= s.axioms().size()) {
+            throw new ProofException(structure + " has " + s.axioms().size() + " axioms");
+        }
+        return Structures.axiom(s, i);
+    }
+
+    /**
+     * Applies a generic theorem to concrete definitions: {@code mapping} sends each abstract
+     * symbol of the structure to a concrete definition, and {@code laws} prove the structure's
+     * axioms for them, in order. Templates on the abstract symbols are instantiated as needed.
+     */
+    public Theorem interpret(Theorem thm, String structure, Map<String, String> mapping, List<Theorem> laws) {
+        return Structures.interpret(signature, structure(structure), thm, mapping, laws);
     }
 
     // ---- Equality -------------------------------------------------------------------------

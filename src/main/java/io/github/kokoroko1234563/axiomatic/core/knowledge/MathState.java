@@ -29,7 +29,7 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Theorem;
  * library, with a binary save format. Statements are stored as pointed graphs.
  */
 public final class MathState {
-    private static final int FORMAT_VERSION = 1;
+    private static final int FORMAT_VERSION = 2;
 
     private final Kernel kernel;
     private final Deciders deciders;
@@ -135,6 +135,20 @@ public final class MathState {
             }
         }
 
+        out.writeInt(library.certificates().size());
+        for (Library.StructureCert cert : library.certificates()) {
+            out.writeUTF(cert.structure());
+            out.writeInt(cert.mapping().size());
+            for (var e : new java.util.TreeMap<>(cert.mapping()).entrySet()) {
+                out.writeUTF(e.getKey());
+                out.writeUTF(e.getValue());
+            }
+            out.writeInt(cert.laws().size());
+            for (Theorem law : cert.laws()) {
+                writeTheorem(out, law);
+            }
+        }
+
         out.writeInt(library.conjectures().size());
         for (Library.Conjecture c : library.conjectures()) {
             out.writeUTF(c.name());
@@ -149,7 +163,7 @@ public final class MathState {
 
     public static MathState read(DataInput in) throws IOException {
         int version = in.readByte();
-        if (version != FORMAT_VERSION) {
+        if (version != FORMAT_VERSION && version != 1) {
             throw new IOException("Unknown mathematics save format " + version);
         }
         MathState state = new MathState();
@@ -158,7 +172,7 @@ public final class MathState {
         int defs = in.readInt();
         for (int i = 0; i < defs; i++) {
             // Re-checked on load; they were accepted in this order, so they still are.
-            state.signature().define(readDefinition(in));
+            state.signature().defineInternal(readDefinition(in));
         }
 
         int links = in.readInt();
@@ -183,6 +197,24 @@ public final class MathState {
                 default -> throw new IOException("Unknown status");
             };
             state.library.restoreStatus(f, status);
+        }
+
+        if (version >= 2) {
+            int certs = in.readInt();
+            for (int i = 0; i < certs; i++) {
+                String structure = in.readUTF();
+                int n = in.readInt();
+                Map<String, String> mapping = new LinkedHashMap<>();
+                for (int j = 0; j < n; j++) {
+                    mapping.put(in.readUTF(), in.readUTF());
+                }
+                int lawCount = in.readInt();
+                List<Theorem> laws = new ArrayList<>();
+                for (int j = 0; j < lawCount; j++) {
+                    laws.add(readTheorem(in, state.kernel));
+                }
+                state.library.restoreCertificate(new Library.StructureCert(structure, mapping, laws));
+            }
         }
 
         int conjectures = in.readInt();
@@ -265,6 +297,10 @@ public final class MathState {
                 out.writeByte(2);
                 writeFormula(out, p.body());
             }
+            case Definition.Abstract a -> {
+                out.writeByte(3);
+                out.writeBoolean(a.predicate());
+            }
         }
     }
 
@@ -276,6 +312,7 @@ public final class MathState {
             case 0 -> new Definition.Explicit(name, params, readTerm(in), symbol);
             case 1 -> new Definition.PrimitiveRecursive(name, params, readTerm(in), readTerm(in), symbol);
             case 2 -> new Definition.Predicate(name, params, readFormula(in), symbol);
+            case 3 -> new Definition.Abstract(name, params, in.readBoolean(), symbol);
             default -> throw new IOException("Unknown definition kind");
         };
     }

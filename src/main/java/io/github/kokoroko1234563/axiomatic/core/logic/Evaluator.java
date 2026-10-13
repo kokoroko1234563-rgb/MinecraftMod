@@ -88,6 +88,7 @@ public final class Evaluator {
                 yield acc;
             }
             case Definition.Predicate p -> throw new IllegalArgumentException(function + " is not a function");
+            case Definition.Abstract a -> throw new IllegalArgumentException(function + " is abstract: it has no value");
         };
     }
 
