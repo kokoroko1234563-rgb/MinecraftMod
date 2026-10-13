@@ -220,6 +220,33 @@ public final class Kernel {
         return definingStatements(def.name());
     }
 
+    // ---- Recognition ----------------------------------------------------------------------
+
+    /**
+     * Equivalence Bench: if f and g are the same design (identical defining equations up to
+     * renaming, see {@link Designs}), proves f(x̄) = g(x̄); for two properties, P(x̄) → Q(x̄) and
+     * Q(x̄) → P(x̄). Same equations, same function: every definition here is total.
+     */
+    public List<Theorem> sameDesign(String f, String g) {
+        Definition df = signature.get(f);
+        Definition dg = signature.get(g);
+        if (df == null || dg == null) {
+            throw new ProofException("Unknown definition: " + (df == null ? f : g));
+        }
+        if (!new Designs(signature).same(f, g)) {
+            throw new ProofException(f + " and " + g + " are not the same design");
+        }
+        List<Term> vars = df.params().stream().<Term>map(Var::new).toList();
+        Set<String> deps = Set.of("def:" + f, "def:" + g);
+        if (df instanceof Definition.Predicate) {
+            Formula p = new Formula.Pred(f, vars);
+            Formula q = new Formula.Pred(g, vars);
+            return List.of(new Theorem(Formula.implies(p, q), List.of(), deps, 1),
+                    new Theorem(Formula.implies(q, p), List.of(), deps, 1));
+        }
+        return List.of(new Theorem(Formula.eq(new Term.App(f, vars), new Term.App(g, vars)), List.of(), deps, 1));
+    }
+
     // ---- Implementations ------------------------------------------------------------------
 
     /**

@@ -20,6 +20,7 @@
     "axiomatic:structure_bench",
     "axiomatic:prime_forge",
     "axiomatic:implementation_bench",
+    "axiomatic:equivalence_bench",
     "axiomatic:network_surveyor",
     "axiomatic:infinite_prime_well",
     "axiomatic:factorization_vault",

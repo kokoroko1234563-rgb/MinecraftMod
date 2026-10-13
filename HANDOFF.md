@@ -97,6 +97,11 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   conjecture taint will cascade.
 - **Deciders** are linked in the Drafting Chamber's Link mode from the two proven link theorems
   (variable names may differ from the definition's).
+- **Recognition** (Equivalence Bench, `Kernel.sameDesign`, `core/logic/Designs`): two definitions
+  whose defining equations are identical up to renaming (their name, inputs, bound variables,
+  and the definitions they use, compared recursively) are proven equal (f(x̄) = g(x̄), or both
+  implications for properties). This replaces the doc's bisimulation checking, which has no
+  machine-as-data counterpart here.
 - **Implementations** (Implementation Bench, `Kernel.implement`): a closed, non-conjectural
   proof of ∀x̄. fast(x̄) = slow(x̄) makes the Evaluator compute slow with fast (`Signature
   .implementation`). Refused if fast itself computes slow. Saved (format version 3). This is the

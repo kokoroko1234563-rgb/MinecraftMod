@@ -257,6 +257,7 @@ MACHINES = {
     "structure_bench": ("blue", "M", "Structure Bench"),
     "prime_forge": ("gold", "P", "Prime Forge"),
     "implementation_bench": ("blue", "=", "Implementation Bench"),
+    "equivalence_bench": ("blue", "~", "Equivalence Bench"),
     "network_surveyor": ("copper", "N", "Network Surveyor"),
     "infinite_prime_well": ("gold", "W", "Infinite Prime Well"),
     "factorization_vault": ("gold", "V", "Factorization Vault"),
@@ -602,6 +603,8 @@ LANG = {
     "label.axiomatic.vault_empty": "Empty: the number 1",
     "slot.axiomatic.vault_in": "Items to store",
     "status.axiomatic.vault_number": "Stored as one number of %s digits",
+    "slot.axiomatic.design_a": "A design: circuit f(…) or statement P(…)",
+    "slot.axiomatic.design_b": "Another design",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
@@ -773,6 +776,8 @@ def main():
            {"Q": "minecraft:quartz", "B": board, "K": "minecraft:lapis_block"})
     shaped("network_surveyor", ["CMC", "OBO", "CCC"],
            {"C": "minecraft:copper_ingot", "M": "minecraft:map", "O": "minecraft:compass", "B": board})
+    shaped("equivalence_bench", ["QBQ", "BCB", "QBQ"],
+           {"Q": "minecraft:quartz", "B": board, "C": "minecraft:comparator"})
     shaped("implementation_bench", ["QBQ", "BOB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "O": "minecraft:observer"})
     shaped("perfect_core", ["CNC", "CMC", "CCC"], {

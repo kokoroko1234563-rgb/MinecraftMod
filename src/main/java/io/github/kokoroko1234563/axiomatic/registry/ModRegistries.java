@@ -44,6 +44,7 @@ import io.github.kokoroko1234563.axiomatic.machine.reasoning.PropertyBenchBlockE
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.RewriterBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.StructureBenchBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.ImplementationBenchBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.EquivalenceBenchBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.WitnessBenchBlockEntity;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -212,6 +213,8 @@ public final class ModRegistries {
             MapColor.COLOR_BLUE, ModusPonensPressBlockEntity::new);
     public static final Machine<StructureBenchBlockEntity> STRUCTURE_BENCH = machine("structure_bench",
             MapColor.COLOR_LIGHT_BLUE, StructureBenchBlockEntity::new);
+    public static final Machine<EquivalenceBenchBlockEntity> EQUIVALENCE_BENCH = machine("equivalence_bench",
+            MapColor.COLOR_LIGHT_BLUE, EquivalenceBenchBlockEntity::new);
     public static final Machine<NetworkSurveyorBlockEntity> NETWORK_SURVEYOR = machine("network_surveyor",
             MapColor.COLOR_ORANGE, NetworkSurveyorBlockEntity::new);
     public static final Machine<ImplementationBenchBlockEntity> IMPLEMENTATION_BENCH = machine("implementation_bench",
