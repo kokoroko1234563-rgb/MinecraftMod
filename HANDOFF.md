@@ -105,7 +105,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - **Implementations** (Implementation Bench, `Kernel.implement`): a closed, non-conjectural
   proof of ∀x̄. fast(x̄) = slow(x̄) makes the Evaluator compute slow with fast (`Signature
   .implementation`). Refused if fast itself computes slow. Saved (format version 3). This is the
-  doc's unary-to-binary upgrade in general form; the Duplicator's cost is still the value.
+  doc's unary-to-binary upgrade in general form. Implementing the canonical addition is the
+  upgrade itself (`Signature.binaryNumerals`): the Duplicator then costs bit count + 1, not value + 1.
 - **Starter definitions**: new worlds come with `add`, `mul`, `pow`, `Even`, `le` (≤), `Divides`
   (|), `Mersenne` (∃p. n + 1 = 2^p) and `Prime` defined exactly as in the design doc (definitions only, nothing proven), because the
   opening hour certifies evens before the Drafting Chamber exists, and because recipes ask for

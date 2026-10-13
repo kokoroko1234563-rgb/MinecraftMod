@@ -215,6 +215,16 @@ public final class Signature {
      * A definition the kernel can trust to be addition: a + 0 = a and a + S(b) = S(a + b), whatever
      * it is called. Termination obligations are stated with it. Returns its name, or null.
      */
+    /**
+     * Whether the world has made the unary-to-binary upgrade: addition, the root of arithmetic,
+     * has a proven implementation. Numerals are then handled by their digits (the Duplicator's
+     * copy cost drops from a numeral's value to its bit count).
+     */
+    public boolean binaryNumerals() {
+        String add = canonicalAddition();
+        return add != null && !implementation(add).equals(add);
+    }
+
     public String canonicalAddition() {
         for (Definition d : definitions.values()) {
             if (d instanceof Definition.PrimitiveRecursive r && r.params().size() == 2

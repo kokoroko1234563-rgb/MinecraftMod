@@ -145,7 +145,7 @@ NOTEBOOK = [
     "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
     "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless.",
     "Infinitely many\n\nProve that above every n there is a prime: for all n, exists p, n <= p and Prime(p). That proof crafts the Infinite Prime Well, which emits primes forever. The Factorization Vault stores items as one number.",
-    "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds.",
+    "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds. Implement addition itself and numbers go binary: the Duplicator then pays for digits, not value.",
     "Perfect numbers\n\nA Mersenne prime is a prime one less than a power of two, like 7 or 31. By Euclid and Euler each one gives a perfect number. A Perfect Core needs a numeral certified both Prime and Mersenne, without conjectures.",
     "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
 ]
