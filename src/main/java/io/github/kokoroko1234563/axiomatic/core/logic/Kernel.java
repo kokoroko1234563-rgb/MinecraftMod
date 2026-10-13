@@ -220,6 +220,40 @@ public final class Kernel {
         return definingStatements(def.name());
     }
 
+    // ---- Implementations ------------------------------------------------------------------
+
+    /**
+     * Implementation Bench: a proof of ∀x̄. fast(x̄) = slow(x̄) makes every computation of slow run
+     * fast instead. Theorems about slow stay true, since the two are proven equal; only the cost
+     * changes. Returns {slow, fast}.
+     */
+    public String[] implement(Theorem proof) {
+        if (!proof.isClosed() || proof.isConjectural()) {
+            throw new ProofException("The proof must not rest on assumptions or conjectures");
+        }
+        if (!(proof.formula() instanceof Eq eq) || !(eq.left() instanceof Term.App fast)
+                || !(eq.right() instanceof Term.App slow)) {
+            throw new ProofException("Needs a proof of fast(x, …) = slow(x, …)");
+        }
+        List<Term> vars = fast.args();
+        if (!vars.equals(slow.args()) || !vars.stream().allMatch(t -> t instanceof Var)
+                || new HashSet<>(vars).size() != vars.size()) {
+            throw new ProofException("Both sides must take the same distinct variables, in the same order");
+        }
+        if (fast.function().equals(slow.function())) {
+            throw new ProofException("A function cannot implement itself");
+        }
+        if (!Signature.isFunction(signature.get(fast.function())) || signature.get(fast.function()) instanceof Definition.Abstract
+                || !Signature.isFunction(signature.get(slow.function()))) {
+            throw new ProofException("Both sides must be defined functions");
+        }
+        if (signature.dependsOn(fast.function(), slow.function())) {
+            throw new ProofException(fast.function() + " itself computes " + slow.function() + ": that would loop");
+        }
+        signature.setImplementation(slow.function(), fast.function());
+        return new String[] {slow.function(), fast.function()};
+    }
+
     /**
      * Turns an unproven statement into a conjecture that may be used like a theorem. Everything
      * derived from it is marked conjectural. Which statements may be conjectured (only ones the

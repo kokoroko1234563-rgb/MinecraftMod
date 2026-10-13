@@ -40,6 +40,7 @@ import io.github.kokoroko1234563.axiomatic.machine.reasoning.ModusPonensPressBlo
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.PropertyBenchBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.RewriterBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.StructureBenchBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.ImplementationBenchBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.WitnessBenchBlockEntity;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -206,6 +207,8 @@ public final class ModRegistries {
             MapColor.COLOR_BLUE, ModusPonensPressBlockEntity::new);
     public static final Machine<StructureBenchBlockEntity> STRUCTURE_BENCH = machine("structure_bench",
             MapColor.COLOR_LIGHT_BLUE, StructureBenchBlockEntity::new);
+    public static final Machine<ImplementationBenchBlockEntity> IMPLEMENTATION_BENCH = machine("implementation_bench",
+            MapColor.COLOR_LIGHT_BLUE, ImplementationBenchBlockEntity::new);
     public static final Machine<PrimeForgeBlockEntity> PRIME_FORGE = machine("prime_forge",
             MapColor.GOLD, PrimeForgeBlockEntity::new);
     public static final Machine<CompiledMachineBlockEntity> COMPILED_MACHINE = machine("compiled_machine",

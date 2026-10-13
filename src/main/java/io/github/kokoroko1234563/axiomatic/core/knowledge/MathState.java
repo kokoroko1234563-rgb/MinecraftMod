@@ -29,7 +29,7 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Theorem;
  * library, with a binary save format. Statements are stored as pointed graphs.
  */
 public final class MathState {
-    private static final int FORMAT_VERSION = 2;
+    private static final int FORMAT_VERSION = 3;
 
     private final Kernel kernel;
     private final Deciders deciders;
@@ -101,6 +101,12 @@ public final class MathState {
             writeDefinition(out, def);
         }
 
+        out.writeInt(signature().implementations().size());
+        for (var e : signature().implementations().entrySet()) {
+            out.writeUTF(e.getKey());
+            out.writeUTF(e.getValue());
+        }
+
         out.writeInt(deciders.all().size());
         for (Deciders.Link link : deciders.all()) {
             out.writeUTF(link.property());
@@ -163,7 +169,7 @@ public final class MathState {
 
     public static MathState read(DataInput in) throws IOException {
         int version = in.readByte();
-        if (version != FORMAT_VERSION && version != 1) {
+        if (version < 1 || version > FORMAT_VERSION) {
             throw new IOException("Unknown mathematics save format " + version);
         }
         MathState state = new MathState();
@@ -173,6 +179,13 @@ public final class MathState {
         for (int i = 0; i < defs; i++) {
             // Re-checked on load; they were accepted in this order, so they still are.
             state.signature().defineInternal(readDefinition(in));
+        }
+
+        if (version >= 3) {
+            int impls = in.readInt();
+            for (int i = 0; i < impls; i++) {
+                state.signature().restoreImplementation(in.readUTF(), in.readUTF());
+            }
         }
 
         int links = in.readInt();

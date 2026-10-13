@@ -19,6 +19,7 @@
     "axiomatic:compiled_machine",
     "axiomatic:structure_bench",
     "axiomatic:prime_forge",
+    "axiomatic:implementation_bench",
     "axiomatic:conjecture_bench",
     "axiomatic:conjecture_block",
     "axiomatic:statement_conveyor",

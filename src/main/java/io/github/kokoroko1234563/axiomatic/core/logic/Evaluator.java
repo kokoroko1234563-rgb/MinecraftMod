@@ -75,9 +75,9 @@ public final class Evaluator {
         };
     }
 
-    /** Applies a defined function to concrete inputs. */
+    /** Applies a defined function to concrete inputs (through its implementation, if proven). */
     public BigInteger apply(String function, List<BigInteger> args) {
-        Definition def = signature.get(function);
+        Definition def = signature.get(signature.implementation(function));
         Map<String, BigInteger> env = new HashMap<>();
         for (int i = 0; i < args.size(); i++) {
             env.put(def.params().get(i), args.get(i));

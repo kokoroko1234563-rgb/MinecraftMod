@@ -93,6 +93,10 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   conjecture taint will cascade.
 - **Deciders** are linked in the Drafting Chamber's Link mode from the two proven link theorems
   (variable names may differ from the definition's).
+- **Implementations** (Implementation Bench, `Kernel.implement`): a closed, non-conjectural
+  proof of ∀x̄. fast(x̄) = slow(x̄) makes the Evaluator compute slow with fast (`Signature
+  .implementation`). Refused if fast itself computes slow. Saved (format version 3). This is the
+  doc's unary-to-binary upgrade in general form; the Duplicator's cost is still the value.
 - **Starter definitions**: new worlds come with `add` and `Even` defined (not proven anything),
   because the opening hour certifies evens on the Test Bench before the Drafting Chamber exists.
 - **Energy is the mod's own** simple system (dynamo → cables → machines, no loss), not the NeoForge

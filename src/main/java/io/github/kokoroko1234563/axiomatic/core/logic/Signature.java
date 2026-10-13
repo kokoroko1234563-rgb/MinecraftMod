@@ -24,6 +24,8 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Term.Zero;
  */
 public final class Signature {
     private final Map<String, Definition> definitions = new LinkedHashMap<>();
+    /** slow function → a proven-equal faster function that computes it (Implementation Bench). */
+    private final Map<String, String> implementations = new LinkedHashMap<>();
 
     /**
      * An independent copy, for computing on another thread while the world keeps changing.
@@ -32,7 +34,65 @@ public final class Signature {
     public Signature copy() {
         Signature out = new Signature();
         out.definitions.putAll(definitions);
+        out.implementations.putAll(implementations);
         return out;
+    }
+
+    /** The function that actually computes {@code name}: its proven-equal implementation, if any. */
+    public String implementation(String name) {
+        String impl = implementations.get(name);
+        return impl == null ? name : implementation(impl);
+    }
+
+    public Map<String, String> implementations() {
+        return java.util.Collections.unmodifiableMap(implementations);
+    }
+
+    /** Records an implementation; only {@link Kernel#implement} and save loading may call this. */
+    void setImplementation(String slow, String fast) {
+        implementations.put(slow, fast);
+    }
+
+    /** Puts back a saved implementation (trusted, like everything loaded from a save). */
+    public void restoreImplementation(String slow, String fast) {
+        implementations.put(slow, fast);
+    }
+
+    /** Whether computing {@code name} may call {@code other}, directly or through other definitions or implementations. */
+    public boolean dependsOn(String name, String other) {
+        return dependsOn(name, other, new HashSet<>());
+    }
+
+    private boolean dependsOn(String name, String other, Set<String> seen) {
+        if (name.equals(other)) {
+            return true;
+        }
+        if (!seen.add(name)) {
+            return false;
+        }
+        String impl = implementations.get(name);
+        if (impl != null && dependsOn(impl, other, seen)) {
+            return true;
+        }
+        Definition def = definitions.get(name);
+        Set<String> used = switch (def) {
+            case null -> Set.of();
+            case Definition.Explicit e -> namesIn(e.body());
+            case Definition.PrimitiveRecursive r -> {
+                Set<String> s = new HashSet<>(namesIn(r.base()));
+                s.addAll(namesIn(r.step()));
+                yield s;
+            }
+            case Definition.GeneralRecursive g -> namesIn(g.body());
+            case Definition.Predicate p -> namesIn(p.body());
+            case Definition.Abstract a -> Set.of();
+        };
+        for (String u : used) {
+            if (!u.equals(name) && dependsOn(u, other, seen)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Definition get(String name) {

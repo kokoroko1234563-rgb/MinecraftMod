@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "Q": "minecraft:quartz",
+    "B": "axiomatic:circuit_board",
+    "O": "minecraft:observer"
+  },
+  "pattern": [
+    "QBQ",
+    "BOB",
+    "QBQ"
+  ],
+  "result": {
+    "id": "axiomatic:implementation_bench",
+    "count": 1
+  }
+}

@@ -23,7 +23,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 public final class Notebook {
     private Notebook() {}
 
-    public static final int PAGES = 24;
+    public static final int PAGES = 25;
     private static final String GIVEN = "axiomatic_notebook_given";
 
     public static ItemStack create() {

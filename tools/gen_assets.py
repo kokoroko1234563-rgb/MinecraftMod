@@ -140,6 +140,7 @@ NOTEBOOK = [
     "Factories\n\nThe Statement Conveyor moves statements and circuits between machines; it needs a proven 0 + n = n to craft. The Duplicator copies statements for 1 unit. Every step still costs energy.",
     "Safety\n\nAn unpowered conjecture block goes dormant: safe, but its cards stop working. Seal a conjecture block in obsidian or tinted glass near a Containment Controller to keep its failure harmless.",
     "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
+    "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds.",
     "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
 ]
 
@@ -176,6 +177,7 @@ MACHINES = {
     "compiled_machine": ("gold", "f", "Compiled Machine"),
     "structure_bench": ("blue", "M", "Structure Bench"),
     "prime_forge": ("gold", "P", "Prime Forge"),
+    "implementation_bench": ("blue", "=", "Implementation Bench"),
     "conjecture_bench": ("purple", "?", "Conjecture Bench"),
     "conjecture_block": ("purple", "!", "Conjecture Block"),
 }
@@ -487,6 +489,8 @@ LANG = {
     "subtitles.axiomatic.refuted": "Counterexample found",
     "subtitles.axiomatic.disaster": "Conjecture fails",
     "subtitles.axiomatic.working": "Machine hums",
+    "slot.axiomatic.implementation_proof": "Proof of fast(x) = slow(x)",
+    "status.axiomatic.implemented": "%s is now computed by %s",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
@@ -655,6 +659,8 @@ def main():
            {"O": "minecraft:obsidian", "T": "minecraft:tinted_glass", "B": board})
     shaped("structure_bench", ["QBQ", "BKB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "K": "minecraft:lapis_block"})
+    shaped("implementation_bench", ["QBQ", "BOB", "QBQ"],
+           {"Q": "minecraft:quartz", "B": board, "O": "minecraft:observer"})
     shaped("prime_forge", ["KCK", "PFP", "KKK"],
            {"K": "minecraft:iron_block", "C": "axiomatic:prime_core", "P": "minecraft:gold_ingot",
             "F": "minecraft:blast_furnace"})
