@@ -10,7 +10,9 @@ import java.util.Set;
 import io.github.kokoroko1234563.axiomatic.core.logic.Formula;
 import io.github.kokoroko1234563.axiomatic.core.logic.Kernel;
 import io.github.kokoroko1234563.axiomatic.core.logic.ProofException;
+import io.github.kokoroko1234563.axiomatic.core.logic.Signature;
 import io.github.kokoroko1234563.axiomatic.core.logic.Syntax;
+import io.github.kokoroko1234563.axiomatic.core.logic.Term;
 import io.github.kokoroko1234563.axiomatic.core.logic.Theorem;
 
 /**
@@ -303,5 +305,44 @@ public final class Library {
                     Conjecture c = conjectures.get(d.substring("conjecture:".length()));
                     return c == null || c.state != ConjectureState.PROVEN;
                 }).toList());
+    }
+
+    // ---- The binary upgrade ---------------------------------------------------------------
+
+    /**
+     * Whether binary is proven: the Library holds a named, fully proven theorem saying every
+     * number splits into halves and a bit, ∀n. n = (h(n) + h(n)) + p(n) ∧ p(n) ≤ 1, for some
+     * functions h and p (canonical + and ≤). Numerals are then handled by their digits.
+     */
+    public boolean binaryProven(Signature signature) {
+        for (Theorem t : named.values()) {
+            if (t.isClosed() && !t.isConjectural() && isBinaryDecomposition(t.formula(), signature)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** n = (h(n) + h(n)) + p(n) ∧ p(n) ≤ 1 (either side of the equation first). */
+    public static boolean isBinaryDecomposition(Formula f, Signature signature) {
+        if (!(f instanceof Formula.And and) || !(and.left() instanceof Formula.Eq eq)
+                || !(and.right() instanceof Formula.Pred le) || le.args().size() != 2
+                || !Bounds.isLe(signature, le.name()) || !le.args().get(1).equals(Term.succ(Term.zero()))) {
+            return false;
+        }
+        Term n = eq.left() instanceof Term.Var ? eq.left() : eq.right();
+        Term sum = n == eq.left() ? eq.right() : eq.left();
+        if (!(n instanceof Term.Var) || !(sum instanceof Term.App outer) || !Bounds.isAdd(signature, outer.function())
+                || outer.args().size() != 2 || !(outer.args().get(0) instanceof Term.App inner)
+                || !inner.function().equals(outer.function()) || !inner.args().get(0).equals(inner.args().get(1))) {
+            return false;
+        }
+        Term half = inner.args().get(0);
+        Term bit = outer.args().get(1);
+        return isUnaryCall(half, n, signature) && isUnaryCall(bit, n, signature) && le.args().get(0).equals(bit);
+    }
+
+    private static boolean isUnaryCall(Term t, Term n, Signature signature) {
+        return t instanceof Term.App a && a.args().equals(List.of(n)) && Signature.isFunction(signature.get(a.function()));
     }
 }

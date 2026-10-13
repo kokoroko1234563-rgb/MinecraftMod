@@ -215,38 +215,6 @@ public final class Signature {
      * A definition the kernel can trust to be addition: a + 0 = a and a + S(b) = S(a + b), whatever
      * it is called. Termination obligations are stated with it. Returns its name, or null.
      */
-    /**
-     * Whether the world has made the unary-to-binary upgrade: some addition (a definition with
-     * the equations of +) has a proven implementation that really is fast, adding two 40-bit
-     * numbers in a few thousand steps where unary addition would take a trillion. A renamed copy
-     * of addition implements it too, but does not pass. Numerals are then handled by their digits
-     * (the Duplicator's copy cost drops from a numeral's value to its bit count).
-     */
-    public boolean binaryNumerals() {
-        if (implementations.equals(binaryCheckedFor)) {
-            return binaryCached;
-        }
-        boolean binary = false;
-        java.math.BigInteger big = java.math.BigInteger.ONE.shiftLeft(40);
-        for (Definition d : definitions.values()) {
-            if (isAddition(d) && !implementation(d.name()).equals(d.name())) {
-                try {
-                    new Evaluator(this, 20_000).apply(d.name(), List.of(big, big));
-                    binary = true;
-                    break;
-                } catch (Evaluator.OutOfBudget | ProofException e) {
-                    // Not fast: still unary.
-                }
-            }
-        }
-        binaryCheckedFor = Map.copyOf(implementations);
-        binaryCached = binary;
-        return binary;
-    }
-
-    private Map<String, String> binaryCheckedFor;
-    private boolean binaryCached;
-
     private static boolean isAddition(Definition d) {
         return d instanceof Definition.PrimitiveRecursive r && r.params().size() == 2
                 && r.base().equals(new Var(r.params().get(0)))

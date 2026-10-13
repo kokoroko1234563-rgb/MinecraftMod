@@ -66,38 +66,6 @@ class ImplementationTest {
         assertThrows(ProofException.class, () -> kernel.implement(loopy));
     }
 
-    /** addFast(a, b) = add(a, b) by induction on b, from the two definitions. */
-    private Theorem addFastIsAdd() {
-        List<Theorem> fast = kernel.define(new Definition.PrimitiveRecursive("addFast", List.of("a", "b"), a,
-                succ(app("addFast", a, b)), null));
-        Theorem addZero = kernel.definingStatements("add").get(0);
-        Theorem addSucc = kernel.definingStatements("add").get(1);
-        Theorem base = kernel.reflexivity(app("addFast", a, zero()));
-        base = Tactics.rewriteMatching(kernel, base, fast.get(0), false, 1);   // addFast(a, 0) = a
-        base = Tactics.rewriteMatching(kernel, base, addZero, true, 3);        // = add(a, 0); the pattern matches every subterm
-        Theorem ih = kernel.assume(eq(app("addFast", a, b), app("add", a, b)));
-        Theorem step = kernel.reflexivity(app("addFast", a, succ(b)));
-        step = Tactics.rewriteMatching(kernel, step, fast.get(1), false, 1);   // = S(addFast(a, b))
-        step = Tactics.rewriteMatching(kernel, step, ih, false, 0);            // = S(add(a, b))
-        step = Tactics.rewriteMatching(kernel, step, addSucc, true, 0);        // = add(a, S(b))
-        return kernel.induction(base, kernel.discharge(step, ih.hypotheses().get(0)), "b");
-    }
-
-    @Test
-    void binaryNumeralsNeedATrulyFastAddition() {
-        assertTrue(!kernel.signature().binaryNumerals());
-        // An implementation of something else is not the upgrade.
-        kernel.implement(proof());
-        assertTrue(!kernel.signature().binaryNumerals());
-        // Nor is an unproven claim about addition.
-        assertThrows(ProofException.class, () -> kernel.implement(
-                kernel.conjecture("fastAdd", eq(app("add", a, b), app("slow", a)))));
-        // A renamed copy of addition implements it, but is no faster: the cheat is refused.
-        String[] pair = kernel.implement(addFastIsAdd());
-        assertEquals("add", pair[0]);
-        assertTrue(!kernel.signature().binaryNumerals());
-    }
-
     @Test
     void survivesSaveAndLoad() throws java.io.IOException {
         var state = io.github.kokoroko1234563.axiomatic.core.knowledge.MathState.newWorld();

@@ -14,8 +14,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Duplicator: copies a numeral (certificates included), a statement or a circuit. Machines consume their inputs, so this is
- * how a number gets used twice. In the unary age copying costs the numeral's value; once addition
- * has a proven implementation (the unary-to-binary upgrade), it costs the numeral's bit count.
+ * how a number gets used twice. In the unary age copying costs the numeral's value; once binary is
+ * proven (a named theorem splitting every number into halves and a bit, see
+ * {@link io.github.kokoroko1234563.axiomatic.core.knowledge.Library#binaryProven}), its bit count.
  */
 public class DuplicatorBlockEntity extends MachineBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(
@@ -67,8 +68,8 @@ public class DuplicatorBlockEntity extends MachineBlockEntity {
             return null;
         }
         in.shrink(1);
-        boolean binary = io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(level.getServer()).state()
-                .signature().binaryNumerals();
+        var state = io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(level.getServer()).state();
+        boolean binary = state.library().binaryProven(state.signature());
         long cost = copyCost(n.value(), binary);
         setStatus(Component.translatable("status.axiomatic.cost", cost));
         return new Job(cost, (int) Math.clamp(cost / 50, 4, 400), out);

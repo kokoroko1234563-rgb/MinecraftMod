@@ -113,12 +113,13 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - **Implementations** (Implementation Bench, `Kernel.implement`): a closed, non-conjectural
   proof of ∀x̄. fast(x̄) = slow(x̄) makes the Evaluator compute slow with fast (`Signature
   .implementation`). Refused if fast itself computes slow. Saved (format version 3). This is the
-  doc's unary-to-binary upgrade in general form. `Signature.binaryNumerals` is true once some
-  addition has an implementation that adds two 40-bit numbers within 20,000 steps; the Duplicator
-  then costs bit count + 1, not value + 1. **No Peano definition can pass yet** (the Evaluator is
-  unary: S and primitive-recursion loops), so the upgrade needs a binary-recursion definition kind
-  (f(0), f(2n+1), f(2n+2) with a matching binary induction rule) — a good next kernel task. A
-  renamed copy of add used to unlock it (found in review); the speed test refuses that.
+  doc's unary-to-binary upgrade in general form.
+- **Binary** (`Library.binaryProven`): a named, fully proven theorem of the shape
+  ∀n. n = (h(n) + h(n)) + p(n) ∧ p(n) ≤ 1 (any functions h, p; canonical + and ≤). The
+  Duplicator then costs bit count + 1, not value + 1. `BinaryTest` proves it with kernel rules
+  (flip/par/half by primitive recursion, flip∘flip∘par = par, par + flip(par) = 1, then induction).
+  Option for later: also let the Evaluator compute canonical + and × natively once binary is proven.
+  (An earlier version unlocked this by implementing add, which a renamed copy of add could do.)
 - **Starter definitions**: new worlds come with `add`, `mul`, `pow`, `Even`, `le` (≤), `Divides`
   (|), `Mersenne` (∃p. n + 1 = 2^p) and `Prime` defined exactly as in the design doc (definitions only, nothing proven), because the
   opening hour certifies evens before the Drafting Chamber exists, and because recipes ask for
@@ -216,14 +217,6 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 ## Suggested next steps
 
-0. **Decision needed: how the binary upgrade becomes reachable** (`Signature.binaryNumerals`).
-   Every evaluation is unary, so no implementation of + can be fast. Options:
-   A. Gate on a proven decomposition theorem, e.g. ∀n. n = (half(n) + half(n)) + par(n) with
-      half/par/flip defined by primitive recursion (provable by induction using the lemma
-      flip(flip(par n)) = par n), and then let the Evaluator compute canonical + and × natively.
-   B. A binary-recursion definition kind (f(0), f(2n+1) from f(n), f(2n+2) from f(n+1)) with a
-      binary induction rule, plus native doubling/halving in the Evaluator for its constructors.
-   A is much smaller and fits "once binary is proven" in the design.
 1. Compact blocks: inspecting a Compiled Machine's ports, theorem cards slotted into other
    machines (speed cards exist for the Compiled Machine).
 2. A worked mod-n example (multiplication mod n as a SetMonoid, ≡ mod n as an equivalence, laws
