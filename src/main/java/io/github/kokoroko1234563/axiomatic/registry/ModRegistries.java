@@ -85,6 +85,9 @@ public final class ModRegistries {
     public static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS =
             DeferredRegister.create(Registries.SOUND_EVENT, Axiomatic.MODID);
 
+    /** Every machine, in registration order (for capabilities). */
+    public static final List<Machine<?>> MACHINES = new ArrayList<>();
+
     /** Items shown in the creative tab, in registration order. */
     private static final List<DeferredItem<?>> TAB_ITEMS = new ArrayList<>();
 
@@ -262,7 +265,9 @@ public final class ModRegistries {
                 p -> p.mapColor(color).strength(2.5f).sound(SoundType.COPPER).requiresCorrectToolForDrops());
         type[0] = BLOCK_ENTITIES.register(name, () -> new BlockEntityType<>(factory, block.get()));
         tab(ITEMS.registerSimpleBlockItem(block));
-        return new Machine<>(block, type[0]);
+        Machine<T> machine = new Machine<>(block, type[0]);
+        MACHINES.add(machine);
+        return machine;
     }
 
     private static <T extends DeferredItem<?>> T tab(T item) {

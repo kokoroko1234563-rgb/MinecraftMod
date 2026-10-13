@@ -61,6 +61,7 @@ public final class AxiomaticGameTests {
         test("prime_well_emits_primes", AxiomaticGameTests::primeWellEmitsPrimes);
         test("factorization_vault_stores_as_a_number", AxiomaticGameTests::vaultStoresAsANumber);
         test("mersenne_and_the_perfect_core", AxiomaticGameTests::mersenneAndThePerfectCore);
+        test("foreign_energy_powers_machines", AxiomaticGameTests::foreignEnergyPowersMachines);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -109,6 +110,32 @@ public final class AxiomaticGameTests {
     }
 
     // ---- Tests ----------------------------------------------------------------------------
+
+    /** Other mods' generators can insert through the energy capability; aborted inserts undo. */
+    private static void foreignEnergyPowersMachines(GameTestHelper h) {
+        h.setBlock(MACHINE, ModRegistries.SUCCESSOR.get());
+        h.setBlock(DYNAMO, ModRegistries.COAL_DYNAMO.get());
+        MachineBlockEntity successor = h.getBlockEntity(MACHINE, MachineBlockEntity.class);
+        var level = h.getLevel();
+        var cap = net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK;
+        var handler = level.getCapability(cap, h.absolutePos(MACHINE), null);
+        h.assertTrue(handler != null, "machines expose the energy capability");
+        h.assertTrue(level.getCapability(cap, h.absolutePos(DYNAMO), null) == null, "generators do not take energy");
+        try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            h.assertValueEqual(handler.insert(41, tx), 40, "4 FE per unit, remainder refused");
+        }
+        h.assertValueEqual(successor.energy(), 0L, "an aborted insert is undone");
+        try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            handler.insert(400, tx);
+            tx.commit();
+        }
+        h.assertValueEqual(successor.energy(), 100L, "a committed insert stays");
+        try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            h.assertValueEqual(handler.extract(100, tx), 0, "Axiomatic energy cannot be pulled out");
+        }
+        successor.setItem(0, NumeralItem.stack(NumeralData.of(4), 1));
+        h.succeedWhen(() -> h.assertTrue(numeralIn(successor, 1) != null, "the machine ran on foreign energy"));
+    }
 
     private static void successorCountsUp(GameTestHelper h) {
         MachineBlockEntity successor = powered(h, ModRegistries.SUCCESSOR.get(), MachineBlockEntity.class);

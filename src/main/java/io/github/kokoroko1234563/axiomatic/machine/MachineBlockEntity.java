@@ -230,6 +230,26 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
         return energy;
     }
 
+    /** Sets the buffer without marking the block changed; for transactional inserts. */
+    public void setEnergyQuietly(long amount) {
+        energy = Math.max(0, Math.min(capacity, amount));
+    }
+
+    /** Marks the block changed after {@link #setEnergyQuietly} commits. */
+    public void energyChanged() {
+        markChanged();
+    }
+
+    private io.github.kokoroko1234563.axiomatic.energy.ForeignEnergy foreignEnergy;
+
+    /** This machine's face to other mods' energy, through NeoForge's energy capability. */
+    public io.github.kokoroko1234563.axiomatic.energy.ForeignEnergy foreignEnergy() {
+        if (foreignEnergy == null) {
+            foreignEnergy = new io.github.kokoroko1234563.axiomatic.energy.ForeignEnergy(this);
+        }
+        return foreignEnergy;
+    }
+
     public long capacity() {
         return capacity;
     }

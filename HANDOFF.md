@@ -41,7 +41,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `core/knowledge/` | Truth (3-valued evaluation), Deciders (+ link theorems), Fact/Certifier (numeral certificates), TestBench (range checks), Library (statuses, named theorems, conjectures), MathState (world save format, starter definitions) |
 | `registry/ModRegistries` | Every block, item, block entity, menu, component, ingredient type and the creative tab |
 | `machine/` | Machine framework (`MachineBlockEntity`: inventory, energy, jobs paid over time, sync; one `MachineMenu`; layouts) and each machine |
-| `energy/` | Copper Cable and the network search that delivers dynamo energy |
+| `energy/` | Copper Cable and the network search that delivers dynamo energy; `ForeignEnergy` exposes machines (insert only) via `Capabilities.Energy.BLOCK` so other mods' generators can power them |
 | `item/` | Numeral item; `NumeralData` component = value + certificates |
 | `world/AxiomaticData` | SavedData wrapping `MathState` (base64 in level data) |
 | `crafting/CertifiedNumeralIngredient` | Recipe ingredient "numeral certified with property P" |
@@ -50,7 +50,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `machine/CompiledMachineBlockEntity` | Compact block for a defined function: design slot (circuit f(…)), numeral ports, theorem card slot that certifies outputs |
 | `machine/ConjectureBlockEntity`, `reasoning/ConjectureBenchBlockEntity` | Conjectures: bench makes the card + block; block pays upkeep, goes dormant, fails on refutation |
 | `risk/Paradox` | Cascade: items depending on a refuted conjecture turn to paradox junk; crafted parts record conjectures (`axiomatic:depends`) |
-| `AxiomaticConfig` | `disasterBlockDamage` (default false), `conjectureUpkeep`, `cableLossPerBlock` (0.02), `maxCableLoss` (0.5) |
+| `AxiomaticConfig` | `disasterBlockDamage` (default false), `conjectureUpkeep`, `cableLossPerBlock` (0.02), `maxCableLoss` (0.5), `foreignEnergyPerUnit` (4 FE = 1 unit) |
 | `block/LibraryBlock` | Library: use it to list definitions, theorems, conjectures (with post-mortems) and statuses in chat |
 | `item/GraphLensItem` | Graph Lens: shows the pointed graph of the item in the other hand |
 | `book/Notebook` | The Notebook, given on first join: a vanilla written book whose pages are lang keys `notebook.axiomatic.page.N` (placeholder until Modonomicon is reachable) |

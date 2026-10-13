@@ -24,5 +24,10 @@ public final class AxiomaticConfig {
             .comment("The most energy a long cable can lose, as a fraction.")
             .defineInRange("maxCableLoss", 0.5, 0.0, 1.0);
 
+    public static final ModConfigSpec.IntValue FOREIGN_ENERGY_PER_UNIT = BUILDER
+            .comment("How many units of other mods' energy (FE) make one unit of Axiomatic energy, when other mods'",
+                    "generators power Axiomatic machines. 0 refuses foreign energy.")
+            .defineInRange("foreignEnergyPerUnit", 4, 0, 1_000_000);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 }
