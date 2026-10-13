@@ -84,7 +84,7 @@ class ImplementationTest {
     }
 
     @Test
-    void binaryNumeralsOnceAdditionIsImplemented() {
+    void binaryNumeralsNeedATrulyFastAddition() {
         assertTrue(!kernel.signature().binaryNumerals());
         // An implementation of something else is not the upgrade.
         kernel.implement(proof());
@@ -92,9 +92,10 @@ class ImplementationTest {
         // Nor is an unproven claim about addition.
         assertThrows(ProofException.class, () -> kernel.implement(
                 kernel.conjecture("fastAdd", eq(app("add", a, b), app("slow", a)))));
+        // A renamed copy of addition implements it, but is no faster: the cheat is refused.
         String[] pair = kernel.implement(addFastIsAdd());
         assertEquals("add", pair[0]);
-        assertTrue(kernel.signature().binaryNumerals());
+        assertTrue(!kernel.signature().binaryNumerals());
     }
 
     @Test

@@ -156,7 +156,7 @@ NOTEBOOK = [
     "Infinitely many\n\nProve that above every n there is a prime: for all n, exists p, n <= p and Prime(p). That proof crafts the Infinite Prime Well, which emits primes forever. The Factorization Vault stores items as one number.",
     "Equivalences\n\nCertify a relation as an Equivalence in the Structure Bench and the Rewriter accepts s ≡ t in place of an equation. It rewrites only inside functions that respect ≡: name a law like a ≡ b → c ≡ d → a + c ≡ b + d in the Library for each one.",
     "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds.",
-    "Binary\n\nImplement addition itself in the Implementation Bench and numbers go binary: the Duplicator then pays for a numeral's digits, not its value.",
+    "Binary\n\nImplement addition in the Implementation Bench with one that is truly fast (two 40-bit numbers in a few thousand steps) and numbers go binary: the Duplicator then pays for digits, not value.",
     "Perfect numbers\n\nA Mersenne prime is a prime one less than a power of two, like 7 or 31. By Euclid and Euler each one gives a perfect number. A Perfect Core needs a numeral certified both Prime and Mersenne, without conjectures.",
     "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
 ]

@@ -83,7 +83,11 @@ public final class EnergyNetwork {
         public long signature() {
             long h = 1125899906842597L;
             for (BlockPos p : new TreeSet<>(cables)) {
-                h = 31 * h + p.asLong() + (phaseB.contains(p) ? 17 : 0);
+                h = 31 * h + p.asLong();
+                if (phaseB.contains(p)) {
+                    // Phase B is mixed in far from any position's bits (A-only networks hash as before).
+                    h = 31 * h + 0x9E3779B97F4A7C15L;
+                }
             }
             h = 31 * h + 7;
             for (BlockPos p : new TreeSet<>(machines)) {

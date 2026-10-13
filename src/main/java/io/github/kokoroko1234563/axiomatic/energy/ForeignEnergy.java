@@ -17,6 +17,8 @@ import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 public final class ForeignEnergy implements EnergyHandler {
     private final MachineBlockEntity machine;
     private final Journal journal = new Journal();
+    /** Foreign energy received towards the next unit (less than one unit's worth). */
+    private int credit;
 
     public ForeignEnergy(MachineBlockEntity machine) {
         this.machine = machine;
@@ -55,16 +57,24 @@ public final class ForeignEnergy implements EnergyHandler {
     @Override
     public int insert(int amount, TransactionContext transaction) {
         int rate = rate();
-        if (amount <= 0 || rate <= 0) {
+        long room = machine.capacity() - machine.energy();
+        if (amount <= 0 || rate <= 0 || room <= 0) {
             return 0;
         }
-        long units = Math.min(amount / rate, machine.capacity() - machine.energy());
-        if (units <= 0) {
-            return 0;
-        }
+        // Foreign energy below one unit is kept as credit, so slow generators still get through.
+        long total = credit + (long) amount;
+        long units = Math.min(total / rate, room);
         journal.updateSnapshots(transaction);
+        int accepted;
+        if (units < room) {
+            accepted = amount;
+            credit = (int) (total - units * rate);
+        } else {
+            accepted = (int) (units * rate - credit);
+            credit = 0;
+        }
         machine.setEnergyQuietly(machine.energy() + units);
-        return (int) (units * rate);
+        return accepted;
     }
 
     @Override
@@ -73,20 +83,23 @@ public final class ForeignEnergy implements EnergyHandler {
     }
 
     /** Undoes inserts in aborted transactions; marks the machine changed once a root commits. */
-    private final class Journal extends SnapshotJournal<Long> {
+    private record State(long energy, int credit) {}
+
+    private final class Journal extends SnapshotJournal<State> {
         @Override
-        protected Long createSnapshot() {
-            return machine.energy();
+        protected State createSnapshot() {
+            return new State(machine.energy(), credit);
         }
 
         @Override
-        protected void revertToSnapshot(Long snapshot) {
-            machine.setEnergyQuietly(snapshot);
+        protected void revertToSnapshot(State snapshot) {
+            machine.setEnergyQuietly(snapshot.energy());
+            credit = snapshot.credit();
         }
 
         @Override
-        protected void onRootCommit(Long originalState) {
-            if (machine.energy() != originalState) {
+        protected void onRootCommit(State originalState) {
+            if (machine.energy() != originalState.energy()) {
                 machine.energyChanged();
             }
         }

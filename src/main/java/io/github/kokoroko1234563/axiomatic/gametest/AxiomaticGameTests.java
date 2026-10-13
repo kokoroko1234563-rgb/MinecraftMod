@@ -130,14 +130,21 @@ public final class AxiomaticGameTests {
         h.assertTrue(handler != null, "machines expose the energy capability");
         h.assertTrue(level.getCapability(cap, h.absolutePos(DYNAMO), null) == null, "generators do not take energy");
         try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
-            h.assertValueEqual(handler.insert(41, tx), 40, "4 FE per unit, remainder refused");
+            h.assertValueEqual(handler.insert(41, tx), 41, "4 FE per unit, the remainder kept as credit");
         }
         h.assertValueEqual(successor.energy(), 0L, "an aborted insert is undone");
+        for (int i = 0; i < 4; i++) {
+            try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+                handler.insert(1, tx);
+                tx.commit();
+            }
+        }
+        h.assertValueEqual(successor.energy(), 1L, "a 1 FE trickle adds up to a unit");
         try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
             handler.insert(400, tx);
             tx.commit();
         }
-        h.assertValueEqual(successor.energy(), 100L, "a committed insert stays");
+        h.assertValueEqual(successor.energy(), 101L, "a committed insert stays");
         try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
             h.assertValueEqual(handler.extract(100, tx), 0, "Axiomatic energy cannot be pulled out");
         }
