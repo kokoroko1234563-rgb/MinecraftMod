@@ -20,7 +20,8 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Term;
 import io.github.kokoroko1234563.axiomatic.core.logic.Theorem;
 
 /**
- * Soundness, tested by meaning: random chains of instantiation, rewriting and ∧ rules, starting
+ * Soundness, tested by meaning: random chains of instantiation, rewriting, ∧ rules, assumptions,
+ * discharge and modus ponens, starting
  * from the definitions of + and × and reflexivity, must only ever produce statements that are true
  * for every assignment tried. A wrong rule would show up as a false theorem.
  */
@@ -49,7 +50,7 @@ class KernelFuzzTest {
         for (int i = 0; i < 4000; i++) {
             Theorem t;
             try {
-                t = switch (r.nextInt(6)) {
+                t = switch (r.nextInt(9)) {
                     case 0 -> k.reflexivity(term(r, 2));
                     case 1 -> {
                         Theorem p = pool.get(r.nextInt(pool.size()));
@@ -61,10 +62,19 @@ class KernelFuzzTest {
                         yield k.rewrite(target, eq, r.nextBoolean(), r.nextInt(3) - 1);
                     }
                     case 4 -> k.andIntro(pool.get(r.nextInt(pool.size())), pool.get(r.nextInt(pool.size())));
-                    default -> {
+                    case 5 -> {
                         Theorem p = pool.get(r.nextInt(pool.size()));
                         yield p.formula() instanceof Formula.And ? (r.nextBoolean() ? k.andLeft(p) : k.andRight(p)) : p;
                     }
+                    case 6 -> k.assume(Formula.eq(term(r, 1), term(r, 1)));
+                    case 7 -> {
+                        Theorem p = pool.get(r.nextInt(pool.size()));
+                        if (p.hypotheses().isEmpty()) {
+                            yield p;
+                        }
+                        yield k.discharge(p, p.hypotheses().get(r.nextInt(p.hypotheses().size())));
+                    }
+                    default -> k.modusPonens(pool.get(r.nextInt(pool.size())), pool.get(r.nextInt(pool.size())));
                 };
             } catch (ProofException e) {
                 continue;
@@ -76,12 +86,20 @@ class KernelFuzzTest {
             derived++;
             for (int trial = 0; trial < 3; trial++) {
                 Map<String, BigInteger> env = new HashMap<>();
-                for (String v : Syntax.freeVars(t.formula())) {
+                for (String v : VARS) {
                     env.put(v, BigInteger.valueOf(r.nextInt(5)));
                 }
                 Evaluator ev = new Evaluator(state.signature(), 10_000_000);
-                Truth.Value v = new Truth(state.signature(), state.deciders(), ev, BigInteger.TEN).evaluate(t.formula(), env);
-                assertTrue(v != Truth.Value.FALSE, "kernel derived a false statement: " + t.formula() + " at " + env);
+                Truth truth = new Truth(state.signature(), state.deciders(), ev, BigInteger.TEN);
+                // Wherever the open hypotheses hold, the statement must hold.
+                boolean hypothesesHold = t.hypotheses().stream()
+                        .allMatch(hyp -> truth.evaluate(hyp.formula(), env) == Truth.Value.TRUE);
+                if (!hypothesesHold) {
+                    continue;
+                }
+                Truth.Value v = truth.evaluate(t.formula(), env);
+                assertTrue(v != Truth.Value.FALSE, "kernel derived a false statement: " + t.formula()
+                        + " from " + t.hypotheses() + " at " + env);
             }
         }
         assertTrue(derived > 1000, "derived " + derived);
