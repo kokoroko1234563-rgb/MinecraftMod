@@ -3,7 +3,7 @@
 Current state of Axiomatic, written so any session (local or cloud) can continue from this file
 alone. The full game design is in [docs/design.md](docs/design.md). Update this file when you stop.
 
-For an in-game test route see `docs/playtest.md`.
+For an in-game test route see `PLAYTEST.md`.
 
 ## Build and run
 
