@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "S": "minecraft:smooth_stone",
+    "L": "minecraft:lapis_lazuli",
+    "C": "minecraft:comparator"
+  },
+  "pattern": [
+    "SLS",
+    "LCL",
+    "SSS"
+  ],
+  "result": {
+    "id": "axiomatic:equation_bench",
+    "count": 1
+  }
+}

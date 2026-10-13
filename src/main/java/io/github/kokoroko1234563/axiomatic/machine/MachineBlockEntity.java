@@ -180,6 +180,11 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
         return job == null || job.duration() == 0 ? 0 : (float) ticks / job.duration();
     }
 
+    /** A line shown at the top of the screen, such as the selected property or mode. */
+    public Component info() {
+        return Component.empty();
+    }
+
     public Component status() {
         return status;
     }

@@ -7,8 +7,11 @@ import java.util.function.Supplier;
 import io.github.kokoroko1234563.axiomatic.Axiomatic;
 import io.github.kokoroko1234563.axiomatic.crafting.CertifiedNumeralIngredient;
 import io.github.kokoroko1234563.axiomatic.energy.CableBlock;
+import io.github.kokoroko1234563.axiomatic.item.CircuitData;
+import io.github.kokoroko1234563.axiomatic.item.MathItems;
 import io.github.kokoroko1234563.axiomatic.item.NumeralData;
 import io.github.kokoroko1234563.axiomatic.item.NumeralItem;
+import io.github.kokoroko1234563.axiomatic.item.StatementData;
 import io.github.kokoroko1234563.axiomatic.machine.CoalDynamoBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.DuplicatorBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.MachineBlock;
@@ -17,9 +20,20 @@ import io.github.kokoroko1234563.axiomatic.machine.MachineMenu;
 import io.github.kokoroko1234563.axiomatic.machine.SuccessorBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.TestBenchBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.ZeroSourceBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.AssumptionChamberBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.ConjunctionPressBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.DraftingChamberBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.EquationBenchBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.InductionEngineBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.InstantiatorBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.ModusPonensPressBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.PropertyBenchBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.RewriterBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.WitnessBenchBlockEntity;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -55,51 +69,90 @@ public final class ModRegistries {
     /** Items shown in the creative tab, in registration order. */
     private static final List<DeferredItem<?>> TAB_ITEMS = new ArrayList<>();
 
+    /** A machine's block and block entity type, registered together. */
+    public record Machine<T extends MachineBlockEntity>(DeferredBlock<MachineBlock> block,
+            DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> beType) {
+        public MachineBlock get() {
+            return block.get();
+        }
+
+        public BlockEntityType<T> type() {
+            return beType.get();
+        }
+    }
+
     // ---- Components -----------------------------------------------------------------------
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<NumeralData>> NUMERAL =
             COMPONENTS.registerComponentType("numeral",
                     b -> b.persistent(NumeralData.CODEC).networkSynchronized(NumeralData.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<StatementData>> STATEMENT =
+            COMPONENTS.registerComponentType("statement",
+                    b -> b.persistent(StatementData.CODEC).networkSynchronized(StatementData.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CircuitData>> CIRCUIT =
+            COMPONENTS.registerComponentType("circuit",
+                    b -> b.persistent(CircuitData.CODEC).networkSynchronized(CircuitData.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> VARIABLE =
+            COMPONENTS.registerComponentType("variable",
+                    b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));
 
     // ---- Items ----------------------------------------------------------------------------
 
     public static final DeferredItem<NumeralItem> NUMERAL_ITEM = tab(ITEMS.registerItem("numeral", NumeralItem::new));
+    public static final DeferredItem<MathItems.VariableItem> VARIABLE_ITEM =
+            tab(ITEMS.registerItem("variable", MathItems.VariableItem::new));
+    public static final DeferredItem<MathItems.CircuitItem> CIRCUIT_ITEM =
+            tab(ITEMS.registerItem("circuit", MathItems.CircuitItem::new));
+    public static final DeferredItem<MathItems.StatementItem> STATEMENT_ITEM =
+            tab(ITEMS.registerItem("statement", MathItems.StatementItem::new, p -> p.stacksTo(16)));
+    public static final DeferredItem<MathItems.AxiomTabletItem> TABLET_SUCC_NOT_ZERO = tab(ITEMS.registerItem(
+            "axiom_tablet_succ_not_zero", p -> new MathItems.AxiomTabletItem(p, "succ_not_zero"), p -> p.stacksTo(1)));
+    public static final DeferredItem<MathItems.AxiomTabletItem> TABLET_SUCC_INJECTIVE = tab(ITEMS.registerItem(
+            "axiom_tablet_succ_injective", p -> new MathItems.AxiomTabletItem(p, "succ_injective"), p -> p.stacksTo(1)));
     public static final DeferredItem<Item> CIRCUIT_BOARD = tab(ITEMS.registerSimpleItem("circuit_board"));
 
-    // ---- Machines -------------------------------------------------------------------------
+    // ---- Blocks ---------------------------------------------------------------------------
 
-    public static final DeferredBlock<MachineBlock> COAL_DYNAMO = machine("coal_dynamo", MapColor.COLOR_ORANGE,
-            () -> ModRegistries.COAL_DYNAMO_BE.get());
+    public static final Machine<CoalDynamoBlockEntity> COAL_DYNAMO = machine("coal_dynamo", MapColor.COLOR_ORANGE,
+            CoalDynamoBlockEntity::new);
     public static final DeferredBlock<CableBlock> COPPER_CABLE = BLOCKS.registerBlock("copper_cable", CableBlock::new,
             p -> p.mapColor(MapColor.COLOR_ORANGE).strength(0.5f).sound(SoundType.COPPER).noOcclusion());
-    public static final DeferredBlock<MachineBlock> ZERO_SOURCE = machine("zero_source", MapColor.COLOR_ORANGE,
-            () -> ModRegistries.ZERO_SOURCE_BE.get());
-    public static final DeferredBlock<MachineBlock> SUCCESSOR = machine("successor", MapColor.COLOR_ORANGE,
-            () -> ModRegistries.SUCCESSOR_BE.get());
-    public static final DeferredBlock<MachineBlock> DUPLICATOR = machine("duplicator", MapColor.COLOR_ORANGE,
-            () -> ModRegistries.DUPLICATOR_BE.get());
-    public static final DeferredBlock<MachineBlock> TEST_BENCH = machine("test_bench", MapColor.COLOR_BLUE,
-            () -> ModRegistries.TEST_BENCH_BE.get());
 
     static {
-        tab(ITEMS.registerSimpleBlockItem(COAL_DYNAMO));
         tab(ITEMS.registerSimpleBlockItem(COPPER_CABLE));
-        tab(ITEMS.registerSimpleBlockItem(ZERO_SOURCE));
-        tab(ITEMS.registerSimpleBlockItem(SUCCESSOR));
-        tab(ITEMS.registerSimpleBlockItem(DUPLICATOR));
-        tab(ITEMS.registerSimpleBlockItem(TEST_BENCH));
     }
 
-    public static final Supplier<BlockEntityType<CoalDynamoBlockEntity>> COAL_DYNAMO_BE = BLOCK_ENTITIES.register(
-            "coal_dynamo", () -> new BlockEntityType<>(CoalDynamoBlockEntity::new, COAL_DYNAMO.get()));
-    public static final Supplier<BlockEntityType<ZeroSourceBlockEntity>> ZERO_SOURCE_BE = BLOCK_ENTITIES.register(
-            "zero_source", () -> new BlockEntityType<>(ZeroSourceBlockEntity::new, ZERO_SOURCE.get()));
-    public static final Supplier<BlockEntityType<SuccessorBlockEntity>> SUCCESSOR_BE = BLOCK_ENTITIES.register(
-            "successor", () -> new BlockEntityType<>(SuccessorBlockEntity::new, SUCCESSOR.get()));
-    public static final Supplier<BlockEntityType<DuplicatorBlockEntity>> DUPLICATOR_BE = BLOCK_ENTITIES.register(
-            "duplicator", () -> new BlockEntityType<>(DuplicatorBlockEntity::new, DUPLICATOR.get()));
-    public static final Supplier<BlockEntityType<TestBenchBlockEntity>> TEST_BENCH_BE = BLOCK_ENTITIES.register(
-            "test_bench", () -> new BlockEntityType<>(TestBenchBlockEntity::new, TEST_BENCH.get()));
+    // Computation (copper).
+    public static final Machine<ZeroSourceBlockEntity> ZERO_SOURCE = machine("zero_source", MapColor.COLOR_ORANGE,
+            ZeroSourceBlockEntity::new);
+    public static final Machine<SuccessorBlockEntity> SUCCESSOR = machine("successor", MapColor.COLOR_ORANGE,
+            SuccessorBlockEntity::new);
+    public static final Machine<DuplicatorBlockEntity> DUPLICATOR = machine("duplicator", MapColor.COLOR_ORANGE,
+            DuplicatorBlockEntity::new);
+    public static final Machine<TestBenchBlockEntity> TEST_BENCH = machine("test_bench", MapColor.METAL,
+            TestBenchBlockEntity::new);
+
+    // Reasoning (blue).
+    public static final Machine<DraftingChamberBlockEntity> DRAFTING_CHAMBER = machine("drafting_chamber",
+            MapColor.COLOR_BLUE, DraftingChamberBlockEntity::new);
+    public static final Machine<EquationBenchBlockEntity> EQUATION_BENCH = machine("equation_bench",
+            MapColor.COLOR_BLUE, EquationBenchBlockEntity::new);
+    public static final Machine<PropertyBenchBlockEntity> PROPERTY_BENCH = machine("property_bench",
+            MapColor.COLOR_BLUE, PropertyBenchBlockEntity::new);
+    public static final Machine<WitnessBenchBlockEntity> WITNESS_BENCH = machine("witness_bench",
+            MapColor.COLOR_BLUE, WitnessBenchBlockEntity::new);
+    public static final Machine<InstantiatorBlockEntity> INSTANTIATOR = machine("instantiator",
+            MapColor.COLOR_BLUE, InstantiatorBlockEntity::new);
+    public static final Machine<RewriterBlockEntity> REWRITER = machine("rewriter",
+            MapColor.COLOR_BLUE, RewriterBlockEntity::new);
+    public static final Machine<AssumptionChamberBlockEntity> ASSUMPTION_CHAMBER = machine("assumption_chamber",
+            MapColor.COLOR_BLUE, AssumptionChamberBlockEntity::new);
+    public static final Machine<InductionEngineBlockEntity> INDUCTION_ENGINE = machine("induction_engine",
+            MapColor.COLOR_BLUE, InductionEngineBlockEntity::new);
+    public static final Machine<ConjunctionPressBlockEntity> CONJUNCTION_PRESS = machine("conjunction_press",
+            MapColor.COLOR_BLUE, ConjunctionPressBlockEntity::new);
+    public static final Machine<ModusPonensPressBlockEntity> MODUS_PONENS_PRESS = machine("modus_ponens_press",
+            MapColor.COLOR_BLUE, ModusPonensPressBlockEntity::new);
 
     // ---- Menus, ingredients, tab ----------------------------------------------------------
 
@@ -116,10 +169,18 @@ public final class ModRegistries {
             .displayItems((params, output) -> TAB_ITEMS.forEach(item -> output.accept(item.get())))
             .build());
 
-    private static DeferredBlock<MachineBlock> machine(String name, MapColor color,
-            Supplier<BlockEntityType<? extends MachineBlockEntity>> type) {
-        return BLOCKS.registerBlock(name, p -> new MachineBlock(p, type),
+    // ---- Helpers --------------------------------------------------------------------------
+
+    private static <T extends MachineBlockEntity> Machine<T> machine(String name, MapColor color,
+            BlockEntityType.BlockEntitySupplier<T> factory) {
+        // The block and its block entity type refer to each other, so each looks the other up lazily.
+        @SuppressWarnings("unchecked")
+        DeferredHolder<BlockEntityType<?>, BlockEntityType<T>>[] type = new DeferredHolder[1];
+        DeferredBlock<MachineBlock> block = BLOCKS.registerBlock(name, p -> new MachineBlock(p, () -> type[0].get()),
                 p -> p.mapColor(color).strength(2.5f).sound(SoundType.COPPER).requiresCorrectToolForDrops());
+        type[0] = BLOCK_ENTITIES.register(name, () -> new BlockEntityType<>(factory, block.get()));
+        tab(ITEMS.registerSimpleBlockItem(block));
+        return new Machine<>(block, type[0]);
     }
 
     private static <T extends DeferredItem<?>> T tab(T item) {

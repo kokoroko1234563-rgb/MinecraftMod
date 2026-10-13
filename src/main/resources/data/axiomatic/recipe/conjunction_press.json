@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "axiomatic:circuit_board",
+    "P": "minecraft:piston",
+    "L": "minecraft:lapis_lazuli"
+  },
+  "pattern": [
+    "PBP",
+    "LLL"
+  ],
+  "result": {
+    "id": "axiomatic:conjunction_press",
+    "count": 1
+  }
+}

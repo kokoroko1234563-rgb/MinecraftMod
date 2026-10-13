@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "axiomatic:circuit_board",
+    "L": "minecraft:lapis_lazuli",
+    "P": "minecraft:piston"
+  },
+  "pattern": [
+    " B ",
+    "LPL",
+    " L "
+  ],
+  "result": {
+    "id": "axiomatic:instantiator",
+    "count": 1
+  }
+}

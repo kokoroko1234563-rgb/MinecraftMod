@@ -45,6 +45,8 @@ public final class AxiomaticGameTests {
         test("test_bench_certifies_evens", AxiomaticGameTests::testBenchCertifiesEvens);
         test("duplicator_copies_certificates", AxiomaticGameTests::duplicatorCopiesCertificates);
         test("circuit_board_needs_certified_evens", AxiomaticGameTests::circuitBoardNeedsCertifiedEvens);
+        test("zero_add_by_machines", ProofGameTests::zeroAddByMachines);
+        test("double_outputs_evens_by_machines", ProofGameTests::doubleOutputsEvensByMachines);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -65,7 +67,7 @@ public final class AxiomaticGameTests {
             Identifier id = Identifier.fromNamespaceAndPath(Axiomatic.MODID, name);
             ResourceKey<Consumer<GameTestHelper>> fn = ResourceKey.create(Registries.TEST_FUNCTION, id);
             TestData<Holder<TestEnvironmentDefinition<?>>> data = new TestData<>(env,
-                    Identifier.fromNamespaceAndPath(Axiomatic.MODID, "empty_stage"), 400, 0, true);
+                    Identifier.fromNamespaceAndPath(Axiomatic.MODID, "empty_stage"), 1200, 0, true);
             event.registerTest(id, new FunctionGameTestInstance(fn, data));
         }
     }

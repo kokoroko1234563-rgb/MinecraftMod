@@ -33,6 +33,16 @@ GLYPHS = {
     "?": [" ### ", "#   #", "    #", "   # ", "  #  ", "     ", "  #  "],
     "~": ["     ", "  #  ", " ### ", "## ##", "#   #", "## ##", " ### "],  # flame
     "E": ["#####", "#    ", "#    ", "#### ", "#    ", "#    ", "#####"],
+    "D": ["#### ", "#   #", "#   #", "#   #", "#   #", "#   #", "#### "],
+    "=": ["     ", "     ", "#####", "     ", "#####", "     ", "     "],
+    "P": ["#### ", "#   #", "#   #", "#### ", "#    ", "#    ", "#    "],
+    "X": ["#####", "    #", "    #", " ####", "    #", "    #", "#####"],  # ∃
+    "I": [" ### ", "  #  ", "  #  ", "  #  ", "  #  ", "  #  ", " ### "],
+    "R": ["#### ", "#   #", "#   #", "#### ", "# #  ", "#  # ", "#   #"],
+    "A": ["  #  ", " # # ", "#   #", "#   #", "#####", "#   #", "#   #"],
+    "N": ["#   #", "##  #", "# # #", "#  ##", "#   #", "#   #", "#   #"],
+    "^": ["     ", "  #  ", " # # ", "#   #", "#   #", "     ", "     "],
+    ">": ["     ", "#    ", " ##  ", "   ##", " ##  ", "#    ", "     "],
 }
 
 
@@ -122,11 +132,86 @@ MACHINES = {
     "successor": ("copper", "S", "Successor"),
     "duplicator": ("copper", "2", "Duplicator"),
     "test_bench": ("iron", "?", "Test Bench"),
+    "drafting_chamber": ("blue", "D", "Drafting Chamber"),
+    "equation_bench": ("blue", "=", "Equation Bench"),
+    "property_bench": ("blue", "P", "Property Bench"),
+    "witness_bench": ("blue", "X", "Witness Bench"),
+    "instantiator": ("blue", "I", "Instantiator"),
+    "rewriter": ("blue", "R", "Rewriter"),
+    "assumption_chamber": ("blue", "A", "Assumption Chamber"),
+    "induction_engine": ("blue", "N", "Induction Engine"),
+    "conjunction_press": ("blue", "^", "Conjunction Press"),
+    "modus_ponens_press": ("blue", ">", "Modus Ponens Press"),
 }
+
+def variable():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    for x in range(3, 13):
+        for y in range(2, 14):
+            px[x, y] = (235, 230, 215, 255)
+    lapis = (40, 70, 170, 255)
+    for gy, row in enumerate(["#   #", "## ##", "# # #", "#   #", "#   #"]):
+        for gx, c in enumerate(row):
+            if c == "#":
+                px[5 + gx, 5 + gy] = lapis
+    return img
+
+
+def circuit():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    copper = (210, 130, 70, 255)
+    node = (240, 220, 160, 255)
+    for x in range(3, 13):
+        px[x, 8] = copper
+    for y in range(3, 13):
+        px[8, y] = copper
+    for x, y in [(3, 8), (12, 8), (8, 3), (8, 12), (8, 8)]:
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                px[x + dx, y + dy] = node if (dx, dy) != (0, 0) else copper
+    return img
+
+
+def statement():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    for x in range(3, 13):
+        for y in range(2, 14):
+            px[x, y] = (245, 235, 200, 255)
+    for x in range(3, 13):
+        px[x, 2] = (180, 150, 90, 255)
+        px[x, 13] = (180, 150, 90, 255)
+    for y in (5, 7, 9, 11):
+        for x in range(5, 11 if y != 11 else 8):
+            px[x, y] = (60, 60, 90, 255)
+    return img
+
+
+def tablet(mark):
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    for x in range(3, 13):
+        for y in range(2, 15):
+            px[x, y] = (150, 150, 150, 255)
+    for x in range(3, 13):
+        px[x, 2] = (190, 190, 190, 255)
+    for gy, row in enumerate(GLYPHS[mark]):
+        for gx, c in enumerate(row):
+            if c == "#":
+                px[5 + gx, 5 + gy] = (40, 70, 170, 255)
+    return img
+
 
 ITEMS = {
     "numeral": (numeral, "Numeral"),
     "circuit_board": (circuit_board, "Circuit Board"),
+    "variable": (variable, "Variable"),
+    "circuit": (circuit, "Circuit"),
+    "statement": (statement, "Statement"),
+    "axiom_tablet_succ_not_zero": (lambda: tablet("0"), "Axiom Tablet: S(x) ≠ 0"),
+    "axiom_tablet_succ_injective": (lambda: tablet("S"), "Axiom Tablet: S is injective"),
 }
 
 LANG = {
@@ -150,6 +235,71 @@ LANG = {
     "status.axiomatic.too_big": "Too big to search",
     "status.axiomatic.certified": "%s(%s) certified, %s steps",
     "status.axiomatic.not_certified": "No witness: %s(%s) not certified (%s steps)",
+    "button.axiomatic.copy": "Copy",
+    "button.axiomatic.direction": "Direction",
+    "button.axiomatic.function": "Function ▶",
+    "button.axiomatic.mode": "Mode ▶",
+    "button.axiomatic.occurrence": "Occurrence",
+    "button.axiomatic.release": "Release",
+    "item.axiomatic.statement.proven": "Theorem",
+    "item.axiomatic.statement.stamped": "Stamped Statement",
+    "item.axiomatic.statement.unproven": "Statement",
+    "item.axiomatic.variable.named": "Variable %s",
+    "label.axiomatic.all": "all",
+    "label.axiomatic.assemble": "%s: %s",
+    "label.axiomatic.assuming": "Assuming %s",
+    "label.axiomatic.chamber_empty": "Nothing assumed",
+    "label.axiomatic.mode.assemble": "Assemble",
+    "label.axiomatic.mode.define": "Define",
+    "label.axiomatic.mode.name": "Name theorem",
+    "label.axiomatic.mode.tablet": "Axiom tablet",
+    "label.axiomatic.rewrite_ltr": "Left → right, %s",
+    "label.axiomatic.rewrite_rtl": "Right → left, %s",
+    "label.axiomatic.seal_mode": "Seal with ∃",
+    "slot.axiomatic.assumption": "Statement to assume",
+    "slot.axiomatic.base": "Base case P(0)",
+    "slot.axiomatic.circuit": "Circuit",
+    "slot.axiomatic.circuit_or_statement": "Circuit (or statement to seal)",
+    "slot.axiomatic.discharge": "Conclusion to discharge",
+    "slot.axiomatic.drafting_1": "Input 1 (rename in an anvil to define or name)",
+    "slot.axiomatic.drafting_2": "Input 2 (step case)",
+    "slot.axiomatic.drafting_3": "Input 3 (variable recursed on)",
+    "slot.axiomatic.equation": "Proven equation",
+    "slot.axiomatic.implication": "P → Q",
+    "slot.axiomatic.instance": "Proof of the instance",
+    "slot.axiomatic.left": "Left",
+    "slot.axiomatic.premise": "P",
+    "slot.axiomatic.right": "Right",
+    "slot.axiomatic.second_circuit": "Second circuit (relations)",
+    "slot.axiomatic.statement": "Proven statement",
+    "slot.axiomatic.step": "Step P(n) → P(S(n))",
+    "slot.axiomatic.target": "Statement to prove",
+    "slot.axiomatic.variable": "Variable",
+    "slot.axiomatic.variable_to_seal": "Variable to seal",
+    "slot.axiomatic.witness": "Witness circuit",
+    "status.axiomatic.applied": "Applied",
+    "status.axiomatic.arity": "%s takes %s inputs",
+    "status.axiomatic.bad_name": "Not a valid name: %s",
+    "status.axiomatic.bad_recursive_call": "↺ must be called as ↺(x, …, y) on plain variables, ending with the one recursed on",
+    "status.axiomatic.chamber_busy": "Already assuming something: Release first",
+    "status.axiomatic.define_unproven": "Define properties from unproven statements",
+    "status.axiomatic.needs_and": "Needs a statement P ∧ Q to split",
+    "status.axiomatic.needs_circuit": "Slot %s needs a circuit, variable or small numeral",
+    "status.axiomatic.needs_exists": "Needs a statement ∃k. … or a property defined by one",
+    "status.axiomatic.needs_name": "Rename the first input in an anvil to name it",
+    "status.axiomatic.needs_proven": "Slot %s needs a proven statement",
+    "status.axiomatic.needs_statement": "Slot %s needs a statement",
+    "status.axiomatic.needs_tablet": "Needs an Axiom Tablet",
+    "status.axiomatic.needs_variable": "Slot %s needs a Variable",
+    "status.axiomatic.nothing_assumed": "Nothing is assumed yet",
+    "status.axiomatic.released": "Released",
+    "status.axiomatic.unknown_function": "Unknown function %s",
+    "tooltip.axiomatic.assuming": "Assuming %s (stamp %s)",
+    "tooltip.axiomatic.axiom.succ_not_zero": "Axiom 3: ∀x. ¬(S(x) = 0)",
+    "tooltip.axiomatic.axiom.succ_injective": "Axiom 4: ∀x y. S(x) = S(y) → x = y",
+    "tooltip.axiomatic.proven": "Proven (%s steps)",
+    "tooltip.axiomatic.proven_conjectural": "Proven from conjectures",
+    "tooltip.axiomatic.unproven": "Unproven",
 }
 
 
@@ -228,6 +378,28 @@ def main():
         "R": "minecraft:redstone",
         "E": {"neoforge:ingredient_type": f"{NS}:certified_numeral", "property": "Even"},
     }, category="misc")
+    board = "axiomatic:circuit_board"
+    shaped("drafting_chamber", ["IGI", "GLG", "IGI"],
+           {"I": "minecraft:iron_ingot", "G": "minecraft:glass", "L": "minecraft:lectern"})
+    shaped("variable", ["PPP", "PLP", "PPP"], {"P": "minecraft:paper", "L": "minecraft:lapis_lazuli"},
+           count=8, category="misc")
+    shaped("equation_bench", ["SLS", "LCL", "SSS"],
+           {"S": "minecraft:smooth_stone", "L": "minecraft:lapis_lazuli", "C": "minecraft:comparator"})
+    shaped("property_bench", ["SLS", "LOL", "SSS"],
+           {"S": "minecraft:smooth_stone", "L": "minecraft:lapis_lazuli", "O": "minecraft:observer"})
+    shaped("witness_bench", ["ILI", "LOL", "III"],
+           {"I": "minecraft:iron_ingot", "L": "minecraft:lapis_lazuli", "O": "minecraft:observer"})
+    shaped("axiom_tablet_succ_not_zero", ["L", "I", "S"],
+           {"L": "minecraft:lapis_lazuli", "I": "minecraft:ink_sac", "S": "minecraft:stone_slab"}, category="misc")
+    shaped("axiom_tablet_succ_injective", ["I", "L", "S"],
+           {"L": "minecraft:lapis_lazuli", "I": "minecraft:ink_sac", "S": "minecraft:stone_slab"}, category="misc")
+    shaped("instantiator", [" B ", "LPL", " L "], {"B": board, "L": "minecraft:lapis_lazuli", "P": "minecraft:piston"})
+    shaped("rewriter", [" B ", "LPL", " L "], {"B": board, "L": "minecraft:lapis_lazuli", "P": "minecraft:sticky_piston"})
+    shaped("assumption_chamber", ["GBG", "GHG", "GGG"], {"B": board, "G": "minecraft:glass", "H": "minecraft:hopper"})
+    shaped("induction_engine", ["BOB", "OKO", "BOB"],
+           {"B": board, "O": "minecraft:observer", "K": "minecraft:lapis_block"})
+    shaped("conjunction_press", ["PBP", "LLL"], {"B": board, "P": "minecraft:piston", "L": "minecraft:lapis_lazuli"})
+    shaped("modus_ponens_press", ["LBL", "PPP"], {"B": board, "P": "minecraft:piston", "L": "minecraft:lapis_lazuli"})
 
 
 def nbt_structure(path, size, data_version=4790):

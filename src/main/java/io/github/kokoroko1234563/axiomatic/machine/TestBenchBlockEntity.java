@@ -35,7 +35,7 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
     private String property = "Even";
 
     public TestBenchBlockEntity(BlockPos pos, BlockState state) {
-        super(ModRegistries.TEST_BENCH_BE.get(), pos, state, 100_000);
+        super(ModRegistries.TEST_BENCH.type(), pos, state, 100_000);
     }
 
     @Override
@@ -45,6 +45,11 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
 
     public String property() {
         return property;
+    }
+
+    @Override
+    public Component info() {
+        return Component.translatable("label.axiomatic.property", property);
     }
 
     @Override

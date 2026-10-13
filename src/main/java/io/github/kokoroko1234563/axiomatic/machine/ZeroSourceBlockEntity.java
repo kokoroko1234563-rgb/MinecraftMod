@@ -17,7 +17,7 @@ public class ZeroSourceBlockEntity extends MachineBlockEntity {
             List.of(MachineLayout.output(116, 35, null)), List.of());
 
     public ZeroSourceBlockEntity(BlockPos pos, BlockState state) {
-        super(ModRegistries.ZERO_SOURCE_BE.get(), pos, state, 1_000);
+        super(ModRegistries.ZERO_SOURCE.type(), pos, state, 1_000);
     }
 
     @Override

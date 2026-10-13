@@ -40,6 +40,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `item/` | Numeral item; `NumeralData` component = value + certificates |
 | `world/AxiomaticData` | SavedData wrapping `MathState` (base64 in level data) |
 | `crafting/CertifiedNumeralIngredient` | Recipe ingredient "numeral certified with property P" |
+| `machine/ReasoningBlockEntity` + `machine/reasoning/` | Reasoning machines: each applies one Kernel rule. The transformed statement is consumed; tools (equations, variables, circuits) stay |
+| `item/MathItems`, `StatementData`, `CircuitData` | Statement items (proven = Theorem, or unproven claim), circuits, Variable blocks (use in air to cycle name), Axiom Tablets |
 | `client/` | `MachineScreen` (drawn with rectangles, no texture), screen registration |
 | `gametest/AxiomaticGameTests` | In-world tests on an empty stage structure |
 | `src/test/java/...` | JUnit tests. `KernelTest` proves zero_add (exactly the doc's 6 steps), succ_add, add_comm and "Double outputs evens", and checks that cheats are refused |
@@ -86,8 +88,12 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - [x] Energy: Coal Dynamo, copper cables, energy per step
 - [~] Vanilla crafting recipes: done for the machines that exist (dynamo, cable, Zero Source,
       Successor, Duplicator, Test Bench, Circuit Board)
-- [~] Machines: Zero Source, Successor, Duplicator, Test Bench (numeral mode) done and game-tested.
-      Not yet: Drafting Chamber, Variable blocks, benches, reasoning machines, Graph Lens, Axiom Tablets
+- [~] Machines done: Zero Source, Successor, Duplicator (also copies statements/circuits), Test
+      Bench (numeral mode), Drafting Chamber (assemble / define / name / tablet modes), Variable
+      blocks, Equation/Property/Witness Bench, Axiom Tablets, Instantiator, Rewriter, Assumption
+      Chamber (assume, ∃-open, discharge), Induction Engine, Conjunction/Modus Ponens Press.
+      Game tests prove zero_add and "Double outputs evens" with the real machines.
+      Not yet: Conjecture Bench, Graph Lens, Library block, Statement Conveyor, Test Bench range mode
 - [ ] Compact blocks: compile, name, inspect; typed ports; theorem cards
 - [~] Knowledge record: core done (statuses, certificates, conjectures) and saved per world;
       not yet surfaced in game (Library block)
@@ -96,11 +102,23 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - [ ] The Notebook (Modonomicon) with Getting Started, Machines, Logic and Proof
 - [ ] Placeholder CC0 textures and sounds
 
+## How the player builds things (design gaps filled in, worth reviewing)
+
+- **Circuits** are built in the Drafting Chamber's Assemble mode: pick a function with the
+  Function button (S, any defined function, or ↺ = recursive call), put argument circuits /
+  Variable blocks / numerals (≤ 64) in the inputs.
+- **Names** come from renaming the first input in an anvil (definitions and theorem names), so no
+  custom text box was needed.
+- **Define mode**: circuit alone → explicit definition (parameters = its variables, alphabetical);
+  base + step (using ↺) + Variable → primitive recursion (fixed parameters in the order of the ↺
+  call); unproven statement → property/relation. An *unnamed* `f(…)` gives f's defining statements
+  again (how the starter `add` gets its equations).
+- Hypothesis items are not yet physically locked inside the chamber (the kernel still tracks and
+  enforces their stamps and locked variables).
+
 ## Suggested next steps
 
-1. Statement items (a Theorem or unproven Formula in a data component) and circuit items (a Term).
-2. Reasoning machines as 1–3 input machines calling one Kernel rule each (Instantiator,
-   Rewriter, Conjunction/Modus Ponens Press, Induction Engine, Witness Bench, Assumption Chamber).
-3. Drafting Chamber: assemble circuits from Variable blocks / numerals / defined functions,
-   compile definitions and name theorems (needs a name text box).
-4. Notebook (Modonomicon) given on first join; Library block; Conjecture Bench + upkeep.
+1. Conjecture Bench + conjecture blocks with upkeep and background checks (core is done).
+2. Library block (lists named theorems, conjectures, statuses), Test Bench range mode.
+3. Notebook (Modonomicon) given on first join: needs `maven.blamejared.com`/`modmaven.dev` allowed.
+4. Theorem cards and compact blocks; Prime Core recipe; Graph Lens.

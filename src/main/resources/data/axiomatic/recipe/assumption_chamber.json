@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "axiomatic:circuit_board",
+    "G": "minecraft:glass",
+    "H": "minecraft:hopper"
+  },
+  "pattern": [
+    "GBG",
+    "GHG",
+    "GGG"
+  ],
+  "result": {
+    "id": "axiomatic:assumption_chamber",
+    "count": 1
+  }
+}

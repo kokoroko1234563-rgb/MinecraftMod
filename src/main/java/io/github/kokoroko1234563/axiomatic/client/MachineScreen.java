@@ -3,7 +3,6 @@ package io.github.kokoroko1234563.axiomatic.client;
 import io.github.kokoroko1234563.axiomatic.machine.MachineBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.MachineLayout;
 import io.github.kokoroko1234563.axiomatic.machine.MachineMenu;
-import io.github.kokoroko1234563.axiomatic.machine.TestBenchBlockEntity;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -81,9 +80,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         super.extractLabels(g, mouseX, mouseY);
         MachineBlockEntity m = menu.machine();
-        if (m instanceof TestBenchBlockEntity bench) {
-            g.text(font, Component.translatable("label.axiomatic.property", bench.property()), 22, 18, 0xFF404040, false);
-        }
+        g.text(font, m.info(), 22, 18, 0xFF404040, false);
         // Status sits left of the buttons, under the slots.
         var wrapped = font.split(m.status(), 84);
         for (int i = 0; i < Math.min(2, wrapped.size()); i++) {
@@ -95,6 +92,12 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         super.extractTooltip(g, mouseX, mouseY);
         MachineBlockEntity m = menu.machine();
+        if (hoveredSlot != null && !hoveredSlot.hasItem() && hoveredSlot.container == m) {
+            String label = m.layout().slots().get(hoveredSlot.index).label();
+            if (label != null) {
+                g.setTooltipForNextFrame(Component.translatable(label), mouseX, mouseY);
+            }
+        }
         if (mouseX >= leftPos + 8 && mouseX < leftPos + 18 && mouseY >= topPos + 17 && mouseY < topPos + 69) {
             g.setTooltipForNextFrame(Component.translatable("tooltip.axiomatic.energy", m.energy(), m.capacity()),
                     mouseX, mouseY);

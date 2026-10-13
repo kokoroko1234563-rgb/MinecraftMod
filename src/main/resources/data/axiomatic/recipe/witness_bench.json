@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "L": "minecraft:lapis_lazuli",
+    "O": "minecraft:observer"
+  },
+  "pattern": [
+    "ILI",
+    "LOL",
+    "III"
+  ],
+  "result": {
+    "id": "axiomatic:witness_bench",
+    "count": 1
+  }
+}

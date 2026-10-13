@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Duplicator: copies a numeral, certificates included. Machines consume their inputs, so this is
+ * Duplicator: copies a numeral (certificates included), a statement or a circuit. Machines consume their inputs, so this is
  * how a number gets used twice. In the unary age copying costs the numeral's value.
  */
 public class DuplicatorBlockEntity extends MachineBlockEntity {
@@ -22,7 +22,7 @@ public class DuplicatorBlockEntity extends MachineBlockEntity {
                     MachineLayout.output(116, 44, null)), List.of());
 
     public DuplicatorBlockEntity(BlockPos pos, BlockState state) {
-        super(ModRegistries.DUPLICATOR_BE.get(), pos, state, 10_000);
+        super(ModRegistries.DUPLICATOR.type(), pos, state, 10_000);
     }
 
     @Override
@@ -32,7 +32,8 @@ public class DuplicatorBlockEntity extends MachineBlockEntity {
 
     @Override
     public boolean canPlace(int slot, ItemStack stack) {
-        return slot == 0 && stack.is(ModRegistries.NUMERAL_ITEM.get());
+        return slot == 0 && (stack.is(ModRegistries.NUMERAL_ITEM.get()) || stack.is(ModRegistries.STATEMENT_ITEM.get())
+                || stack.is(ModRegistries.CIRCUIT_ITEM.get()));
     }
 
     /** What a copy costs: the value now; its digit count once binary numerals are proven (later). */
@@ -46,6 +47,15 @@ public class DuplicatorBlockEntity extends MachineBlockEntity {
         if (in.isEmpty()) {
             setStatus(Component.empty());
             return null;
+        }
+        if (!in.is(ModRegistries.NUMERAL_ITEM.get())) {
+            // Statements and circuits: copying a known fact costs one unit, like applying a theorem.
+            List<ItemStack> out = List.of(in.copyWithCount(1), in.copyWithCount(1));
+            if (!outputsFit(out)) {
+                return null;
+            }
+            in.shrink(1);
+            return new Job(1, 4, out);
         }
         NumeralData n = NumeralItem.data(in);
         List<ItemStack> out = List.of(NumeralItem.stack(n, 1), NumeralItem.stack(n, 1));

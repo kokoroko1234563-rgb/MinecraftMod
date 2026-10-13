@@ -25,7 +25,7 @@ public class CoalDynamoBlockEntity extends MachineBlockEntity {
     private List<MachineBlockEntity> consumers = List.of();
 
     public CoalDynamoBlockEntity(BlockPos pos, BlockState state) {
-        super(ModRegistries.COAL_DYNAMO_BE.get(), pos, state, 20_000);
+        super(ModRegistries.COAL_DYNAMO.type(), pos, state, 20_000);
     }
 
     @Override

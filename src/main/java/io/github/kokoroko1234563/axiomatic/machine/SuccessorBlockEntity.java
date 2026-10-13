@@ -18,7 +18,7 @@ public class SuccessorBlockEntity extends MachineBlockEntity {
             List.of(MachineLayout.input(56, 35, null), MachineLayout.output(116, 35, null)), List.of());
 
     public SuccessorBlockEntity(BlockPos pos, BlockState state) {
-        super(ModRegistries.SUCCESSOR_BE.get(), pos, state, 1_000);
+        super(ModRegistries.SUCCESSOR.type(), pos, state, 1_000);
     }
 
     @Override

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "axiomatic:circuit_board",
+    "O": "minecraft:observer",
+    "K": "minecraft:lapis_block"
+  },
+  "pattern": [
+    "BOB",
+    "OKO",
+    "BOB"
+  ],
+  "result": {
+    "id": "axiomatic:induction_engine",
+    "count": 1
+  }
+}

@@ -6,6 +6,16 @@
     "axiomatic:successor",
     "axiomatic:duplicator",
     "axiomatic:test_bench",
+    "axiomatic:drafting_chamber",
+    "axiomatic:equation_bench",
+    "axiomatic:property_bench",
+    "axiomatic:witness_bench",
+    "axiomatic:instantiator",
+    "axiomatic:rewriter",
+    "axiomatic:assumption_chamber",
+    "axiomatic:induction_engine",
+    "axiomatic:conjunction_press",
+    "axiomatic:modus_ponens_press",
     "axiomatic:copper_cable"
   ]
 }

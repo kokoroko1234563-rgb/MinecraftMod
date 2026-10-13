@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "S": "minecraft:smooth_stone",
+    "L": "minecraft:lapis_lazuli",
+    "O": "minecraft:observer"
+  },
+  "pattern": [
+    "SLS",
+    "LOL",
+    "SSS"
+  ],
+  "result": {
+    "id": "axiomatic:property_bench",
+    "count": 1
+  }
+}
