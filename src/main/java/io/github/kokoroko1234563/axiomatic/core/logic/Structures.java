@@ -231,6 +231,8 @@ public final class Structures {
                     case Definition.PrimitiveRecursive r -> new Definition.PrimitiveRecursive(instName, r.params(),
                             map(r.base()), mapSelf(r.step(), n, instName), r.symbol());
                     case Definition.Predicate p -> new Definition.Predicate(instName, p.params(), map(p.body()), p.symbol());
+                    case Definition.GeneralRecursive g -> new Definition.GeneralRecursive(instName, g.params(),
+                            mapSelf(g.body(), n, instName), map(g.measure()), g.symbol());
                     case Definition.Abstract a -> throw new ProofException("Unmapped abstract symbol " + a.name());
                 };
                 signature.defineInternal(instance);

@@ -139,6 +139,7 @@ NOTEBOOK = [
     "Structures\n\nThe Structure Bench shows the axioms of monoids, equivalences and orders. Prove a theorem once for any monoid, certify an operation's three laws, and apply the theorem to it for free.",
     "Factories\n\nThe Statement Conveyor moves statements and circuits between machines; it needs a proven 0 + n = n to craft. The Duplicator copies statements for 1 unit. Every step still costs energy.",
     "Safety\n\nAn unpowered conjecture block goes dormant: safe, but its cards stop working. Seal a conjecture block in obsidian or tinted glass near a Containment Controller to keep its failure harmless.",
+    "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
     "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
 ]
 
@@ -349,6 +350,7 @@ LANG = {
     "label.axiomatic.mode.name": "Name theorem",
     "label.axiomatic.mode.tablet": "Axiom tablet",
     "label.axiomatic.mode.link": "Link a decider",
+    "label.axiomatic.mode.recurse": "General recursion",
     "status.axiomatic.linked": "%s is now decided by %s",
     "label.axiomatic.rewrite_ltr": "Left → right, %s",
     "label.axiomatic.rewrite_rtl": "Right → left, %s",
@@ -362,8 +364,8 @@ LANG = {
     "slot.axiomatic.circuit_or_statement": "Circuit, or statement P",
     "slot.axiomatic.discharge": "Conclusion to discharge",
     "slot.axiomatic.drafting_1": "Input 1 (rename in an anvil to define or name)",
-    "slot.axiomatic.drafting_2": "Input 2 (step case)",
-    "slot.axiomatic.drafting_3": "Input 3 (variable recursed on)",
+    "slot.axiomatic.drafting_2": "Input 2 (step case, or measure)",
+    "slot.axiomatic.drafting_3": "Input 3 (variable recursed on, or termination proof)",
     "slot.axiomatic.equation": "Proven equation",
     "slot.axiomatic.implication": "P → Q",
     "slot.axiomatic.instance": "Proof of the instance",

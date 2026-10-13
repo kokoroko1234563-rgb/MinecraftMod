@@ -51,6 +51,7 @@ public class LibraryBlock extends Block {
                     case Definition.PrimitiveRecursive r -> "recursive";
                     case Definition.Explicit e -> "explicit";
                     case Definition.Abstract a -> "abstract";
+                    case Definition.GeneralRecursive g -> "general";
                 };
                 line(player, Component.literal(" " + d.name() + "(" + String.join(", ", d.params()) + ")")
                         .append(Component.translatable("library.axiomatic.kind." + kind).withStyle(ChatFormatting.GRAY)));

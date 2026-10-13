@@ -9,7 +9,8 @@ import java.util.List;
  * <p>{@code symbol} is an optional infix symbol used only for display, such as "+".
  */
 public sealed interface Definition
-        permits Definition.Explicit, Definition.PrimitiveRecursive, Definition.Predicate, Definition.Abstract {
+        permits Definition.Explicit, Definition.PrimitiveRecursive, Definition.GeneralRecursive, Definition.Predicate,
+        Definition.Abstract {
 
     String name();
 
@@ -44,6 +45,19 @@ public sealed interface Definition
 
         public String recursionParam() {
             return params.get(params.size() - 1);
+        }
+    }
+
+    /**
+     * General recursion: {@code name(params) = body}, where the body may call {@code name} with any
+     * arguments, usually inside a selector such as ifz(t, e, c). Accepted only with a proof that
+     * {@code measure} shrinks at every call (see {@link Kernel#terminationObligation}), so the
+     * function is total. Euclid's algorithm is the model case.
+     */
+    record GeneralRecursive(String name, List<String> params, Term body, Term measure, String symbol)
+            implements Definition {
+        public GeneralRecursive {
+            params = List.copyOf(params);
         }
     }
 

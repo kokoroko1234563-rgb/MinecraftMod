@@ -186,6 +186,7 @@ final class ProofGameTests {
                     ItemStack named = take(induction, 3);
                     named.set(DataComponents.CUSTOM_NAME, Component.literal("zero_add"));
                     clear(drafting);
+                    drafting.onButton(level, null, 0); // General recursion
                     drafting.onButton(level, null, 0); // Name
                     drafting.setItem(0, named);
                 })

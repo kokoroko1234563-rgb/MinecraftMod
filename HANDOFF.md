@@ -68,6 +68,13 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   variables cannot be instantiated or inducted on.
 - **Primitive recursion recurses on the last parameter**: f(x̄, 0) = base, f(x̄, S(y)) = step,
   where step may call f only as f(x̄, y).
+- **General recursion** (prime path stage 3): `Definition.GeneralRecursive` f(x̄) = body with a
+  measure μ. `Kernel.terminationObligation` lists, for every call f(ā) under the selector
+  conditions leading to it, "μ(ā) < μ(x̄)" written ∃k. μ(ā) + S(k) = μ(x̄) using whichever
+  definition has exactly the shape of addition (`Signature.canonicalAddition`). `defineRecursive`
+  needs a closed, non-conjectural proof of it. Selectors (definitions by recursion on the last
+  input whose cases just pick an input, like ifz(t, e, c)) are evaluated lazily. Nested calls and
+  calls in the measure are refused. In game: Drafting Chamber "General recursion" mode.
 - **Rewriter** (machine) rewrites by pattern (`core/logic/Tactics.rewriteMatching`, built only
   from kernel rules): the equation's free variables match any subterm, except variables locked
   by its assumptions. The occurrence button picks a match in reading order (or all). The

@@ -119,8 +119,105 @@ public final class Kernel {
             }
             // Abstract symbols have no defining statements; only their structure's axioms.
             case Definition.Abstract a -> List.of();
+            case Definition.GeneralRecursive g -> List.of(Formula.eq(new Term.App(name, params), g.body()));
         };
         return statements.stream().map(f -> new Theorem(f, List.of(), dep, 1)).toList();
+    }
+
+    // ---- General recursion ----------------------------------------------------------------
+
+    /**
+     * What must be proven before {@code def} is accepted: for every recursive call f(ā) in the
+     * body, under the selector conditions that lead to it, μ(ā) < μ(x̄), where a < b is
+     * ∃k. a + S(k) = b with the world's addition. Several calls give a conjunction, in reading
+     * order. Proving it shows f is total, so its defining equation is safe.
+     */
+    public Formula terminationObligation(Definition.GeneralRecursive def) {
+        if (signature.get(def.name()) != null) {
+            throw new ProofException(def.name() + " is already defined");
+        }
+        signature.checkGeneral(def);
+        String add = signature.canonicalAddition();
+        if (add == null) {
+            throw new ProofException("Define addition first: termination is measured with it");
+        }
+        List<Formula> obligations = new ArrayList<>();
+        collectObligations(def, def.body(), List.of(), add, obligations);
+        if (obligations.isEmpty()) {
+            throw new ProofException("The body never calls " + def.name() + ": define it explicitly instead");
+        }
+        Formula all = obligations.get(obligations.size() - 1);
+        for (int i = obligations.size() - 2; i >= 0; i--) {
+            all = Formula.and(obligations.get(i), all);
+        }
+        return all;
+    }
+
+    private void collectObligations(Definition.GeneralRecursive def, Term t, List<Formula> guards, String add,
+            List<Formula> out) {
+        switch (t) {
+            case Term.App a when a.function().equals(def.name()) -> {
+                Map<String, Term> args = new LinkedHashMap<>();
+                for (int i = 0; i < def.params().size(); i++) {
+                    args.put(def.params().get(i), a.args().get(i));
+                }
+                Term smaller = substituteAll(def.measure(), args);
+                String k = Syntax.freshName("k", new HashSet<>(def.params()));
+                Formula shrinks = Formula.exists(k, Formula.eq(
+                        Term.app(add, smaller, Term.succ(Term.var(k))), def.measure()));
+                Formula ob = shrinks;
+                for (int i = guards.size() - 1; i >= 0; i--) {
+                    ob = Formula.implies(guards.get(i), ob);
+                }
+                out.add(ob);
+            }
+            case Term.App a -> {
+                int[] sel = signature.selector(a.function());
+                if (sel == null) {
+                    a.args().forEach(x -> collectObligations(def, x, guards, add, out));
+                    return;
+                }
+                Term c = a.args().get(a.args().size() - 1);
+                Formula isZero = Formula.eq(c, Term.zero());
+                for (int i = 0; i < a.args().size(); i++) {
+                    List<Formula> g = new ArrayList<>(guards);
+                    if (i == sel[1]) {
+                        g.add(Formula.not(isZero));
+                    } else if (i == sel[0]) {
+                        g.add(isZero);
+                    }
+                    collectObligations(def, a.args().get(i), g, add, out);
+                }
+            }
+            case Term.Succ s -> collectObligations(def, s.arg(), guards, add, out);
+            default -> {}
+        }
+    }
+
+    /** Simultaneous substitution of variables in a term. */
+    private static Term substituteAll(Term t, Map<String, Term> map) {
+        return switch (t) {
+            case Var v -> map.getOrDefault(v.name(), v);
+            case Term.Succ s -> Term.succ(substituteAll(s.arg(), map));
+            case Term.App a -> new Term.App(a.function(), a.args().stream().map(x -> substituteAll(x, map)).toList());
+            default -> t;
+        };
+    }
+
+    /**
+     * Defines a function by general recursion, given a proof of its termination obligation. The
+     * proof must be unconditional and must not rest on conjectures: a definition is forever.
+     */
+    public List<Theorem> defineRecursive(Definition.GeneralRecursive def, Theorem termination) {
+        Formula obligation = terminationObligation(def);
+        if (!termination.isClosed() || termination.isConjectural()) {
+            throw new ProofException("The termination proof must not rest on assumptions or conjectures");
+        }
+        if (!Syntax.alphaEquals(termination.formula(), obligation)) {
+            throw new ProofException("Termination needs a proof of " + obligation + ", got " + termination.formula());
+        }
+        signature.defineTerminating(def);
+        return definingStatements(def.name());
     }
 
     /**

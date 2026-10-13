@@ -301,6 +301,11 @@ public final class MathState {
                 out.writeByte(3);
                 out.writeBoolean(a.predicate());
             }
+            case Definition.GeneralRecursive g -> {
+                out.writeByte(4);
+                writeTerm(out, g.body());
+                writeTerm(out, g.measure());
+            }
         }
     }
 
@@ -313,6 +318,8 @@ public final class MathState {
             case 1 -> new Definition.PrimitiveRecursive(name, params, readTerm(in), readTerm(in), symbol);
             case 2 -> new Definition.Predicate(name, params, readFormula(in), symbol);
             case 3 -> new Definition.Abstract(name, params, in.readBoolean(), symbol);
+            // Termination was checked when it was defined; saved worlds are trusted.
+            case 4 -> new Definition.GeneralRecursive(name, params, readTerm(in), readTerm(in), symbol);
             default -> throw new IOException("Unknown definition kind");
         };
     }

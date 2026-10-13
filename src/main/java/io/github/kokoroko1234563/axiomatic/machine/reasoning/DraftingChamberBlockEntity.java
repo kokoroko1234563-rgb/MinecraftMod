@@ -45,7 +45,7 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
     /** Placeholder for the call one step down in a recursive definition. Not a valid player name. */
     public static final String RECURSIVE_CALL = "#rec";
 
-    public enum Mode { ASSEMBLE, DEFINE, NAME, TABLET, LINK }
+    public enum Mode { ASSEMBLE, DEFINE, RECURSE, NAME, TABLET, LINK }
 
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
             MachineLayout.input(26, 31, "slot.axiomatic.drafting_1"), MachineLayout.input(44, 31, "slot.axiomatic.drafting_2"),
@@ -109,7 +109,7 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
 
     @Override
     protected boolean milestone() {
-        return mode == Mode.NAME || mode == Mode.DEFINE;
+        return mode == Mode.NAME || mode == Mode.DEFINE || mode == Mode.RECURSE;
     }
 
     @Override
@@ -123,6 +123,7 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
         return switch (mode) {
             case ASSEMBLE -> assemble(ctx);
             case DEFINE -> define(ctx);
+            case RECURSE -> recurse(ctx);
             case NAME -> name(ctx);
             case TABLET -> tablet(ctx);
             case LINK -> link(ctx);
@@ -237,6 +238,36 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
             return p.name();
         }
         return null;
+    }
+
+    /**
+     * General recursion: input 1 is the body (renamed in an anvil), calling itself with ↺ in any
+     * way; input 2 is the measure that must shrink; input 3 the proof that it does. Without a
+     * proof, out comes the statement to prove (the termination obligation). Parameters are the
+     * variables of body and measure in alphabetical order, which is how ↺ takes its inputs.
+     */
+    private List<ItemStack> recurse(Context ctx) {
+        if (items.get(1).isEmpty()) {
+            return List.of();
+        }
+        String name = nameOf(items.get(0));
+        Term body = ctx.term(0);
+        Term measure = ctx.term(1);
+        TreeSet<String> vars = new TreeSet<>(Syntax.freeVars(body));
+        vars.addAll(Syntax.freeVars(measure));
+        var def = new Definition.GeneralRecursive(name, List.copyOf(vars), renameCall(body, name), measure, null);
+        Kernel kernel = ctx.state().kernel();
+        if (items.get(2).isEmpty()) {
+            lastConsumed = List.of();
+            if (!items.get(3).isEmpty()) {
+                return List.of();
+            }
+            return List.of(ctx.unproven(kernel.terminationObligation(def)));
+        }
+        List<Theorem> statements = kernel.defineRecursive(def, ctx.theorem(2));
+        lastConsumed = List.of(0, 1, 2);
+        lastCost = 20;
+        return statements.stream().map(ctx::proven).toList();
     }
 
     /** The fixed parameters as the recursive call ↺(x̄, y) in the step lists them, or null if there is no call. */

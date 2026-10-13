@@ -63,6 +63,12 @@ public final class Evaluator {
                 if (a.function().equals(recursiveName)) {
                     yield recursiveValue;
                 }
+                int[] sel = signature.selector(a.function());
+                if (sel != null) {
+                    // Selectors are lazy: evaluate the condition, then only the chosen input.
+                    BigInteger c = eval(a.args().get(a.args().size() - 1), env, recursiveName, recursiveValue);
+                    yield eval(a.args().get(c.signum() == 0 ? sel[0] : sel[1]), env, recursiveName, recursiveValue);
+                }
                 List<BigInteger> args = a.args().stream().map(x -> eval(x, env, recursiveName, recursiveValue)).toList();
                 yield apply(a.function(), args);
             }
@@ -89,6 +95,13 @@ public final class Evaluator {
             }
             case Definition.Predicate p -> throw new IllegalArgumentException(function + " is not a function");
             case Definition.Abstract a -> throw new IllegalArgumentException(function + " is abstract: it has no value");
+            case Definition.GeneralRecursive g -> {
+                try {
+                    yield eval(g.body(), env);
+                } catch (StackOverflowError e) {
+                    throw new OutOfBudget();
+                }
+            }
         };
     }
 

@@ -48,6 +48,17 @@ public final class Signature {
         if (!Syntax.isValidName(def.name())) {
             throw new ProofException("Invalid name: " + def.name());
         }
+        if (def instanceof Definition.GeneralRecursive) {
+            throw new ProofException("General recursion needs a termination proof: use Kernel.defineRecursive");
+        }
+        return defineChecked(def);
+    }
+
+    /** Adds a general recursive definition whose termination the kernel has checked. */
+    Definition defineTerminating(Definition.GeneralRecursive def) {
+        if (!Syntax.isValidName(def.name())) {
+            throw new ProofException("Invalid name: " + def.name());
+        }
         return defineChecked(def);
     }
 
@@ -82,9 +93,77 @@ public final class Signature {
                 }
             }
             case Definition.Abstract a -> {}
+            case Definition.GeneralRecursive g -> checkGeneral(g);
         }
         definitions.put(def.name(), def);
         return def;
+    }
+
+    /**
+     * A general recursive body may call itself with any arguments, but never inside the arguments
+     * of such a call or of the measure (their termination would depend on the function itself).
+     */
+    void checkGeneral(Definition.GeneralRecursive g) {
+        Set<String> params = new HashSet<>(g.params());
+        checkGeneralTerm(g, g.body(), params, true);
+        checkTerm(g.measure(), params, "the measure");
+    }
+
+    private void checkGeneralTerm(Definition.GeneralRecursive g, Term t, Set<String> params, boolean callsAllowed) {
+        switch (t) {
+            case Zero z -> {}
+            case Succ s -> checkGeneralTerm(g, s.arg(), params, callsAllowed);
+            case Var v -> {
+                if (!params.contains(v.name())) {
+                    throw new ProofException("The body may only mention " + g.params() + ", not " + v.name());
+                }
+            }
+            case App a -> {
+                if (a.function().equals(g.name())) {
+                    if (!callsAllowed) {
+                        throw new ProofException("A call of " + g.name() + " may not contain another call of it");
+                    }
+                    if (a.args().size() != g.params().size()) {
+                        throw new ProofException(g.name() + " takes " + g.params().size() + " inputs");
+                    }
+                    a.args().forEach(arg -> checkGeneralTerm(g, arg, params, false));
+                } else {
+                    checkArity(a);
+                    a.args().forEach(arg -> checkGeneralTerm(g, arg, params, callsAllowed));
+                }
+            }
+        }
+    }
+
+    /**
+     * If {@code name} is a selector, a definition by recursion on its last input c whose cases just
+     * pick an input: sel(…, 0) = e and sel(…, S(y)) = t. Returns {else index, then index}, or null.
+     * Selectors are evaluated lazily, which is what lets general recursion stop.
+     */
+    public int[] selector(String name) {
+        if (!(definitions.get(name) instanceof Definition.PrimitiveRecursive r)) {
+            return null;
+        }
+        List<String> fixed = r.fixedParams();
+        if (r.base() instanceof Var e && r.step() instanceof Var t && fixed.contains(e.name()) && fixed.contains(t.name())) {
+            return new int[] {fixed.indexOf(e.name()), fixed.indexOf(t.name())};
+        }
+        return null;
+    }
+
+    /**
+     * A definition the kernel can trust to be addition: a + 0 = a and a + S(b) = S(a + b), whatever
+     * it is called. Termination obligations are stated with it. Returns its name, or null.
+     */
+    public String canonicalAddition() {
+        for (Definition d : definitions.values()) {
+            if (d instanceof Definition.PrimitiveRecursive r && r.params().size() == 2
+                    && r.base().equals(new Var(r.params().get(0)))
+                    && r.step().equals(new Succ(new App(r.name(), List.of(new Var(r.params().get(0)), new Var(r.params().get(1))))))) {
+                return r.name();
+            }
+        }
+        return null;
     }
 
     /**
@@ -111,6 +190,10 @@ public final class Signature {
                 namesIn(r.step()).forEach(n -> collectAbstracts(n, out, seen));
             }
             case Definition.Predicate p -> namesIn(p.body()).forEach(n -> collectAbstracts(n, out, seen));
+            case Definition.GeneralRecursive g -> {
+                namesIn(g.body()).forEach(n -> collectAbstracts(n, out, seen));
+                namesIn(g.measure()).forEach(n -> collectAbstracts(n, out, seen));
+            }
         }
     }
 
@@ -222,6 +305,7 @@ public final class Signature {
     /** Whether the definition is a function: defined, or an abstract structure operation. */
     public static boolean isFunction(Definition def) {
         return def instanceof Definition.Explicit || def instanceof Definition.PrimitiveRecursive
+                || def instanceof Definition.GeneralRecursive
                 || (def instanceof Definition.Abstract a && !a.predicate());
     }
 
