@@ -276,6 +276,19 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
         return AxiomaticData.get(level.getServer());
     }
 
+    /** Breaking a machine drops its inventory and the outputs of a job in progress (its inputs are already spent). */
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (job != null && level != null) {
+            for (ItemStack out : job.outputs()) {
+                net.minecraft.world.Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                        out.copy());
+            }
+            job = null;
+        }
+    }
+
     // ---- Saving and syncing ---------------------------------------------------------------
 
     @Override

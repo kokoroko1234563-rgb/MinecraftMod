@@ -120,6 +120,13 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
     @Override
     protected List<ItemStack> apply(Context ctx) {
         lastCost = 1;
+        // Defining and naming change the world's mathematics, so only start when the outputs
+        // can surely be delivered (a half-done definition could not be redone: "already defined").
+        if ((mode == Mode.DEFINE || mode == Mode.RECURSE || mode == Mode.NAME)
+                && (!items.get(3).isEmpty() || !items.get(4).isEmpty())) {
+            setStatus(Component.translatable("status.axiomatic.output_full"));
+            return List.of();
+        }
         return switch (mode) {
             case ASSEMBLE -> assemble(ctx);
             case DEFINE -> define(ctx);
