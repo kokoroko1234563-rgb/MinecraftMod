@@ -90,6 +90,7 @@ public class PrimeForgeBlockEntity extends MachineBlockEntity {
             if (r.outcome() != null && r.outcome().commit(state.library())) {
                 // This candidate refuted the method's conjecture: the candidate is used up.
                 data(level).setDirty();
+                playSound(ModRegistries.SOUND_REFUTED, 1.0f);
                 setStatus(r.outcome().message());
                 now.shrink(1);
                 return null;
@@ -106,6 +107,7 @@ public class PrimeForgeBlockEntity extends MachineBlockEntity {
                 return null;
             }
             now.shrink(1);
+            playSound(ModRegistries.SOUND_CERTIFIED, 0.7f);
             setStatus(Component.translatable("status.axiomatic.forged", NumeralItem.display(prime), cost));
             return new Job(cost, (int) Math.clamp(cost / 200, 10, 600), out);
         });

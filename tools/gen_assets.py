@@ -472,6 +472,12 @@ LANG = {
     "status.axiomatic.method_shape": "The method card must read H(n) → P(n), with one variable",
     "status.axiomatic.computing": "Computing…",
     "status.axiomatic.compute_failed": "The computation failed",
+    "subtitles.axiomatic.applied": "Reasoning machine clicks",
+    "subtitles.axiomatic.certified": "Numeral certified",
+    "subtitles.axiomatic.proven": "Theorem proven",
+    "subtitles.axiomatic.refuted": "Counterexample found",
+    "subtitles.axiomatic.disaster": "Conjecture fails",
+    "subtitles.axiomatic.working": "Machine hums",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 

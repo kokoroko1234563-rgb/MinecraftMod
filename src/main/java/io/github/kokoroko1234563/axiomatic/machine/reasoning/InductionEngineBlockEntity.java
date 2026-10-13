@@ -25,6 +25,11 @@ public class InductionEngineBlockEntity extends ReasoningBlockEntity {
     }
 
     @Override
+    protected boolean milestone() {
+        return true;
+    }
+
+    @Override
     protected List<Integer> consumed() {
         return List.of(0, 1);
     }

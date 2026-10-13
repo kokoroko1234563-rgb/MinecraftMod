@@ -1,0 +1,8 @@
+{
+  "machine.applied": {"subtitle": "subtitles.axiomatic.applied", "sounds": ["axiomatic:applied"]},
+  "machine.certified": {"subtitle": "subtitles.axiomatic.certified", "sounds": ["axiomatic:certified"]},
+  "machine.proven": {"subtitle": "subtitles.axiomatic.proven", "sounds": ["axiomatic:proven"]},
+  "conjecture.refuted": {"subtitle": "subtitles.axiomatic.refuted", "sounds": ["axiomatic:refuted"]},
+  "conjecture.disaster": {"subtitle": "subtitles.axiomatic.disaster", "sounds": ["axiomatic:disaster"]},
+  "machine.working": {"subtitle": "subtitles.axiomatic.working", "sounds": ["axiomatic:working"]}
+}

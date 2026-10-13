@@ -250,6 +250,13 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
         }
     }
 
+    /** Plays one of the mod's sounds at this machine. */
+    protected void playSound(java.util.function.Supplier<net.minecraft.sounds.SoundEvent> sound, float volume) {
+        if (level != null) {
+            level.playSound(null, worldPosition, sound.get(), net.minecraft.sounds.SoundSource.BLOCKS, volume, 1.0f);
+        }
+    }
+
     protected void markChanged() {
         syncNeeded = true;
         setChanged();

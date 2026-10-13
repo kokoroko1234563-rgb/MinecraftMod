@@ -108,6 +108,11 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
     }
 
     @Override
+    protected boolean milestone() {
+        return mode == Mode.NAME || mode == Mode.DEFINE;
+    }
+
+    @Override
     protected long cost(Context ctx) {
         return lastCost;
     }

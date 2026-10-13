@@ -77,6 +77,9 @@ public final class ModRegistries {
     public static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES =
             DeferredRegister.create(NeoForgeRegistries.Keys.INGREDIENT_TYPES, Axiomatic.MODID);
 
+    public static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS =
+            DeferredRegister.create(Registries.SOUND_EVENT, Axiomatic.MODID);
+
     /** Items shown in the creative tab, in registration order. */
     private static final List<DeferredItem<?>> TAB_ITEMS = new ArrayList<>();
 
@@ -90,6 +93,19 @@ public final class ModRegistries {
         public BlockEntityType<T> type() {
             return beType.get();
         }
+    }
+
+    // ---- Sounds (synthesized by tools/gen_sounds.sh) --------------------------------------
+
+    public static final Supplier<net.minecraft.sounds.SoundEvent> SOUND_APPLIED = sound("machine.applied");
+    public static final Supplier<net.minecraft.sounds.SoundEvent> SOUND_CERTIFIED = sound("machine.certified");
+    public static final Supplier<net.minecraft.sounds.SoundEvent> SOUND_PROVEN = sound("machine.proven");
+    public static final Supplier<net.minecraft.sounds.SoundEvent> SOUND_REFUTED = sound("conjecture.refuted");
+    public static final Supplier<net.minecraft.sounds.SoundEvent> SOUND_DISASTER = sound("conjecture.disaster");
+
+    private static Supplier<net.minecraft.sounds.SoundEvent> sound(String name) {
+        return SOUNDS.register(name, () -> net.minecraft.sounds.SoundEvent.createVariableRangeEvent(
+                net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, name)));
     }
 
     // ---- Components -----------------------------------------------------------------------
@@ -245,5 +261,6 @@ public final class ModRegistries {
         COMPONENTS.register(bus);
         TABS.register(bus);
         INGREDIENT_TYPES.register(bus);
+        SOUNDS.register(bus);
     }
 }

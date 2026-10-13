@@ -109,6 +109,11 @@ public abstract class ReasoningBlockEntity extends MachineBlockEntity {
      */
     protected abstract List<ItemStack> apply(Context ctx);
 
+    /** Whether this application deserves the "proven" chime (induction, naming a theorem). */
+    protected boolean milestone() {
+        return false;
+    }
+
     /** Energy for one application. */
     protected long cost(Context ctx) {
         return 1;
@@ -146,6 +151,8 @@ public abstract class ReasoningBlockEntity extends MachineBlockEntity {
         }
         data(level).setDirty();
         setStatus(Component.translatable("status.axiomatic.applied"));
+        playSound(milestone() ? io.github.kokoroko1234563.axiomatic.registry.ModRegistries.SOUND_PROVEN
+                : io.github.kokoroko1234563.axiomatic.registry.ModRegistries.SOUND_APPLIED, 0.6f);
         return new Job(cost(ctx), 10, out);
     }
 }

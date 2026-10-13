@@ -10,7 +10,6 @@ import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
@@ -99,7 +98,7 @@ public class ConjectureBlockEntity extends MachineBlockEntity {
         String counterexample = c.counterexample() == null ? "?" : c.counterexample().toString();
         level.players().stream().filter(p -> p.blockPosition().closerThan(pos, 64)).forEach(p -> p.sendSystemMessage(
                 Component.translatable("message.axiomatic.disaster", c.name(), counterexample)));
-        level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 0.6f);
+        level.playSound(null, pos, ModRegistries.SOUND_DISASTER.get(), SoundSource.BLOCKS, 1.5f, 1.0f);
         level.removeBlock(pos, false);
         Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                 new ItemStack(ModRegistries.PARADOX_JUNK.get()));

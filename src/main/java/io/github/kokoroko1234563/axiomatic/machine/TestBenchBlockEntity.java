@@ -143,6 +143,9 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
             }
             now.shrink(1);
             long cost = Math.max(1, search.steps());
+            if (search.fact() != null) {
+                playSound(ModRegistries.SOUND_CERTIFIED, 0.7f);
+            }
             setStatus(search.tooBig() ? Component.translatable("status.axiomatic.too_big")
                     : Component.translatable(search.fact() == null ? "status.axiomatic.not_certified" : "status.axiomatic.certified",
                             prop, NumeralItem.display(n.value()), cost));
@@ -206,7 +209,10 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
             data(level).setDirty();
             setStatus(switch (run.result()) {
                 case TestBench.Passed p -> Component.translatable("status.axiomatic.tested", bound.toString(), p.cases());
-                case TestBench.Counterexample c -> Component.translatable("status.axiomatic.counterexample", c.assignment().toString());
+                case TestBench.Counterexample c -> {
+                    playSound(ModRegistries.SOUND_REFUTED, 0.8f);
+                    yield Component.translatable("status.axiomatic.counterexample", c.assignment().toString());
+                }
                 case TestBench.Inconclusive i -> Component.translatable("status.axiomatic.inconclusive", i.assignment().toString());
             });
             if (status instanceof Library.Proven) {

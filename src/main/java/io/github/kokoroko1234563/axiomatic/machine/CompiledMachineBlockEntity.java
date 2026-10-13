@@ -180,6 +180,7 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
         if (r.card() != null) {
             if (r.card().commit(state.library())) {
                 data(level).setDirty();
+                playSound(ModRegistries.SOUND_REFUTED, 1.0f);
                 setStatus(r.card().message());
                 rememberFailure(key);
                 return null;
