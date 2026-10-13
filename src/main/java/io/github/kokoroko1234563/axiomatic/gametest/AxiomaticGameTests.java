@@ -70,6 +70,7 @@ public final class AxiomaticGameTests {
         test("certificate_sorter_splits_by_property", AxiomaticGameTests::sorterSplitsByProperty);
         test("courier_runs_on_eulerian_networks", AxiomaticGameTests::courierRunsOnEulerianNetworks);
         test("courier_refuses_odd_networks", AxiomaticGameTests::courierRefusesOddNetworks);
+        test("pipes_see_machine_inventories", AxiomaticGameTests::pipesSeeMachineInventories);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -311,6 +312,34 @@ public final class AxiomaticGameTests {
                     "the surveyor names the clash");
             h.succeed();
         });
+    }
+
+    /** Other mods' pipes use the item capability, with the same rules as hoppers. */
+    private static void pipesSeeMachineInventories(GameTestHelper h) {
+        h.setBlock(MACHINE, ModRegistries.SUCCESSOR.get());
+        MachineBlockEntity successor = h.getBlockEntity(MACHINE, MachineBlockEntity.class);
+        var handler = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
+                h.absolutePos(MACHINE), net.minecraft.core.Direction.UP);
+        h.assertTrue(handler != null, "machines expose the item capability");
+        var numeral = net.neoforged.neoforge.transfer.item.ItemResource.of(NumeralItem.stack(NumeralData.of(4), 1));
+        var dirt = net.neoforged.neoforge.transfer.item.ItemResource.of(Items.DIRT);
+        try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            h.assertValueEqual(handler.insert(dirt, 1, tx), 0, "machines refuse what they cannot use");
+            h.assertValueEqual(handler.insert(numeral, 2, tx), 2, "numerals go into the input");
+            tx.commit();
+        }
+        h.assertValueEqual(successor.getItem(0).getCount(), 2, "the input holds the piped numerals");
+        try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            h.assertValueEqual(handler.extract(numeral, 1, tx), 0, "inputs cannot be pulled out");
+        }
+        successor.setItem(1, NumeralItem.stack(NumeralData.of(9), 1));
+        var nine = net.neoforged.neoforge.transfer.item.ItemResource.of(NumeralItem.stack(NumeralData.of(9), 1));
+        try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            h.assertValueEqual(handler.extract(nine, 1, tx), 1, "outputs can be pulled out");
+            tx.commit();
+        }
+        h.assertTrue(successor.getItem(1).isEmpty(), "the output was taken");
+        h.succeed();
     }
 
     /** Certified evens drop into the hopper below; the rest are pushed into the chest beside. */
