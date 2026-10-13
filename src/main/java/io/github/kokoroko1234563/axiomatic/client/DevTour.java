@@ -119,6 +119,15 @@ public final class DevTour {
         STEPS.add(new Step(30, mc -> shot(mc, "library")));
         STEPS.add(new Step(10, mc -> ((LibraryScreen) mc.screen).select(1)));
         STEPS.add(new Step(20, mc -> shot(mc, "library_theorems")));
+        // The longest Notebook pages, to check they fit.
+        STEPS.add(new Step(10, mc -> {
+            var book = new net.minecraft.client.gui.screens.inventory.BookViewScreen(
+                    net.minecraft.client.gui.screens.inventory.BookViewScreen.BookAccess.fromItem(
+                            io.github.kokoroko1234563.axiomatic.book.Notebook.create()));
+            mc.setScreen(book);
+            book.setPage(30);
+        }));
+        STEPS.add(new Step(20, mc -> shot(mc, "notebook_long_page")));
         STEPS.add(new Step(10, mc -> mc.setScreen(null)));
         STEPS.add(new Step(20, mc -> {
             Axiomatic.LOGGER.info("Dev tour finished");

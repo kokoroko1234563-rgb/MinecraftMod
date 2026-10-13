@@ -36,6 +36,7 @@ GLYPHS = {
     "D": ["#### ", "#   #", "#   #", "#   #", "#   #", "#   #", "#### "],
     "=": ["     ", "     ", "#####", "     ", "#####", "     ", "     "],
     "P": ["#### ", "#   #", "#   #", "#### ", "#    ", "#    ", "#    "],
+    "Y": ["#   #", "#   #", " # # ", "  #  ", "  #  ", "  #  ", "  #  "],  # a fork
     "X": ["#####", "    #", "    #", " ####", "    #", "    #", "#####"],  # ∃
     "I": [" ### ", "  #  ", "  #  ", "  #  ", "  #  ", "  #  ", " ### "],
     "R": ["#### ", "#   #", "#   #", "#### ", "# #  ", "#  # ", "#   #"],
@@ -131,7 +132,8 @@ NOTEBOOK = [
     "Definitions\n\nDefine mode: rename a circuit in an anvil, say Double, to define it. For recursion give a base case, a step using the loop sign (the call one step down), and the variable recursed on.",
     "Statements\n\nThe Equation Bench makes left = right; the same circuit twice gives the proven t = t. The Property Bench makes P(circuit), and its Mode button builds and, implies, not and exists.",
     "First proof\n\nEven(Double(n)): state it on the Property Bench, then give the Witness Bench the witness n and Double(n) = n + n. Every Double output can now be certified for free.",
-    "Theorem cards\n\nThe Compiled Machine runs a defined function on numerals. A proven statement about it in the card slot certifies each output for 1 unit: no more searching. A proven a + b = b + a is a speed card: the machine swaps its inputs to recurse on the smaller.",
+    "Theorem cards\n\nThe Compiled Machine runs a defined function on numerals. A proven statement about it in the card slot certifies each output for 1 unit: no more searching.",
+    "Speed cards\n\nA proven a + b = b + a in the Compiled Machine's card slot is a speed card: the machine swaps its inputs to recurse on the smaller one. Only fully proven symmetries work.",
     "Reasoning\n\nInstantiator: put a circuit in for a variable. Rewriter: swap one side of a proven equation for the other; its variables match anything. Conjunction and Modus Ponens Presses: and, and P -> Q with P gives Q.",
     "Assumptions\n\nThe Assumption Chamber assumes a statement and stamps what follows; its variables are locked. Put a conclusion in the discharge slot to get H -> Q.",
     "Opening exists\n\nPut a proven exists, like exists j. a = j + j, in a chamber with a Variable in its open-as slot: you get a = j + j to work with. Close it by discharging a conclusion that does not mention j.",
@@ -142,14 +144,18 @@ NOTEBOOK = [
     "Conjectures\n\nThe Conjecture Bench turns a named claim into a card and a block. Keep the block powered. Each use is checked: one counterexample and it fails, with everything built on it.",
     "Prime Cores\n\nPrime is predefined: 2 <= n and no d with 2 <= d < n divides n. The Test Bench can certify primes by trying every d: slow and costly. Cards and deciders make it cheap.",
     "Prime Forge\n\nThe Forge finds the next prime from a candidate, certified by its method card H(n) -> Prime(n). A proven decider link is safe. A conjectured test is fast, until a Carmichael number like 561 comes by.",
-    "Structures\n\nThe Structure Bench shows the axioms of monoids, equivalences and orders. Prove a theorem once for any monoid, certify an operation's three laws, and apply the theorem to it for free. SetMonoid is a monoid on a set A, each law assuming its inputs are in A: multiplication mod n needs it.",
+    "Structures\n\nThe Structure Bench shows the axioms of monoids, equivalences and orders. Prove a theorem once for any monoid, certify an operation's three laws, and apply the theorem to it for free.",
+    "Monoids on a set\n\nSetMonoid is a monoid on a set A: e is in A, A is closed, and each law assumes its inputs are in A. Multiplication mod n needs it, since 1 is its identity only below n.",
     "Factories\n\nThe Statement Conveyor moves statements and circuits between machines; it needs a proven 0 + n = n to craft. The Duplicator copies statements for 1 unit. Every step still costs energy.",
+    "Sorting\n\nThe Certificate Sorter splits a stream of numerals by a property in its filter slot, like Even(n): certified ones drop out below into a hopper, the rest are pushed out the sides.",
     "Safety\n\nAn unpowered conjecture block goes dormant: safe, but its cards stop working. Seal a conjecture block in obsidian or tinted glass near a Containment Controller to keep its failure harmless.",
     "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
-    "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless. Click a cable to switch its phase (A copper, B silver): if neighbouring cables always differ, the Surveyor certifies alternating power at double speed. Mixed phases without that proof short out.",
+    "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless.",
+    "Phases\n\nClick a cable to switch its phase (A copper, B silver). If neighbouring cables always differ, the Surveyor certifies alternating power: double speed. Mixed phases without that proof short out, so survey from next to the dynamo.",
     "Infinitely many\n\nProve that above every n there is a prime: for all n, exists p, n <= p and Prime(p). That proof crafts the Infinite Prime Well, which emits primes forever. The Factorization Vault stores items as one number.",
     "Equivalences\n\nCertify a relation as an Equivalence in the Structure Bench and the Rewriter accepts s ≡ t in place of an equation. It rewrites only inside functions that respect ≡: name a law like a ≡ b → c ≡ d → a + c ≡ b + d in the Library for each one.",
-    "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds. Implement addition itself and numbers go binary: the Duplicator then pays for digits, not value.",
+    "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds.",
+    "Binary\n\nImplement addition itself in the Implementation Bench and numbers go binary: the Duplicator then pays for a numeral's digits, not its value.",
     "Perfect numbers\n\nA Mersenne prime is a prime one less than a power of two, like 7 or 31. By Euclid and Euler each one gives a perfect number. A Perfect Core needs a numeral certified both Prime and Mersenne, without conjectures.",
     "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
 ]
@@ -265,6 +271,7 @@ MACHINES = {
     "network_surveyor": ("copper", "N", "Network Surveyor"),
     "infinite_prime_well": ("gold", "W", "Infinite Prime Well"),
     "factorization_vault": ("gold", "V", "Factorization Vault"),
+    "certificate_sorter": ("iron", "Y", "Certificate Sorter"),
     "conjecture_bench": ("purple", "?", "Conjecture Bench"),
     "conjecture_block": ("purple", "!", "Conjecture Block"),
 }
@@ -517,6 +524,14 @@ LANG = {
     "slot.axiomatic.port_2": "Input 2",
     "slot.axiomatic.port_3": "Input 3",
     "slot.axiomatic.card": "Theorem card",
+    "slot.axiomatic.numeral": "Numeral",
+    "slot.axiomatic.filter": "Filter: a property statement like Even(n)",
+    "slot.axiomatic.sort_yes": "Certified (out below)",
+    "slot.axiomatic.sort_no": "Not certified (pushed out the sides)",
+    "button.axiomatic.certificates": "Proven / any",
+    "label.axiomatic.sorts_proven": "Sorts by %s (proven certificates only)",
+    "label.axiomatic.sorts_any": "Sorts by %s (conjectural certificates count)",
+    "status.axiomatic.needs_filter": "Put a property statement like Even(n) in the filter slot",
     "slot.axiomatic.conjecture_statement": "Unproven statement, renamed in an anvil",
     "status.axiomatic.too_many_ports": "%s has more than 3 inputs",
     "status.axiomatic.computed": "Computed %s (%s steps)",
@@ -802,6 +817,8 @@ def main():
            {"O": "minecraft:obsidian", "T": "minecraft:tinted_glass", "B": board})
     shaped("structure_bench", ["QBQ", "BKB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "K": "minecraft:lapis_block"})
+    shaped("certificate_sorter", ["IHI", "CBC", "III"],
+           {"I": "minecraft:iron_ingot", "H": "minecraft:hopper", "C": "minecraft:comparator", "B": board})
     shaped("network_surveyor", ["CMC", "OBO", "CCC"],
            {"C": "minecraft:copper_ingot", "M": "minecraft:map", "O": "minecraft:compass", "B": board})
     shaped("equivalence_bench", ["QBQ", "BCB", "QBQ"],

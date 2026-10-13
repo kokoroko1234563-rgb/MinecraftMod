@@ -224,6 +224,9 @@ public final class ModRegistries {
             MapColor.COLOR_LIGHT_BLUE, ImplementationBenchBlockEntity::new);
     public static final Machine<PrimeWellBlockEntity> PRIME_WELL = machine("infinite_prime_well",
             MapColor.GOLD, PrimeWellBlockEntity::new);
+    public static final Machine<io.github.kokoroko1234563.axiomatic.machine.CertificateSorterBlockEntity> CERTIFICATE_SORTER =
+            machine("certificate_sorter", MapColor.COLOR_LIGHT_BLUE,
+                    io.github.kokoroko1234563.axiomatic.machine.CertificateSorterBlockEntity::new);
     public static final Machine<FactorizationVaultBlockEntity> FACTORIZATION_VAULT = machine("factorization_vault",
             MapColor.GOLD, FactorizationVaultBlockEntity::new);
     public static final Machine<PrimeForgeBlockEntity> PRIME_FORGE = machine("prime_forge",

@@ -67,6 +67,7 @@ public final class AxiomaticGameTests {
         test("clashing_phases_short_circuit", AxiomaticGameTests::clashingPhasesShortCircuit);
         test("add_comm_speed_card", SpeedCardGameTest::addCommSwapsInputs);
         test("conjectured_speed_card_refused", SpeedCardGameTest::conjecturedSymmetryIsRefused);
+        test("certificate_sorter_splits_by_property", AxiomaticGameTests::sorterSplitsByProperty);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -301,6 +302,50 @@ public final class AxiomaticGameTests {
                     "the surveyor names the clash");
             h.succeed();
         });
+    }
+
+    /** Certified evens drop into the hopper below; the rest are pushed into the chest beside. */
+    private static void sorterSplitsByProperty(GameTestHelper h) {
+        BlockPos sorterPos = new BlockPos(2, 2, 2);
+        h.setBlock(sorterPos, ModRegistries.CERTIFICATE_SORTER.get());
+        h.setBlock(new BlockPos(2, 1, 2), net.minecraft.world.level.block.Blocks.HOPPER);
+        h.setBlock(new BlockPos(3, 2, 2), net.minecraft.world.level.block.Blocks.CHEST);
+        MachineBlockEntity sorter = h.getBlockEntity(sorterPos, MachineBlockEntity.class);
+        sorter.receiveEnergy(sorter.capacity());
+        var state = io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(h.getLevel().getServer()).state();
+        var printer = new io.github.kokoroko1234563.axiomatic.core.logic.Printer(state.signature());
+        sorter.setItem(1, io.github.kokoroko1234563.axiomatic.item.MathItems.statementStack(
+                io.github.kokoroko1234563.axiomatic.item.StatementData.unproven(
+                        io.github.kokoroko1234563.axiomatic.core.logic.Formula.pred("Even",
+                                io.github.kokoroko1234563.axiomatic.core.logic.Term.var("n")), printer)));
+        NumeralData even = NumeralData.of(6).withFact(new Fact("Even", List.of(BigInteger.valueOf(6)), java.util.Set.of()));
+        NumeralData plain = NumeralData.of(8);  // even, but not certified: it goes to the side
+        sorter.setItem(0, NumeralItem.stack(even, 2));
+        var hopper = (net.minecraft.world.level.block.entity.HopperBlockEntity) h.getBlockEntity(new BlockPos(2, 1, 2),
+                net.minecraft.world.level.block.entity.HopperBlockEntity.class);
+        var chest = h.getBlockEntity(new BlockPos(3, 2, 2), net.minecraft.world.level.block.entity.ChestBlockEntity.class);
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(sorter.getItem(0).isEmpty(), "sorting the certified evens"))
+                .thenExecute(() -> sorter.setItem(0, NumeralItem.stack(plain, 3)))
+                .thenWaitUntil(() -> {
+                    int down = 0;
+                    for (int i = 0; i < hopper.getContainerSize(); i++) {
+                        if (hopper.getItem(i).is(ModRegistries.NUMERAL_ITEM.get())) {
+                            h.assertTrue(NumeralItem.data(hopper.getItem(i)).equals(even), "only certified evens go down");
+                            down += hopper.getItem(i).getCount();
+                        }
+                    }
+                    int side = 0;
+                    for (int i = 0; i < chest.getContainerSize(); i++) {
+                        if (chest.getItem(i).is(ModRegistries.NUMERAL_ITEM.get())) {
+                            h.assertTrue(NumeralItem.data(chest.getItem(i)).equals(plain), "only the rest go sideways");
+                            side += chest.getItem(i).getCount();
+                        }
+                    }
+                    h.assertValueEqual(down, 2, "certified evens below");
+                    h.assertValueEqual(side, 3, "uncertified numerals beside");
+                })
+                .thenSucceed();
     }
 
     private static void surveyorCertifiesTrees(GameTestHelper h) {
