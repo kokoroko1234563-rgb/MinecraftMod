@@ -215,6 +215,14 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - Hypothesis items are not yet physically locked inside the chamber (the kernel still tracks and
   enforces their stamps and locked variables).
 
+## Known minor issues (from a code review, not fixed)
+
+- A Coal Dynamo touching two separate cable networks hashes them as one graph, so a Surveyor
+  (which sees one network) can never certify it; with mixed phases it stays shorted.
+- A hopper that feeds a Certificate Sorter's rejects back into it loops them (1 unit per pass).
+- The Library payload caps lines per tab (1000) but not bytes; NeoForge splits large packets,
+  so only enormous libraries could disconnect a player.
+
 ## Suggested next steps
 
 1. Compact blocks: inspecting a Compiled Machine's ports, theorem cards slotted into other
