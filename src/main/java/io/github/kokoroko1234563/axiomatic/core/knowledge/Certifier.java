@@ -37,26 +37,28 @@ public final class Certifier {
         if (!thm.isClosed()) {
             throw new ProofException("The theorem still depends on an open assumption");
         }
-        return byStatement(thm.formula(), thm.dependencies(), inputs, premises, truth);
+        return byStatement(thm.formula(), thm.dependencies(), inputs, premises, truth, false);
     }
 
     /**
      * Certifies the conclusion of a statement {@code H₁ → … → Hₖ → P(t̄)} for concrete inputs.
      * The statement must be proven (or tested over a range containing the inputs, or conjectured;
      * {@code dependencies} records which). Each premise Hᵢ that is a property must be matched by
-     * one of the given certificates; premises that are equations are checked by computing them.
+     * one of the given certificates (or, if {@code computePremises}, settled by computation, as
+     * the Prime Forge does with bare candidates); premises that are equations are checked by
+     * computing them.
      *
      * @param inputs a value for every free variable of the statement
      */
     public static Fact byStatement(Formula statement, Set<String> dependencies, Map<String, BigInteger> inputs,
-            List<Fact> premises, Truth truth) {
+            List<Fact> premises, Truth truth, boolean computePremises) {
         if (!inputs.keySet().containsAll(Syntax.freeVars(statement))) {
             throw new ProofException("Every variable of " + statement + " needs an input value");
         }
         Set<String> deps = new HashSet<>(dependencies);
         Formula f = statement;
         while (f instanceof Formula.Implies imp) {
-            requirePremise(imp.premise(), inputs, premises, truth, deps);
+            requirePremise(imp.premise(), inputs, premises, truth, deps, computePremises);
             f = imp.conclusion();
         }
         if (!(f instanceof Formula.Pred p)) {
@@ -68,14 +70,20 @@ public final class Certifier {
     }
 
     private static void requirePremise(Formula premise, Map<String, BigInteger> inputs, List<Fact> premises,
-            Truth truth, Set<String> deps) {
+            Truth truth, Set<String> deps, boolean computePremises) {
         switch (premise) {
             case Formula.Pred p -> {
                 List<BigInteger> values = p.args().stream().map(t -> truth.evaluator().eval(t, inputs)).toList();
-                Fact match = premises.stream().filter(fact -> fact.sameClaim(p.name(), values)).findFirst()
-                        .orElseThrow(() -> new ProofException("Needs a certificate for " + p.name()
-                                + values.toString().replace('[', '(').replace(']', ')')));
-                deps.addAll(match.dependencies());
+                Fact match = premises.stream().filter(fact -> fact.sameClaim(p.name(), values)).findFirst().orElse(null);
+                if (match != null) {
+                    deps.addAll(match.dependencies());
+                } else if (computePremises && truth.property(p.name(), values) == Truth.Value.TRUE) {
+                    // No certificate given, but computing settles it (a witness or a linked decider).
+                    deps.addAll(truth.dependencies());
+                } else {
+                    throw new ProofException("Needs a certificate for " + p.name()
+                            + values.toString().replace('[', '(').replace(']', ')'));
+                }
             }
             case Formula.Eq e -> {
                 if (truth.evaluate(e, inputs) != Truth.Value.TRUE) {

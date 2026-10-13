@@ -48,6 +48,8 @@ public final class AxiomaticGameTests {
         test("zero_add_by_machines", ProofGameTests::zeroAddByMachines);
         test("double_outputs_evens_by_machines", ProofGameTests::doubleOutputsEvensByMachines);
         test("two_n_plus_one_trap", TrapGameTests::twoNPlusOneTrap);
+        test("prime_forge_finds_primes", TrapGameTests::primeForgeFindsPrimes);
+        test("prime_forge_catches_a_bad_method", TrapGameTests::primeForgeCatchesABadMethod);
         test("theorem_card_certifies_outputs", TrapGameTests::theoremCardCertifiesOutputs);
         test("test_bench_range_mode", AxiomaticGameTests::testBenchRangeMode);
         test("structure_bench_certify_and_apply", StructureGameTests::certifyAndApply);

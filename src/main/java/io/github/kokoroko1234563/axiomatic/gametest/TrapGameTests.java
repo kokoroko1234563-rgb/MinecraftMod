@@ -54,6 +54,11 @@ final class TrapGameTests {
         define(state, new Definition.PrimitiveRecursive("modR", List.of("d", "n"), Term.zero(),
                 Term.app("mul", next, Term.app("isZero", Term.app("eqb", next, d))), null));
         define(state, new Definition.Explicit("divides", List.of("d", "n"), Term.app("isZero", Term.app("modR", d, N)), null));
+        Term k = Term.var("k");
+        define(state, new Definition.PrimitiveRecursive("countDiv", List.of("n", "k"), Term.zero(),
+                Term.app("add", Term.app("countDiv", N, k), Term.app("divides", Term.succ(k), N)), null));
+        define(state, new Definition.Explicit("isPrime", List.of("n"),
+                Term.app("eqb", Term.app("countDiv", N, N), Term.numeral(2)), null));
         define(state, new Definition.Predicate("le", List.of("a", "b"),
                 Formula.exists("j", Formula.eq(Term.app("add", a, Term.var("j")), b)), "≤"));
         define(state, new Definition.Predicate("Prime", List.of("n"),
@@ -102,6 +107,44 @@ final class TrapGameTests {
             NumeralData n = NumeralItem.data(out);
             h.assertValueEqual(n.value(), BigInteger.valueOf(42), "Twice(21)");
             h.assertTrue(n.hasProperty("Even", false), "Twice's outputs are certified even by the card");
+        });
+    }
+
+    /** A method card: "H(n) → Prime(n)", conjectured (the link proofs are long). */
+    private static ItemStack method(MathState state, String name, Formula premise) {
+        var thm = state.library().conjecture(state.kernel(), state.deciders(), name,
+                Formula.implies(premise, Formula.pred("Prime", N)));
+        return MathItems.statementStack(StatementData.of(thm, new Printer(state.signature())));
+    }
+
+    static void primeForgeFindsPrimes(GameTestHelper h) {
+        MathState state = AxiomaticData.get(h.getLevel().getServer()).state();
+        defineOpeningHour(state);
+        MachineBlockEntity forge = place(h, 4, ModRegistries.PRIME_FORGE.get());
+        forge.setItem(1, method(state, "trialDivision", Formula.eq(Term.app("isPrime", N), Term.numeral(1))));
+        forge.setItem(0, NumeralItem.stack(NumeralData.of(8), 1));
+        h.succeedWhen(() -> {
+            ItemStack out = forge.getItem(2);
+            h.assertTrue(!out.isEmpty(), "waiting; status: " + forge.status().getString());
+            NumeralData p = NumeralItem.data(out);
+            h.assertValueEqual(p.value(), BigInteger.valueOf(11), "next prime from 8");
+            h.assertTrue(p.hasProperty("Prime", true), "certified prime (conjecturally)");
+        });
+    }
+
+    static void primeForgeCatchesABadMethod(GameTestHelper h) {
+        MathState state = AxiomaticData.get(h.getLevel().getServer()).state();
+        defineOpeningHour(state);
+        MachineBlockEntity forge = place(h, 5, ModRegistries.PRIME_FORGE.get());
+        // "Odd numbers are prime": modR(2, n) = 1 → Prime(n). Fine for 3, 5, 7; caught at 9.
+        forge.setItem(1, method(state, "oddsArePrime", Formula.eq(Term.app("modR", Term.numeral(2), N), Term.numeral(1))));
+        forge.setItem(0, NumeralItem.stack(NumeralData.of(8), 1));
+        h.succeedWhen(() -> {
+            h.assertValueEqual(state.library().conjectureNamed("oddsArePrime").state(),
+                    Library.ConjectureState.REFUTED, "state");
+            h.assertValueEqual(state.library().conjectureNamed("oddsArePrime").counterexample().get("n"),
+                    BigInteger.valueOf(9), "counterexample");
+            h.assertTrue(forge.getItem(2).isEmpty(), "nothing certified comes out");
         });
     }
 

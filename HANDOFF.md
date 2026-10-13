@@ -54,6 +54,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `item/GraphLensItem` | Graph Lens: shows the pointed graph of the item in the other hand |
 | `book/Notebook` | The Notebook, given on first join: a vanilla written book whose pages are lang keys `notebook.axiomatic.page.N` (placeholder until Modonomicon is reachable) |
 | `reasoning/StructureBenchBlockEntity` | Structure Bench: Axioms / Certify (laws → Library certificate) / Apply (generic theorem + circuit naming a certified op) |
+| `machine/PrimeForgeBlockEntity`, `machine/Cards` | Prime Forge: next prime ≥ candidate certified by a method card "H(n) → Prime(n)"; Cards = shared theorem-card rules (proven / Tested in range / conjectural with background check) |
 | `client/` | `MachineScreen` (drawn with rectangles, no texture), screen registration |
 | `gametest/AxiomaticGameTests` | In-world tests on an empty stage structure |
 | `src/test/java/...` | JUnit tests. `KernelTest` proves zero_add (exactly the doc's 6 steps), succ_add, add_comm and "Double outputs evens", and checks that cheats are refused |
@@ -92,7 +93,9 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   "∀n ∃k. n = k + k" does not. Bounded ∃ ("∃k ≤ n") is not recognised, so Prime can be *refuted*
   by search but only *certified* by a linked decider or a card. A conjecture's check never uses a
   decider whose link depends on that same conjecture.
-- **Background checks** run when a conjectural card is used in a Compiled Machine (the card's
+- **Typed ports**: a Compiled Machine card's premises about its inputs must be met by the
+  inputs' certificates. The Prime Forge instead computes premises for its bare candidates.
+- **Background checks** run when a conjectural card is used in a Compiled Machine or Prime Forge (the card's
   statement is computed for those inputs). Instances reached by other routes are not watched yet.
 - **Structures** are theory interpretation: abstract symbols (`Monoid.op`, `Monoid.e`,
   `Equivalence.R`, `Order.R`, names players cannot type) have no defining statements, only

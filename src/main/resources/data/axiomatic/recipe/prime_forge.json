@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "K": "minecraft:iron_block",
+    "C": "axiomatic:prime_core",
+    "P": "minecraft:gold_ingot",
+    "F": "minecraft:blast_furnace"
+  },
+  "pattern": [
+    "KCK",
+    "PFP",
+    "KKK"
+  ],
+  "result": {
+    "id": "axiomatic:prime_forge",
+    "count": 1
+  }
+}

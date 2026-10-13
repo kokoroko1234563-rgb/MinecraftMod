@@ -167,6 +167,7 @@ MACHINES = {
     "modus_ponens_press": ("blue", ">", "Modus Ponens Press"),
     "compiled_machine": ("gold", "f", "Compiled Machine"),
     "structure_bench": ("blue", "M", "Structure Bench"),
+    "prime_forge": ("gold", "P", "Prime Forge"),
     "conjecture_bench": ("purple", "?", "Conjecture Bench"),
     "conjecture_block": ("purple", "!", "Conjecture Block"),
 }
@@ -464,6 +465,11 @@ LANG = {
     "block.axiomatic.statement_conveyor": "Statement Conveyor",
     "block.axiomatic.containment_controller": "Containment Controller",
     "slot.axiomatic.open_as": "Variable to open an ∃ as (optional)",
+    "slot.axiomatic.candidate": "Candidate numeral",
+    "slot.axiomatic.method_card": "Method card: H(n) → Prime(n)",
+    "status.axiomatic.forge_none": "No prime found in %s candidates",
+    "status.axiomatic.forged": "Forged %s (%s steps)",
+    "status.axiomatic.method_shape": "The method card must read H(n) → P(n), with one variable",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
@@ -632,6 +638,9 @@ def main():
            {"O": "minecraft:obsidian", "T": "minecraft:tinted_glass", "B": board})
     shaped("structure_bench", ["QBQ", "BKB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "K": "minecraft:lapis_block"})
+    shaped("prime_forge", ["KCK", "PFP", "KKK"],
+           {"K": "minecraft:iron_block", "C": "axiomatic:prime_core", "P": "minecraft:gold_ingot",
+            "F": "minecraft:blast_furnace"})
     shaped("compiled_machine", ["CBC", "BRB", "CBC"],
            {"C": "minecraft:copper_ingot", "B": board, "R": "minecraft:redstone_block"})
     shaped("prime_core", ["GPG", "PRP", "GPG"], {

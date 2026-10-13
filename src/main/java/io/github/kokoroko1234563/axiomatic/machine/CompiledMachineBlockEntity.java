@@ -5,18 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import io.github.kokoroko1234563.axiomatic.core.knowledge.Certifier;
 import io.github.kokoroko1234563.axiomatic.core.knowledge.Fact;
-import io.github.kokoroko1234563.axiomatic.core.knowledge.Library;
 import io.github.kokoroko1234563.axiomatic.core.knowledge.MathState;
 import io.github.kokoroko1234563.axiomatic.core.knowledge.Truth;
 import io.github.kokoroko1234563.axiomatic.core.logic.Definition;
 import io.github.kokoroko1234563.axiomatic.core.logic.Evaluator;
 import io.github.kokoroko1234563.axiomatic.core.logic.Formula;
 import io.github.kokoroko1234563.axiomatic.core.logic.ProofException;
-import io.github.kokoroko1234563.axiomatic.core.logic.Syntax;
 import io.github.kokoroko1234563.axiomatic.core.logic.Term;
 import io.github.kokoroko1234563.axiomatic.item.MathItems;
 import io.github.kokoroko1234563.axiomatic.item.NumeralData;
@@ -142,30 +138,7 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
      */
     private Fact certify(ServerLevel level, MathState state, String f, StatementData card, List<NumeralData> inputs,
             Evaluator evaluator, BigInteger output) {
-        Library library = state.library();
-        BigInteger testedUpTo = null;
-        if (!card.proven()) {
-            // A Tested statement works as a card inside its tested range.
-            if (library.status(card.formula()) instanceof Library.Tested t) {
-                testedUpTo = t.upTo();
-            } else {
-                throw new ProofException(Component.translatable("status.axiomatic.card_unproven").getString());
-            }
-        } else if (!card.hypotheses().isEmpty()) {
-            throw new ProofException(Component.translatable("status.axiomatic.card_unproven").getString());
-        }
-        Set<String> refuted = library.refuted(Set.copyOf(card.dependencies()));
-        if (!refuted.isEmpty()) {
-            throw new ProofException(Component.translatable("status.axiomatic.card_refuted", String.join(", ", refuted)).getString());
-        }
-        for (String dep : card.dependencies()) {
-            if (dep.startsWith("conjecture:")) {
-                Library.Conjecture c = library.conjectureNamed(dep.substring("conjecture:".length()));
-                if (c != null && c.state() == Library.ConjectureState.DORMANT) {
-                    throw new ProofException(Component.translatable("status.axiomatic.card_dormant", c.name()).getString());
-                }
-            }
-        }
+        Cards.usable(state.library(), card);
         Formula conclusion = card.formula();
         while (conclusion instanceof Formula.Implies imp) {
             conclusion = imp.conclusion();
@@ -179,30 +152,12 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
         for (int i = 0; i < app.args().size(); i++) {
             assignment.put(((Term.Var) app.args().get(i)).name(), inputs.get(i).value());
         }
-        if (testedUpTo != null) {
-            for (BigInteger v : assignment.values()) {
-                if (v.compareTo(testedUpTo) > 0) {
-                    throw new ProofException(Component.translatable("status.axiomatic.outside_tested",
-                            testedUpTo.toString()).getString());
-                }
-            }
-        }
         List<Fact> premises = new ArrayList<>();
         inputs.forEach(n -> premises.addAll(n.facts()));
         // Witnesses are searched up to the largest number involved, as on the Test Bench.
         BigInteger cap = inputs.stream().map(NumeralData::value).reduce(output, BigInteger::max);
         Truth truth = new Truth(state.signature(), state.deciders(), evaluator, cap);
-
-        // Background check: a conjecture applied to numbers is computed for those numbers.
-        for (Library.Conjecture c : library.conjectures()) {
-            if (c.state() == Library.ConjectureState.ACTIVE && card.dependencies().contains("conjecture:" + c.name())
-                    && Syntax.alphaEquals(c.statement(), card.formula())) {
-                if (library.observe(c.name(), assignment, truth)) {
-                    data(level).setDirty();
-                    throw new ProofException(Component.translatable("status.axiomatic.refuted_now", c.name()).getString());
-                }
-            }
-        }
-        return Certifier.byStatement(card.formula(), Set.copyOf(card.dependencies()), assignment, premises, truth);
+        // Typed ports: a card's premises about the inputs must be met by their certificates.
+        return Cards.apply(state.library(), card, assignment, premises, false, truth, () -> data(level).setDirty());
     }
 }
