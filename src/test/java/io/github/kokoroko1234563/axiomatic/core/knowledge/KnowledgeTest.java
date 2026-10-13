@@ -231,6 +231,13 @@ class KnowledgeTest {
     }
 
     @Test
+    void printedStatementsCompareUpToVariableNames() {
+        assertTrue(Printer.sameUpToVariables("∀n. ∃p. n ≤ p ∧ Prime(p)", "∀m. ∃q. m ≤ q ∧ Prime(q)"));
+        assertFalse(Printer.sameUpToVariables("∀n. ∃p. n ≤ p ∧ Prime(p)", "∀n. ∃p. p ≤ n ∧ Prime(p)"));
+        assertFalse(Printer.sameUpToVariables("∀n. f(n) = n", "∀n. g(n) = n"), "a one-letter function is not a variable");
+    }
+
+    @Test
     void printerReadsLikeTheDesignDoc() {
         Printer p = new Printer(kernel.signature());
         Term n = var("n");

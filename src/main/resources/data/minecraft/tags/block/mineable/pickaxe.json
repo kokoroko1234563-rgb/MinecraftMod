@@ -21,6 +21,8 @@
     "axiomatic:prime_forge",
     "axiomatic:implementation_bench",
     "axiomatic:network_surveyor",
+    "axiomatic:infinite_prime_well",
+    "axiomatic:factorization_vault",
     "axiomatic:conjecture_bench",
     "axiomatic:conjecture_block",
     "axiomatic:statement_conveyor",

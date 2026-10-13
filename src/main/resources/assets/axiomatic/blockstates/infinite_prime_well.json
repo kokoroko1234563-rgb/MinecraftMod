@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "axiomatic:block/infinite_prime_well"
+    }
+  }
+}

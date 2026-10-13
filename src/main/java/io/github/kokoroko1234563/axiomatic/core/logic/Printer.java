@@ -83,6 +83,31 @@ public final class Printer {
         };
     }
 
+    /** Variables as printed: single letters (possibly with ' or #n), not followed by "(". */
+    private static final java.util.regex.Pattern VARIABLE =
+            java.util.regex.Pattern.compile("(?<![A-Za-z0-9_])[a-z](?:'|#\\d+)*(?![A-Za-z0-9_(])");
+
+    /**
+     * Whether two printed statements are the same up to the names of their variables, so
+     * "∀m. ∃q. m ≤ q ∧ Prime(q)" matches "∀n. ∃p. n ≤ p ∧ Prime(p)". Used by theorem-gated recipes.
+     */
+    public static boolean sameUpToVariables(String a, String b) {
+        return normalizeVariables(a).equals(normalizeVariables(b));
+    }
+
+    /** Renames printed variables to v0, v1, … in order of first appearance. */
+    public static String normalizeVariables(String display) {
+        java.util.Map<String, String> names = new java.util.HashMap<>();
+        var m = VARIABLE.matcher(display);
+        StringBuilder out = new StringBuilder();
+        while (m.find()) {
+            String name = names.computeIfAbsent(m.group(), k -> "v" + names.size());
+            m.appendReplacement(out, name);
+        }
+        m.appendTail(out);
+        return out.toString();
+    }
+
     /** The value of a closed numeral S(S(…0)), or null if the term is not one. */
     public static BigInteger numeralValue(Term t) {
         long count = 0;

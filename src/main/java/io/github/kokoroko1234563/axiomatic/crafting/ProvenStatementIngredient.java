@@ -18,8 +18,8 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
 
 /**
  * A recipe ingredient matching a proven statement (no open assumptions, no conjectures) that reads
- * exactly {@code statement}, such as "∀n. 0 + n = n": progression gated by a theorem. The match is
- * on the displayed form, so it relies on the starter definitions' symbols.
+ * like {@code statement}, such as "∀n. 0 + n = n", up to the names of variables: progression gated
+ * by a theorem. The match is on the displayed form, so it relies on the starter definitions.
  *
  * <p>JSON: {@code {"neoforge:ingredient_type": "axiomatic:proven_statement", "statement": "∀n. 0 + n = n"}}
  */
@@ -34,7 +34,7 @@ public record ProvenStatementIngredient(String statement) implements ICustomIngr
     public boolean test(ItemStack stack) {
         StatementData data = MathItems.statement(stack);
         return data != null && data.proven() && data.hypotheses().isEmpty() && !data.isConjectural()
-                && data.display().equals(statement);
+                && io.github.kokoroko1234563.axiomatic.core.logic.Printer.sameUpToVariables(data.display(), statement);
     }
 
     @Override

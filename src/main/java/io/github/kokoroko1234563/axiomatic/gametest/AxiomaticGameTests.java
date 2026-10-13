@@ -58,6 +58,8 @@ public final class AxiomaticGameTests {
         test("milestones_award_advancements", AxiomaticGameTests::milestonesAwardAdvancements);
         test("surveyor_certifies_tree_networks", AxiomaticGameTests::surveyorCertifiesTrees);
         test("surveyor_rejects_cycles", AxiomaticGameTests::surveyorRejectsCycles);
+        test("prime_well_emits_primes", AxiomaticGameTests::primeWellEmitsPrimes);
+        test("factorization_vault_stores_as_a_number", AxiomaticGameTests::vaultStoresAsANumber);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -237,6 +239,34 @@ public final class AxiomaticGameTests {
             h.assertFalse(io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level).isCertifiedTree(graph.signature()),
                     "never certified");
         });
+    }
+
+    private static void primeWellEmitsPrimes(GameTestHelper h) {
+        MachineBlockEntity well = powered(h, ModRegistries.PRIME_WELL.get(), MachineBlockEntity.class);
+        h.succeedWhen(() -> {
+            NumeralData first = numeralIn(well, 0);
+            NumeralData second = numeralIn(well, 1);
+            h.assertTrue(first != null && second != null, "waiting for two primes; status: " + well.status().getString());
+            h.assertValueEqual(first.value(), BigInteger.TWO, "first prime");
+            h.assertValueEqual(second.value(), BigInteger.valueOf(3), "second prime");
+            h.assertTrue(first.hasProperty("Prime", false), "certified prime, not conjecturally");
+        });
+    }
+
+    private static void vaultStoresAsANumber(GameTestHelper h) {
+        BlockPos pos = new BlockPos(3, 1, 3);
+        h.setBlock(pos, ModRegistries.FACTORIZATION_VAULT.get());
+        var vault = h.getBlockEntity(pos, io.github.kokoroko1234563.axiomatic.machine.FactorizationVaultBlockEntity.class);
+        h.startSequence()
+                .thenExecute(() -> vault.setItem(0, new ItemStack(Items.COAL, 5)))
+                .thenIdle(2)
+                .thenExecute(() -> vault.setItem(0, new ItemStack(Items.IRON_INGOT, 3)))
+                .thenIdle(2)
+                .thenExecute(() -> h.assertValueEqual(vault.number(), BigInteger.valueOf(864), "2^5 × 3^3"))
+                .thenExecute(() -> vault.getItem(1).shrink(2))   // take 2 coal
+                .thenIdle(2)
+                .thenExecute(() -> h.assertValueEqual(vault.number(), BigInteger.valueOf(216), "2^3 × 3^3"))
+                .thenSucceed();
     }
 
     private static void circuitBoardNeedsCertifiedEvens(GameTestHelper h) {

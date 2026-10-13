@@ -15,6 +15,8 @@ import io.github.kokoroko1234563.axiomatic.item.StatementData;
 import io.github.kokoroko1234563.axiomatic.machine.CoalDynamoBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.CompiledMachineBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.PrimeForgeBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.PrimeWellBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.FactorizationVaultBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.NetworkSurveyorBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.ConjectureBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.ConjectureBenchBlockEntity;
@@ -212,6 +214,10 @@ public final class ModRegistries {
             MapColor.COLOR_ORANGE, NetworkSurveyorBlockEntity::new);
     public static final Machine<ImplementationBenchBlockEntity> IMPLEMENTATION_BENCH = machine("implementation_bench",
             MapColor.COLOR_LIGHT_BLUE, ImplementationBenchBlockEntity::new);
+    public static final Machine<PrimeWellBlockEntity> PRIME_WELL = machine("infinite_prime_well",
+            MapColor.GOLD, PrimeWellBlockEntity::new);
+    public static final Machine<FactorizationVaultBlockEntity> FACTORIZATION_VAULT = machine("factorization_vault",
+            MapColor.GOLD, FactorizationVaultBlockEntity::new);
     public static final Machine<PrimeForgeBlockEntity> PRIME_FORGE = machine("prime_forge",
             MapColor.GOLD, PrimeForgeBlockEntity::new);
     public static final Machine<CompiledMachineBlockEntity> COMPILED_MACHINE = machine("compiled_machine",

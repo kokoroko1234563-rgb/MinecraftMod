@@ -1,0 +1,32 @@
+{
+  "parent": "axiomatic:prime_forged",
+  "criteria": {
+    "prime_well": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "axiomatic:infinite_prime_well"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:infinite_prime_well"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.prime_well.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.prime_well.description"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "prime_well"
+    ]
+  ]
+}

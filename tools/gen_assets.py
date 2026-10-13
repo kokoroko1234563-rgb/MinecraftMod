@@ -43,6 +43,8 @@ GLYPHS = {
     "N": ["#   #", "##  #", "# # #", "#  ##", "#   #", "#   #", "#   #"],
     "^": ["     ", "  #  ", " # # ", "#   #", "#   #", "     ", "     "],
     ">": ["     ", "#    ", " ##  ", "   ##", " ##  ", "#    ", "     "],
+    "W": ["#   #", "#   #", "#   #", "# # #", "# # #", "## ##", "#   #"],
+    "V": ["#   #", "#   #", "#   #", "#   #", " # # ", " # # ", "  #  "],
     "f": ["  ## ", " #   ", " #   ", "#### ", " #   ", " #   ", " #   "],
     "M": ["#   #", "## ##", "# # #", "#   #", "#   #", "#   #", "#   #"],
     "!": ["  #  ", "  #  ", "  #  ", "  #  ", "  #  ", "     ", "  #  "],
@@ -142,6 +144,7 @@ NOTEBOOK = [
     "Safety\n\nAn unpowered conjecture block goes dormant: safe, but its cards stop working. Seal a conjecture block in obsidian or tinted glass near a Containment Controller to keep its failure harmless.",
     "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
     "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless.",
+    "Infinitely many\n\nProve that above every n there is a prime: for all n, exists p, n <= p and Prime(p). That proof crafts the Infinite Prime Well, which emits primes forever. The Factorization Vault stores items as one number.",
     "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds.",
     "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
 ]
@@ -174,6 +177,8 @@ ADVANCEMENTS = [
      "Prime Time", "Craft a Prime Core from certified primes", "goal"),
     ("prime_forged", "prime_core", "axiomatic:prime_forge", ("milestone", "prime_forged"),
      "Forging Primes", "Forge a prime with a method card", "task"),
+    ("prime_well", "prime_forged", "axiomatic:infinite_prime_well", ("item", "axiomatic:infinite_prime_well"),
+     "Euclid's Theorem", "Craft the Infinite Prime Well, with a proof that primes never run out", "challenge"),
     ("structure", "named", "axiomatic:structure_bench", ("milestone", "structure"),
      "Any Monoid Will Do", "Certify an operation as a monoid, equivalence or order", "goal"),
     ("implemented", "named", "axiomatic:implementation_bench", ("milestone", "implemented"),
@@ -250,6 +255,8 @@ MACHINES = {
     "prime_forge": ("gold", "P", "Prime Forge"),
     "implementation_bench": ("blue", "=", "Implementation Bench"),
     "network_surveyor": ("copper", "N", "Network Surveyor"),
+    "infinite_prime_well": ("gold", "W", "Infinite Prime Well"),
+    "factorization_vault": ("gold", "V", "Factorization Vault"),
     "conjecture_bench": ("purple", "?", "Conjecture Bench"),
     "conjecture_block": ("purple", "!", "Conjecture Block"),
 }
@@ -571,6 +578,11 @@ LANG = {
     "status.axiomatic.network_even": "All degrees even.",
     "status.axiomatic.network_odd": "Some degrees odd.",
     "status.axiomatic.burning_lossless": "Burning (lossless tree network)",
+    "label.axiomatic.well_last": "Last prime: %s",
+    "status.axiomatic.well_stuck": "Cannot decide the next prime (out of energy or computation)",
+    "label.axiomatic.vault_empty": "Empty: the number 1",
+    "slot.axiomatic.vault_in": "Items to store",
+    "status.axiomatic.vault_number": "Stored as one number of %s digits",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
@@ -744,6 +756,12 @@ def main():
            {"C": "minecraft:copper_ingot", "M": "minecraft:map", "O": "minecraft:compass", "B": board})
     shaped("implementation_bench", ["QBQ", "BOB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "O": "minecraft:observer"})
+    shaped("infinite_prime_well", ["CEC", "GZG", "CEC"], {
+        "C": "axiomatic:prime_core", "E": "minecraft:ender_eye", "G": "minecraft:gold_block",
+        "Z": {"neoforge:ingredient_type": f"{NS}:proven_statement", "statement": "∀n. ∃p. n ≤ p ∧ Prime(p)"},
+    })
+    shaped("factorization_vault", ["ICI", "CPC", "ICI"],
+           {"I": "minecraft:iron_block", "C": "minecraft:chest", "P": "axiomatic:prime_core"})
     shaped("prime_forge", ["KCK", "PFP", "KKK"],
            {"K": "minecraft:iron_block", "C": "axiomatic:prime_core", "P": "minecraft:gold_ingot",
             "F": "minecraft:blast_furnace"})

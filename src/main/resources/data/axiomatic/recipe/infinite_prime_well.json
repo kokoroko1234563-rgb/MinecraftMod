@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "axiomatic:prime_core",
+    "E": "minecraft:ender_eye",
+    "G": "minecraft:gold_block",
+    "Z": {
+      "neoforge:ingredient_type": "axiomatic:proven_statement",
+      "statement": "∀n. ∃p. n ≤ p ∧ Prime(p)"
+    }
+  },
+  "pattern": [
+    "CEC",
+    "GZG",
+    "CEC"
+  ],
+  "result": {
+    "id": "axiomatic:infinite_prime_well",
+    "count": 1
+  }
+}
