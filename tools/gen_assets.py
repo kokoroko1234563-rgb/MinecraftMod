@@ -115,6 +115,26 @@ def circuit_board():
     return img
 
 
+NOTEBOOK = [
+    "The Mathematician's Notebook\n\nEverything here is built from Peano's axioms. Coal pays for energy; mathematics decides how wisely it is spent.",
+    "Power\n\nCraft a Coal Dynamo (copper, furnace, redstone) and Copper Cables (3 copper make 8). Machines touching the dynamo or its cables get energy. One coal gives 16,000 units.",
+    "First numbers\n\nThe Zero Source makes 0. The Successor adds one S. A hopper loop counts up. The Duplicator copies a numeral; in the unary age a copy costs its value.",
+    "Certificates\n\nNumerals carry certificates. The Test Bench certifies a numeral by witness search: 12 is Even because 12 = 6 + 6. Bigger numbers cost more energy.",
+    "Circuit Boards\n\nFour certified even numerals with copper and redstone make a Circuit Board. Boards unlock the reasoning machines.",
+    "Circuits\n\nVariable blocks (paper and lapis) stand for any number; use one in the air to change its letter. The Drafting Chamber's Assemble mode builds circuits: pick a function, add inputs.",
+    "Definitions\n\nDefine mode: rename a circuit in an anvil, say Double, to define it. For recursion give a base case, a step using the loop sign (the call one step down), and the variable recursed on.",
+    "Statements\n\nThe Equation Bench makes left = right; the Property Bench makes P(circuit) or seals a variable with an exists. These are claims. Defining gives proven defining statements.",
+    "First proof\n\nEven(Double(n)): state it on the Property Bench, then give the Witness Bench the witness n and Double(n) = n + n. Every Double output can now be certified for free.",
+    "Theorem cards\n\nThe Compiled Machine runs a defined function on numerals. A proven statement about it in the card slot certifies each output for 1 unit: no more searching.",
+    "Reasoning\n\nInstantiator: put a circuit in for a variable. Rewriter: swap one side of a proven equation for the other. Conjunction Press: and. Modus Ponens Press: from P -> Q and P, get Q.",
+    "Assumptions\n\nThe Assumption Chamber assumes a statement and stamps what follows; its variables are locked. Put a conclusion in the discharge slot to get H -> Q.",
+    "Induction\n\nThe Induction Engine takes P(0), the step P(n) -> P(S(n)) and the variable n, and proves P(n) for every n. Start with 0 + n = n: six machine steps.",
+    "The Library\n\nName mode: rename a proven statement in an anvil to file it as a theorem. The Library block lists definitions, theorems, conjectures and tests. The Graph Lens shows any object's graph.",
+    "Conjectures\n\nThe Conjecture Bench turns a named claim into a card and a block. Keep the block powered. Each use is checked: one counterexample and it fails, with everything built on it.",
+    "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
+]
+
+
 def write_json(path, obj):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -234,6 +254,38 @@ def paradox_junk():
     return img
 
 
+def lens():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    for x in range(16):
+        for y in range(16):
+            d = (x - 6) ** 2 + (y - 6) ** 2
+            if 12 < d < 26:
+                px[x, y] = (193, 106, 58, 255)
+            elif d <= 12:
+                px[x, y] = (170, 210, 240, 200)
+    for i in range(4):
+        px[10 + i, 10 + i] = (110, 70, 40, 255)
+        px[11 + i, 10 + i] = (110, 70, 40, 255)
+    for x, y in [(4, 5), (7, 5), (6, 8)]:
+        px[x, y] = (40, 70, 170, 255)
+    return img
+
+
+def library_texture():
+    img = Image.new("RGBA", (16, 16), (110, 80, 50, 255))
+    px = img.load()
+    colours = [(40, 70, 170), (222, 177, 45), (122, 64, 160), (193, 106, 58), (60, 120, 60)]
+    for shelf in (1, 9):
+        for x in range(1, 15):
+            c = colours[(x + shelf) % len(colours)]
+            for y in range(shelf, shelf + 6):
+                px[x, y] = c + (255,)
+        for x in range(16):
+            px[x, shelf + 6] = (80, 55, 30, 255)
+    return img
+
+
 ITEMS = {
     "numeral": (numeral, "Numeral"),
     "circuit_board": (circuit_board, "Circuit Board"),
@@ -244,6 +296,7 @@ ITEMS = {
     "axiom_tablet_succ_injective": (lambda: tablet("S"), "Axiom Tablet: S is injective"),
     "prime_core": (prime_core, "Prime Core"),
     "paradox_junk": (paradox_junk, "Paradox Junk"),
+    "graph_lens": (lambda: lens(), "Graph Lens"),
 }
 
 LANG = {
@@ -355,12 +408,46 @@ LANG = {
     "status.axiomatic.conjecture_active": "Active, paying upkeep",
     "status.axiomatic.conjecture_dormant": "Dormant: no energy for upkeep",
     "message.axiomatic.disaster": "Disaster! Conjecture %s is refuted by the counterexample %s",
+    "slot.axiomatic.test_subject": "Numeral to certify, or statement to test",
+    "slot.axiomatic.test_bound": "Bound numeral (range mode)",
+    "status.axiomatic.needs_bound": "Range mode needs a bound numeral in the third slot",
+    "status.axiomatic.too_many_cases": "Too many cases (%s): lower the bound",
+    "status.axiomatic.not_computable": "This statement cannot be computed",
+    "status.axiomatic.tested": "Tested up to %s (%s cases)",
+    "status.axiomatic.counterexample": "Refuted! Counterexample %s",
+    "status.axiomatic.inconclusive": "Inconclusive at %s",
+    "status.axiomatic.already_proven": "Already proven",
+    "status.axiomatic.outside_tested": "Inputs above the tested range (%s)",
+    "message.axiomatic.lens_nothing": "Hold a numeral, circuit or statement in your other hand",
+    "message.axiomatic.lens_header": "Pointed graph: %s nodes (● = the point)",
+    "message.axiomatic.lens_more": "… and %s more nodes",
+    "library.axiomatic.header": "=== Library ===",
+    "library.axiomatic.definitions": "Definitions",
+    "library.axiomatic.kind.property": "  property",
+    "library.axiomatic.kind.recursive": "  by recursion",
+    "library.axiomatic.kind.explicit": "  explicit",
+    "library.axiomatic.theorems": "Named theorems",
+    "library.axiomatic.uses": "  (%s dependencies, %s steps)",
+    "library.axiomatic.conjectures": "Conjectures",
+    "library.axiomatic.state.active": "[active]",
+    "library.axiomatic.state.dormant": "[dormant]",
+    "library.axiomatic.state.proven": "[proven]",
+    "library.axiomatic.state.refuted": "[REFUTED]",
+    "library.axiomatic.postmortem": " counterexample: %s",
+    "library.axiomatic.statuses": "Statuses",
+    "library.axiomatic.tested": "Tested up to %s",
+    "library.axiomatic.proven": "Proven",
+    "library.axiomatic.refuted": "Refuted at %s",
+    "library.axiomatic.unknown": "Unknown",
+    "block.axiomatic.library": "Library",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
 
 def main():
     lang = dict(LANG)
+    for i, page in enumerate(NOTEBOOK, start=1):
+        lang[f"notebook.axiomatic.page.{i}"] = page
     pickaxe = []
     for name, (family, glyph, display) in MACHINES.items():
         save(casing(family, glyph), os.path.join(ASSETS, "textures", "block", name + ".png"))
@@ -372,6 +459,21 @@ def main():
                    {"model": {"type": "minecraft:model", "model": f"{NS}:block/{name}"}})
         lang[f"block.{NS}.{name}"] = display
         pickaxe.append(f"{NS}:{name}")
+
+    # Library: a plain block with a bookshelf-like texture.
+    save(library_texture(), os.path.join(ASSETS, "textures", "block", "library.png"))
+    write_json(os.path.join(ASSETS, "models", "block", "library.json"),
+               {"parent": "minecraft:block/cube_all", "textures": {"all": f"{NS}:block/library"}})
+    write_json(os.path.join(ASSETS, "blockstates", "library.json"), {"variants": {"": {"model": f"{NS}:block/library"}}})
+    write_json(os.path.join(ASSETS, "items", "library.json"),
+               {"model": {"type": "minecraft:model", "model": f"{NS}:block/library"}})
+    write_json(os.path.join(DATA, "loot_table", "blocks", "library.json"), {
+        "type": "minecraft:block",
+        "pools": [{"rolls": 1, "bonus_rolls": 0, "conditions": [{"condition": "minecraft:survives_explosion"}],
+                   "entries": [{"type": "minecraft:item", "name": f"{NS}:library"}]}],
+        "random_sequence": f"{NS}:blocks/library"})
+    write_json(os.path.join(ROOT, "data", "minecraft", "tags", "block", "mineable", "axe.json"),
+               {"replace": False, "values": [f"{NS}:library"]})
 
     # Cable: a thin cube in the middle of the block.
     save(cable(), os.path.join(ASSETS, "textures", "block", "copper_cable.png"))
@@ -460,6 +562,9 @@ def main():
            {"B": board, "O": "minecraft:observer", "K": "minecraft:lapis_block"})
     shaped("conjunction_press", ["PBP", "LLL"], {"B": board, "P": "minecraft:piston", "L": "minecraft:lapis_lazuli"})
     shaped("modus_ponens_press", ["LBL", "PPP"], {"B": board, "P": "minecraft:piston", "L": "minecraft:lapis_lazuli"})
+    shaped("library", ["BBB", "LCL", "BBB"],
+           {"B": "minecraft:bookshelf", "L": "minecraft:lectern", "C": board})
+    shaped("graph_lens", ["S", "C"], {"S": "minecraft:spyglass", "C": "minecraft:copper_ingot"}, category="misc")
     shaped("conjecture_bench", ["AAA", "LBL", "AAA"],
            {"A": "minecraft:amethyst_shard", "L": "minecraft:lapis_lazuli", "B": board})
     shaped("compiled_machine", ["CBC", "BRB", "CBC"],

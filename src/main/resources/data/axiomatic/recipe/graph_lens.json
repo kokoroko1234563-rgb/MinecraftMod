@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": "minecraft:spyglass",
+    "C": "minecraft:copper_ingot"
+  },
+  "pattern": [
+    "S",
+    "C"
+  ],
+  "result": {
+    "id": "axiomatic:graph_lens",
+    "count": 1
+  }
+}

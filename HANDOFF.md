@@ -46,6 +46,9 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `machine/ConjectureBlockEntity`, `reasoning/ConjectureBenchBlockEntity` | Conjectures: bench makes the card + block; block pays upkeep, goes dormant, fails on refutation |
 | `risk/Paradox` | Cascade: items depending on a refuted conjecture turn to paradox junk; crafted parts record conjectures (`axiomatic:depends`) |
 | `AxiomaticConfig` | `disasterBlockDamage` (default false), `conjectureUpkeep` |
+| `block/LibraryBlock` | Library: use it to list definitions, theorems, conjectures (with post-mortems) and statuses in chat |
+| `item/GraphLensItem` | Graph Lens: shows the pointed graph of the item in the other hand |
+| `book/Notebook` | The Notebook, given on first join: a vanilla written book whose pages are lang keys `notebook.axiomatic.page.N` (placeholder until Modonomicon is reachable) |
 | `client/` | `MachineScreen` (drawn with rectangles, no texture), screen registration |
 | `gametest/AxiomaticGameTests` | In-world tests on an empty stage structure |
 | `src/test/java/...` | JUnit tests. `KernelTest` proves zero_add (exactly the doc's 6 steps), succ_add, add_comm and "Double outputs evens", and checks that cheats are refused |
@@ -102,7 +105,9 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
       blocks, Equation/Property/Witness Bench, Axiom Tablets, Instantiator, Rewriter, Assumption
       Chamber (assume, ∃-open, discharge), Induction Engine, Conjunction/Modus Ponens Press.
       Game tests prove zero_add and "Double outputs evens" with the real machines.
-      Not yet: Conjecture Bench, Graph Lens, Library block, Statement Conveyor, Test Bench range mode
+      Also done: Conjecture Bench, Graph Lens, Library block, Test Bench range mode (Tested
+      statements work as cards inside their range). Not yet: Statement Conveyor (hoppers already
+      move statement items), Containment Chamber
 - [~] Compact blocks: Compiled Machine runs any defined function with theorem cards (proven,
       closure, or conjectural with background checks). Not yet: inspect, typed-port enforcement,
       cards slotted into other machines
@@ -131,7 +136,9 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 ## Suggested next steps
 
-1. Library block (lists named theorems, conjectures, statuses), Test Bench range mode.
-2. Statement Conveyor (unlocks after zero_add), containment chamber.
+1. Statement Conveyor (unlocks after zero_add), Containment Chamber multiblock.
+2. Structures in the core: monoid / equivalence / order certificates and the fast-powering
+   theorem "for any monoid" (needed from prime path stage 2).
+3. A real GUI for the Library (it prints to chat now).
 3. Notebook (Modonomicon) given on first join: needs `maven.blamejared.com`/`modmaven.dev` allowed.
 4. Theorem cards and compact blocks; Prime Core recipe; Graph Lens.

@@ -17,6 +17,8 @@ import io.github.kokoroko1234563.axiomatic.machine.CompiledMachineBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.ConjectureBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.reasoning.ConjectureBenchBlockEntity;
 import io.github.kokoroko1234563.axiomatic.item.RiskyItem;
+import io.github.kokoroko1234563.axiomatic.item.GraphLensItem;
+import io.github.kokoroko1234563.axiomatic.block.LibraryBlock;
 import io.github.kokoroko1234563.axiomatic.machine.DuplicatorBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.MachineBlock;
 import io.github.kokoroko1234563.axiomatic.machine.MachineBlockEntity;
@@ -123,6 +125,8 @@ public final class ModRegistries {
     public static final DeferredItem<Item> CIRCUIT_BOARD = tab(ITEMS.registerItem("circuit_board", RiskyItem::new));
     public static final DeferredItem<Item> PRIME_CORE = tab(ITEMS.registerItem("prime_core", RiskyItem::new));
     public static final DeferredItem<Item> PARADOX_JUNK = tab(ITEMS.registerSimpleItem("paradox_junk"));
+    public static final DeferredItem<GraphLensItem> GRAPH_LENS = tab(ITEMS.registerItem("graph_lens", GraphLensItem::new,
+            p -> p.stacksTo(1)));
 
     // ---- Blocks ---------------------------------------------------------------------------
 
@@ -131,8 +135,12 @@ public final class ModRegistries {
     public static final DeferredBlock<CableBlock> COPPER_CABLE = BLOCKS.registerBlock("copper_cable", CableBlock::new,
             p -> p.mapColor(MapColor.COLOR_ORANGE).strength(0.5f).sound(SoundType.COPPER).noOcclusion());
 
+    public static final DeferredBlock<LibraryBlock> LIBRARY = BLOCKS.registerBlock("library", LibraryBlock::new,
+            p -> p.mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD));
+
     static {
         tab(ITEMS.registerSimpleBlockItem(COPPER_CABLE));
+        tab(ITEMS.registerSimpleBlockItem(LIBRARY));
     }
 
     // Computation (copper).

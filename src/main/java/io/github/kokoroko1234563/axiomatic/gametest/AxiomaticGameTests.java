@@ -49,6 +49,7 @@ public final class AxiomaticGameTests {
         test("double_outputs_evens_by_machines", ProofGameTests::doubleOutputsEvensByMachines);
         test("two_n_plus_one_trap", TrapGameTests::twoNPlusOneTrap);
         test("theorem_card_certifies_outputs", TrapGameTests::theoremCardCertifiesOutputs);
+        test("test_bench_range_mode", AxiomaticGameTests::testBenchRangeMode);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -137,6 +138,23 @@ public final class AxiomaticGameTests {
             NumeralData a = numeralIn(dup, 1);
             h.assertTrue(a != null && a.hasProperty("Even", false), "copies keep certificates");
         });
+    }
+
+    private static void testBenchRangeMode(GameTestHelper h) {
+        MachineBlockEntity bench = powered(h, ModRegistries.TEST_BENCH.get(), MachineBlockEntity.class);
+        var state = io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(h.getLevel().getServer()).state();
+        var printer = new io.github.kokoroko1234563.axiomatic.core.logic.Printer(state.signature());
+        var a = io.github.kokoroko1234563.axiomatic.core.logic.Term.var("a");
+        var b = io.github.kokoroko1234563.axiomatic.core.logic.Term.var("b");
+        var comm = io.github.kokoroko1234563.axiomatic.core.logic.Formula.eq(
+                io.github.kokoroko1234563.axiomatic.core.logic.Term.app("add", a, b),
+                io.github.kokoroko1234563.axiomatic.core.logic.Term.app("add", b, a));
+        bench.setItem(0, io.github.kokoroko1234563.axiomatic.item.MathItems.statementStack(
+                io.github.kokoroko1234563.axiomatic.item.StatementData.unproven(comm, printer)));
+        bench.setItem(2, NumeralItem.stack(NumeralData.of(6), 1));
+        h.succeedWhen(() -> h.assertTrue(state.library().status(comm)
+                instanceof io.github.kokoroko1234563.axiomatic.core.knowledge.Library.Tested t
+                && t.upTo().intValue() == 6, "a + b = b + a should be Tested up to 6; status: " + bench.status().getString()));
     }
 
     private static void circuitBoardNeedsCertifiedEvens(GameTestHelper h) {

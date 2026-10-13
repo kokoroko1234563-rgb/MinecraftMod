@@ -142,10 +142,18 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
      */
     private Fact certify(ServerLevel level, MathState state, String f, StatementData card, List<NumeralData> inputs,
             Evaluator evaluator, BigInteger output) {
-        if (!card.proven() || !card.hypotheses().isEmpty()) {
+        Library library = state.library();
+        BigInteger testedUpTo = null;
+        if (!card.proven()) {
+            // A Tested statement works as a card inside its tested range.
+            if (library.status(card.formula()) instanceof Library.Tested t) {
+                testedUpTo = t.upTo();
+            } else {
+                throw new ProofException(Component.translatable("status.axiomatic.card_unproven").getString());
+            }
+        } else if (!card.hypotheses().isEmpty()) {
             throw new ProofException(Component.translatable("status.axiomatic.card_unproven").getString());
         }
-        Library library = state.library();
         Set<String> refuted = library.refuted(Set.copyOf(card.dependencies()));
         if (!refuted.isEmpty()) {
             throw new ProofException(Component.translatable("status.axiomatic.card_refuted", String.join(", ", refuted)).getString());
@@ -170,6 +178,14 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
         Map<String, BigInteger> assignment = new HashMap<>();
         for (int i = 0; i < app.args().size(); i++) {
             assignment.put(((Term.Var) app.args().get(i)).name(), inputs.get(i).value());
+        }
+        if (testedUpTo != null) {
+            for (BigInteger v : assignment.values()) {
+                if (v.compareTo(testedUpTo) > 0) {
+                    throw new ProofException(Component.translatable("status.axiomatic.outside_tested",
+                            testedUpTo.toString()).getString());
+                }
+            }
         }
         List<Fact> premises = new ArrayList<>();
         inputs.forEach(n -> premises.addAll(n.facts()));

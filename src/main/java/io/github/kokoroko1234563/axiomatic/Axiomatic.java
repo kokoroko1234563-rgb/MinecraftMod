@@ -12,6 +12,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 import io.github.kokoroko1234563.axiomatic.risk.Paradox;
+import io.github.kokoroko1234563.axiomatic.book.Notebook;
 
 /**
  * Mod entry point. Game-side code (blocks, items, machines) lives in this package and its
@@ -28,5 +29,6 @@ public class Axiomatic {
         AxiomaticGameTests.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, AxiomaticConfig.SPEC);
         NeoForge.EVENT_BUS.addListener(Paradox::onCrafted);
+        NeoForge.EVENT_BUS.addListener(Notebook::onLogin);
     }
 }
