@@ -25,6 +25,7 @@
     "axiomatic:infinite_prime_well",
     "axiomatic:factorization_vault",
     "axiomatic:certificate_sorter",
+    "axiomatic:courier_station",
     "axiomatic:conjecture_bench",
     "axiomatic:conjecture_block",
     "axiomatic:statement_conveyor",

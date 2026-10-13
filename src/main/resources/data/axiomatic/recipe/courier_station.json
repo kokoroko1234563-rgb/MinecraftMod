@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "M": "minecraft:minecart",
+    "H": "minecraft:hopper",
+    "B": "axiomatic:circuit_board"
+  },
+  "pattern": [
+    "CMC",
+    "HBH",
+    "CCC"
+  ],
+  "result": {
+    "id": "axiomatic:courier_station",
+    "count": 1
+  }
+}

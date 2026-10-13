@@ -56,6 +56,29 @@ public final class EnergyNetwork {
             return degrees.values().stream().allMatch(d -> d % 2 == 0);
         }
 
+        /**
+         * Whether the cables alone have an Euler circuit: connected (by construction), with a
+         * cycle, and every cable joined to an even number of other cables. A courier can then walk
+         * every cable exactly once and come back, passing each machine on the way.
+         */
+        public boolean eulerian() {
+            if (cables.size() < 3) {
+                return false;
+            }
+            for (BlockPos c : cables) {
+                int n = 0;
+                for (Direction d : Direction.values()) {
+                    if (cables.contains(c.relative(d))) {
+                        n++;
+                    }
+                }
+                if (n % 2 != 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /** Identifies this exact network; any added or removed cable or machine changes it. */
         public long signature() {
             long h = 1125899906842597L;

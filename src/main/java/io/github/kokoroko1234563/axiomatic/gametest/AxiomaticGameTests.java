@@ -68,6 +68,8 @@ public final class AxiomaticGameTests {
         test("add_comm_speed_card", SpeedCardGameTest::addCommSwapsInputs);
         test("conjectured_speed_card_refused", SpeedCardGameTest::conjecturedSymmetryIsRefused);
         test("certificate_sorter_splits_by_property", AxiomaticGameTests::sorterSplitsByProperty);
+        test("courier_runs_on_eulerian_networks", AxiomaticGameTests::courierRunsOnEulerianNetworks);
+        test("courier_refuses_odd_networks", AxiomaticGameTests::courierRefusesOddNetworks);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -346,6 +348,52 @@ public final class AxiomaticGameTests {
                     h.assertValueEqual(side, 3, "uncertified numerals beside");
                 })
                 .thenSucceed();
+    }
+
+    /**
+     * A ring of eight cables at y = 1 around (2, 2); a Courier inside the ring at (2,1,2), a
+     * Surveyor on top at (1,2,1) and a Successor on top at (3,2,3). Every cable has two cable
+     * neighbours. With {@code spur}, one more cable hangs off the ring: a loose end.
+     */
+    private static MachineBlockEntity courierRing(GameTestHelper h, boolean spur) {
+        for (int[] c : new int[][] {{1, 1}, {2, 1}, {3, 1}, {3, 2}, {3, 3}, {2, 3}, {1, 3}, {1, 2}}) {
+            h.setBlock(new BlockPos(c[0], 1, c[1]), ModRegistries.COPPER_CABLE.get());
+        }
+        if (spur) {
+            h.setBlock(new BlockPos(0, 1, 2), ModRegistries.COPPER_CABLE.get());
+        }
+        BlockPos courier = new BlockPos(2, 1, 2);
+        h.setBlock(courier, ModRegistries.COURIER_STATION.get());
+        h.setBlock(new BlockPos(1, 2, 1), ModRegistries.NETWORK_SURVEYOR.get());
+        h.setBlock(new BlockPos(3, 2, 3), ModRegistries.SUCCESSOR.get());
+        h.getBlockEntity(new BlockPos(1, 2, 1), MachineBlockEntity.class).receiveEnergy(10_000);
+        MachineBlockEntity station = h.getBlockEntity(courier, MachineBlockEntity.class);
+        station.receiveEnergy(station.capacity());
+        station.setItem(0, NumeralItem.stack(NumeralData.of(4), 2));
+        return station;
+    }
+
+    private static void courierRunsOnEulerianNetworks(GameTestHelper h) {
+        MachineBlockEntity station = courierRing(h, false);
+        MachineBlockEntity successor = h.getBlockEntity(new BlockPos(3, 2, 3), MachineBlockEntity.class);
+        var level = h.getLevel();
+        h.succeedWhen(() -> {
+            var graph = io.github.kokoroko1234563.axiomatic.energy.EnergyNetwork.graph(level, h.absolutePos(new BlockPos(2, 1, 2)));
+            h.assertTrue(graph.eulerian(), "the ring is Eulerian");
+            h.assertTrue(io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level).isCertifiedEulerian(graph.signature()),
+                    "the surveyor certifies the ring");
+            h.assertTrue(station.getItem(0).isEmpty(), "the courier delivered both numerals; status: " + station.status().getString());
+            h.assertTrue(!successor.getItem(0).isEmpty() || !successor.getItem(1).isEmpty(), "the successor got its input");
+        });
+    }
+
+    private static void courierRefusesOddNetworks(GameTestHelper h) {
+        MachineBlockEntity station = courierRing(h, true);
+        h.runAfterDelay(80, () -> {
+            h.assertValueEqual(station.getItem(0).getCount(), 2, "nothing delivered without an Euler certificate");
+            h.assertTrue(station.status().getString().contains("Eulerian"), "status: " + station.status().getString());
+            h.succeed();
+        });
     }
 
     private static void surveyorCertifiesTrees(GameTestHelper h) {

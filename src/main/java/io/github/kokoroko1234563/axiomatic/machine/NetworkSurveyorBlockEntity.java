@@ -66,9 +66,13 @@ public class NetworkSurveyorBlockEntity extends MachineBlockEntity {
         if (tree) {
             NetworkData.get(level).certifyTree(graph.signature());
         }
+        if (graph.eulerian()) {
+            // The cables have an Euler circuit: every cable has an even number of cable neighbours.
+            NetworkData.get(level).certifyEulerian(graph.signature());
+        }
         report = Component.translatable("label.axiomatic.network", graph.nodes(), graph.edges());
         Component status = Component.translatable(tree ? "status.axiomatic.network_tree" : "status.axiomatic.network_cycles",
-                graph.edges() - graph.nodes() + 1).append(Component.translatable(graph.allDegreesEven()
+                graph.edges() - graph.nodes() + 1).append(Component.translatable(graph.eulerian()
                         ? "status.axiomatic.network_even" : "status.axiomatic.network_odd"));
         if (graph.alternating()) {
             // The player's phases are the claimed two-colouring; check every edge joins different ones.

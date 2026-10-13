@@ -147,6 +147,7 @@ NOTEBOOK = [
     "Structures\n\nThe Structure Bench shows the axioms of monoids, equivalences and orders. Prove a theorem once for any monoid, certify an operation's three laws, and apply the theorem to it for free.",
     "Monoids on a set\n\nSetMonoid is a monoid on a set A: e is in A, A is closed, and each law assumes its inputs are in A. Multiplication mod n needs it, since 1 is its identity only below n.",
     "Factories\n\nThe Statement Conveyor moves statements and circuits between machines; it needs a proven 0 + n = n to craft. The Duplicator copies statements for 1 unit. Every step still costs energy.",
+    "Couriers\n\nIf every cable touches an even number of other cables (a loop with no loose ends), an Euler circuit walks each cable once. The Surveyor certifies it, and a Courier Station there delivers its items to every machine in turn.",
     "Sorting\n\nThe Certificate Sorter splits a stream of numerals by a property in its filter slot, like Even(n): certified ones drop out below into a hopper, the rest are pushed out the sides.",
     "Safety\n\nAn unpowered conjecture block goes dormant: safe, but its cards stop working. Seal a conjecture block in obsidian or tinted glass near a Containment Controller to keep its failure harmless.",
     "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
@@ -272,6 +273,7 @@ MACHINES = {
     "infinite_prime_well": ("gold", "W", "Infinite Prime Well"),
     "factorization_vault": ("gold", "V", "Factorization Vault"),
     "certificate_sorter": ("iron", "Y", "Certificate Sorter"),
+    "courier_station": ("copper", "E", "Courier Station"),
     "conjecture_bench": ("purple", "?", "Conjecture Bench"),
     "conjecture_block": ("purple", "!", "Conjecture Block"),
 }
@@ -531,6 +533,10 @@ LANG = {
     "button.axiomatic.certificates": "Strict",
     "label.axiomatic.sorts_proven": "Sorts by %s (proven only)",
     "label.axiomatic.sorts_any": "Sorts by %s (any cert.)",
+    "slot.axiomatic.cargo": "Cargo for the machines on the network",
+    "status.axiomatic.courier_needs_euler": "Needs a network surveyed as Eulerian: every cable joined to an even number of cables",
+    "status.axiomatic.courier_delivered": "Delivering to %s machines",
+    "status.axiomatic.courier_nowhere": "No machine on the network takes this item",
     "status.axiomatic.needs_filter": "Put a property statement like Even(n) in the filter slot",
     "slot.axiomatic.conjecture_statement": "Unproven statement, renamed in an anvil",
     "status.axiomatic.too_many_ports": "%s has more than 3 inputs",
@@ -630,8 +636,8 @@ LANG = {
     "message.axiomatic.phase_b": "Cable phase B",
     "status.axiomatic.network_tree": "A tree (%s cycles): certified, lossless. ",
     "status.axiomatic.network_cycles": "Not a tree: %s independent cycles, energy is lost. ",
-    "status.axiomatic.network_even": "All degrees even.",
-    "status.axiomatic.network_odd": "Some degrees odd.",
+    "status.axiomatic.network_even": "Every cable has an even number of cable neighbours: Eulerian, certified for couriers.",
+    "status.axiomatic.network_odd": "Some cable has an odd number of cable neighbours.",
     "status.axiomatic.burning_lossless": "Burning (lossless tree network)",
     "label.axiomatic.well_last": "Last prime: %s",
     "status.axiomatic.well_stuck": "Cannot decide the next prime (out of energy or computation)",
@@ -817,6 +823,8 @@ def main():
            {"O": "minecraft:obsidian", "T": "minecraft:tinted_glass", "B": board})
     shaped("structure_bench", ["QBQ", "BKB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "K": "minecraft:lapis_block"})
+    shaped("courier_station", ["CMC", "HBH", "CCC"],
+           {"C": "minecraft:copper_ingot", "M": "minecraft:minecart", "H": "minecraft:hopper", "B": board})
     shaped("certificate_sorter", ["IHI", "CBC", "III"],
            {"I": "minecraft:iron_ingot", "H": "minecraft:hopper", "C": "minecraft:comparator", "B": board})
     shaped("network_surveyor", ["CMC", "OBO", "CCC"],

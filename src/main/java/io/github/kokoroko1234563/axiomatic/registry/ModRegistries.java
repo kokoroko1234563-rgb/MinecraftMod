@@ -227,6 +227,9 @@ public final class ModRegistries {
     public static final Machine<io.github.kokoroko1234563.axiomatic.machine.CertificateSorterBlockEntity> CERTIFICATE_SORTER =
             machine("certificate_sorter", MapColor.COLOR_LIGHT_BLUE,
                     io.github.kokoroko1234563.axiomatic.machine.CertificateSorterBlockEntity::new);
+    public static final Machine<io.github.kokoroko1234563.axiomatic.machine.CourierStationBlockEntity> COURIER_STATION =
+            machine("courier_station", MapColor.COLOR_ORANGE,
+                    io.github.kokoroko1234563.axiomatic.machine.CourierStationBlockEntity::new);
     public static final Machine<FactorizationVaultBlockEntity> FACTORIZATION_VAULT = machine("factorization_vault",
             MapColor.GOLD, FactorizationVaultBlockEntity::new);
     public static final Machine<PrimeForgeBlockEntity> PRIME_FORGE = machine("prime_forge",
