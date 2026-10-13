@@ -66,12 +66,13 @@ public class CourierStationBlockEntity extends MachineBlockEntity {
             setStatus(Component.empty());
             return;
         }
-        EnergyNetwork.Graph graph = EnergyNetwork.graph(level, worldPosition);
-        if (graph.cables().isEmpty()) {
+        List<EnergyNetwork.Graph> networks = EnergyNetwork.networks(level, worldPosition);
+        if (networks.isEmpty()) {
             setStatus(Component.translatable("status.axiomatic.no_network"));
             return;
         }
-        if (!NetworkData.get(level).isCertifiedEulerian(graph.signature())) {
+        NetworkData certs = NetworkData.get(level);
+        if (!networks.stream().allMatch(g -> certs.isCertifiedEulerian(g.signature()))) {
             setStatus(Component.translatable("status.axiomatic.courier_needs_euler"));
             return;
         }
@@ -79,7 +80,7 @@ public class CourierStationBlockEntity extends MachineBlockEntity {
             setStatus(Component.translatable("status.axiomatic.no_energy"));
             return;
         }
-        List<BlockPos> stops = new ArrayList<>(graph.machines());
+        List<BlockPos> stops = new ArrayList<>(networks.stream().flatMap(g -> g.machines().stream()).distinct().toList());
         stops.remove(worldPosition);
         stops.sort(Comparator.comparingLong(BlockPos::asLong));
         // One visit per run: the next machine that takes the item.

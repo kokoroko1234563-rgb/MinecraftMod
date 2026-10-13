@@ -81,13 +81,16 @@ public class CoalDynamoBlockEntity extends MachineBlockEntity {
         if (level.getGameTime() % 20 == 0) {
             // Certificates from a Network Surveyor: a tree transfers without loss; a two-coloured
             // network with both phases runs alternating power. Mixed phases without one short out.
-            EnergyNetwork.Graph graph = EnergyNetwork.graph(level, worldPosition);
-            var networks = io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level);
-            lossless = networks.isCertifiedTree(graph.signature());
-            boolean certified = graph.alternating() && networks.isCertifiedBipartite(graph.signature());
+            // Each network the dynamo touches is judged by its own certificates.
+            var certs = io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level);
+            List<EnergyNetwork.Graph> networks = EnergyNetwork.networks(level, worldPosition);
+            lossless = !networks.isEmpty() && networks.stream().allMatch(g -> certs.isCertifiedTree(g.signature()));
+            boolean anyAlternating = networks.stream().anyMatch(EnergyNetwork.Graph::alternating);
+            boolean allCertified = networks.stream()
+                    .allMatch(g -> !g.alternating() || certs.isCertifiedBipartite(g.signature()));
             boolean wasShorted = shorted;
-            shorted = graph.alternating() && !certified;
-            alternating = certified;
+            shorted = anyAlternating && !allCertified;
+            alternating = anyAlternating && allCertified;
             consumers = EnergyNetwork.consumers(level, worldPosition, lossless);
             if (shorted) {
                 // Only machines touching the dynamo still get power (a Surveyor there can check the

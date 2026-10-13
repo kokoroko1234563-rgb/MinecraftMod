@@ -224,8 +224,6 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 ## Known minor issues (from a code review, not fixed)
 
-- A Coal Dynamo touching two separate cable networks hashes them as one graph, so a Surveyor
-  (which sees one network) can never certify it; with mixed phases it stays shorted.
 - A hopper that feeds a Certificate Sorter's rejects back into it loops them (1 unit per pass).
 
 ## Suggested next steps

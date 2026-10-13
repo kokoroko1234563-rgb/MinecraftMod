@@ -116,13 +116,41 @@ public final class EnergyNetwork {
         }
     }
 
-    /** The cable graph reachable through cables touching {@code start}. */
+    /** The cable graph reachable through cables touching {@code start} (all its networks together). */
     public static Graph graph(Level level, BlockPos start) {
-        Set<BlockPos> cables = new HashSet<>();
-        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        List<BlockPos> seeds = new ArrayList<>();
         for (Direction d : Direction.values()) {
             BlockPos n = start.relative(d);
-            if (isCable(level, n) && cables.add(n.immutable())) {
+            if (isCable(level, n)) {
+                seeds.add(n.immutable());
+            }
+        }
+        return graphFrom(level, seeds);
+    }
+
+    /**
+     * Each separate cable network touching {@code start}, as its own graph. Certificates belong to
+     * one network, so a block touching two networks checks each.
+     */
+    public static List<Graph> networks(Level level, BlockPos start) {
+        List<Graph> out = new ArrayList<>();
+        Set<BlockPos> seen = new HashSet<>();
+        for (Direction d : Direction.values()) {
+            BlockPos n = start.relative(d).immutable();
+            if (isCable(level, n) && !seen.contains(n)) {
+                Graph g = graphFrom(level, List.of(n));
+                seen.addAll(g.cables());
+                out.add(g);
+            }
+        }
+        return out;
+    }
+
+    private static Graph graphFrom(Level level, List<BlockPos> seeds) {
+        Set<BlockPos> cables = new HashSet<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        for (BlockPos n : seeds) {
+            if (cables.add(n)) {
                 queue.add(n);
             }
         }

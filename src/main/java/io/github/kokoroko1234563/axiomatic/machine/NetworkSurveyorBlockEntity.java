@@ -44,24 +44,8 @@ public class NetworkSurveyorBlockEntity extends MachineBlockEntity {
         requested = true;
     }
 
-    @Override
-    protected Job tryStartJob(ServerLevel level) {
-        // Survey on request, and every 10 seconds so a changed network is noticed.
-        if (!requested && level.getGameTime() % 200 != 0) {
-            return null;
-        }
-        EnergyNetwork.Graph graph = EnergyNetwork.graph(level, worldPosition);
-        if (graph.cables().isEmpty()) {
-            setStatus(Component.translatable("status.axiomatic.no_network"));
-            requested = false;
-            return null;
-        }
-        long cost = (long) graph.nodes() * ENERGY_PER_NODE;
-        if (energy < cost) {
-            setStatus(Component.translatable("status.axiomatic.no_energy"));
-            return null;
-        }
-        requested = false;
+    /** Certifies what can be certified about one network and describes it. */
+    private static Component survey(ServerLevel level, EnergyNetwork.Graph graph) {
         boolean tree = graph.isTree();
         if (tree) {
             NetworkData.get(level).certifyTree(graph.signature());
@@ -70,7 +54,6 @@ public class NetworkSurveyorBlockEntity extends MachineBlockEntity {
             // The cables have an Euler circuit: every cable has an even number of cable neighbours.
             NetworkData.get(level).certifyEulerian(graph.signature());
         }
-        report = Component.translatable("label.axiomatic.network", graph.nodes(), graph.edges());
         Component status = Component.translatable(tree ? "status.axiomatic.network_tree" : "status.axiomatic.network_cycles",
                 graph.edges() - graph.nodes() + 1).append(Component.translatable(graph.eulerian()
                         ? "status.axiomatic.network_even" : "status.axiomatic.network_odd"));
@@ -83,6 +66,36 @@ public class NetworkSurveyorBlockEntity extends MachineBlockEntity {
                 BlockPos at = graph.clash().getFirst();
                 status = status.copy().append(Component.translatable("status.axiomatic.network_clash",
                         at.getX(), at.getY(), at.getZ()));
+            }
+        }
+        return status;
+    }
+
+    @Override
+    protected Job tryStartJob(ServerLevel level) {
+        // Survey on request, and every 10 seconds so a changed network is noticed.
+        if (!requested && level.getGameTime() % 200 != 0) {
+            return null;
+        }
+        List<EnergyNetwork.Graph> networks = EnergyNetwork.networks(level, worldPosition);
+        if (networks.isEmpty()) {
+            setStatus(Component.translatable("status.axiomatic.no_network"));
+            requested = false;
+            return null;
+        }
+        long cost = (long) networks.stream().mapToInt(EnergyNetwork.Graph::nodes).sum() * ENERGY_PER_NODE;
+        if (energy < cost) {
+            setStatus(Component.translatable("status.axiomatic.no_energy"));
+            return null;
+        }
+        requested = false;
+        // Each network it touches is surveyed and certified on its own; the report shows the first.
+        Component status = null;
+        for (EnergyNetwork.Graph graph : networks) {
+            Component line = survey(level, graph);
+            if (status == null) {
+                status = line;
+                report = Component.translatable("label.axiomatic.network", graph.nodes(), graph.edges());
             }
         }
         setStatus(status);

@@ -72,6 +72,7 @@ public final class AxiomaticGameTests {
         test("courier_refuses_odd_networks", AxiomaticGameTests::courierRefusesOddNetworks);
         test("pipes_see_machine_inventories", AxiomaticGameTests::pipesSeeMachineInventories);
         test("notebook_pages_unlock", AxiomaticGameTests::notebookPagesUnlock);
+        test("dynamo_judges_each_network", AxiomaticGameTests::dynamoJudgesEachNetwork);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -312,6 +313,19 @@ public final class AxiomaticGameTests {
                     "the surveyor touching the dynamo certifies the colouring");
             h.assertTrue(dynamo.alternating() && !dynamo.shorted(), "the dynamo runs alternating power");
             h.assertTrue(numeralIn(successor, 1) != null, "the successor ran on it");
+        });
+    }
+
+    /** A second, plain network on the dynamo's other side does not spoil the first one's certificate. */
+    private static void dynamoJudgesEachNetwork(GameTestHelper h) {
+        var dynamo = phased(h, false);
+        h.setBlock(new BlockPos(1, 1, 0), ModRegistries.COPPER_CABLE.get());
+        h.setBlock(new BlockPos(0, 1, 0), ModRegistries.COPPER_CABLE.get());
+        var level = h.getLevel();
+        h.succeedWhen(() -> {
+            h.assertValueEqual(io.github.kokoroko1234563.axiomatic.energy.EnergyNetwork.networks(level,
+                    h.absolutePos(new BlockPos(1, 1, 1))).size(), 2, "the dynamo touches two networks");
+            h.assertTrue(dynamo.alternating() && !dynamo.shorted(), "the two-coloured network runs alternating power");
         });
     }
 
