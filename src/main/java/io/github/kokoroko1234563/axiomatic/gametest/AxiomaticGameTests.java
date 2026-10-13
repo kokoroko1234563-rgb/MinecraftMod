@@ -50,6 +50,7 @@ public final class AxiomaticGameTests {
         test("two_n_plus_one_trap", TrapGameTests::twoNPlusOneTrap);
         test("theorem_card_certifies_outputs", TrapGameTests::theoremCardCertifiesOutputs);
         test("test_bench_range_mode", AxiomaticGameTests::testBenchRangeMode);
+        test("structure_bench_certify_and_apply", StructureGameTests::certifyAndApply);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {

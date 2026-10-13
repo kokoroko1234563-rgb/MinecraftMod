@@ -44,6 +44,7 @@ GLYPHS = {
     "^": ["     ", "  #  ", " # # ", "#   #", "#   #", "     ", "     "],
     ">": ["     ", "#    ", " ##  ", "   ##", " ##  ", "#    ", "     "],
     "f": ["  ## ", " #   ", " #   ", "#### ", " #   ", " #   ", " #   "],
+    "M": ["#   #", "## ##", "# # #", "#   #", "#   #", "#   #", "#   #"],
     "!": ["  #  ", "  #  ", "  #  ", "  #  ", "  #  ", "     ", "  #  "],
 }
 
@@ -165,6 +166,7 @@ MACHINES = {
     "conjunction_press": ("blue", "^", "Conjunction Press"),
     "modus_ponens_press": ("blue", ">", "Modus Ponens Press"),
     "compiled_machine": ("gold", "f", "Compiled Machine"),
+    "structure_bench": ("blue", "M", "Structure Bench"),
     "conjecture_bench": ("purple", "?", "Conjecture Bench"),
     "conjecture_block": ("purple", "!", "Conjecture Block"),
 }
@@ -440,6 +442,18 @@ LANG = {
     "library.axiomatic.refuted": "Refuted at %s",
     "library.axiomatic.unknown": "Unknown",
     "block.axiomatic.library": "Library",
+    "button.axiomatic.structure": "Structure ▶",
+    "button.axiomatic.axiom": "Axiom ▶",
+    "label.axiomatic.structure_mode": "%s: %s",
+    "label.axiomatic.structure_mode.axioms": "Axioms",
+    "label.axiomatic.structure_mode.certify": "Certify",
+    "label.axiomatic.structure_mode.apply": "Apply",
+    "slot.axiomatic.structure_1": "Law 1, or a generic theorem (Apply)",
+    "slot.axiomatic.structure_2": "Law 2, or a circuit naming the operation (Apply)",
+    "slot.axiomatic.structure_3": "Law 3",
+    "status.axiomatic.certified_structure": "%s certified: %s",
+    "status.axiomatic.needs_design": "Needs a circuit such as add(a, b)",
+    "status.axiomatic.not_certified_structure": "%s is not certified as a %s",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
@@ -567,6 +581,8 @@ def main():
     shaped("graph_lens", ["S", "C"], {"S": "minecraft:spyglass", "C": "minecraft:copper_ingot"}, category="misc")
     shaped("conjecture_bench", ["AAA", "LBL", "AAA"],
            {"A": "minecraft:amethyst_shard", "L": "minecraft:lapis_lazuli", "B": board})
+    shaped("structure_bench", ["QBQ", "BKB", "QBQ"],
+           {"Q": "minecraft:quartz", "B": board, "K": "minecraft:lapis_block"})
     shaped("compiled_machine", ["CBC", "BRB", "CBC"],
            {"C": "minecraft:copper_ingot", "B": board, "R": "minecraft:redstone_block"})
     shaped("prime_core", ["GPG", "PRP", "GPG"], {

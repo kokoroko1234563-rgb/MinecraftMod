@@ -90,7 +90,8 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
     static List<String> functions(Signature signature) {
         List<String> out = new ArrayList<>();
         out.add("S");
-        signature.all().stream().filter(d -> !(d instanceof Definition.Predicate)).forEach(d -> out.add(d.name()));
+        signature.all().stream().filter(d -> Signature.isFunction(d) && !d.name().contains("⟨"))
+                .forEach(d -> out.add(d.name()));
         out.add(RECURSIVE_CALL);
         return out;
     }
@@ -102,7 +103,8 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
 
     @Override
     protected List<Integer> required() {
-        return List.of(0);
+        // Assembling a constant (a function with no inputs) needs no input at all.
+        return mode == Mode.ASSEMBLE ? List.of() : List.of(0);
     }
 
     @Override
@@ -127,6 +129,11 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
         for (int i = 0; i < 3 && !items.get(i).isEmpty(); i++) {
             args.add(ctx.term(i));
             used.add(i);
+        }
+        if (args.isEmpty() && (function.equals("S") || function.equals(RECURSIVE_CALL)
+                || ctx.state().signature().get(function) == null
+                || !ctx.state().signature().get(function).params().isEmpty() || !items.get(3).isEmpty())) {
+            return List.of();
         }
         Term result;
         if (function.equals("S")) {

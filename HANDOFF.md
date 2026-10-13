@@ -49,6 +49,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `block/LibraryBlock` | Library: use it to list definitions, theorems, conjectures (with post-mortems) and statuses in chat |
 | `item/GraphLensItem` | Graph Lens: shows the pointed graph of the item in the other hand |
 | `book/Notebook` | The Notebook, given on first join: a vanilla written book whose pages are lang keys `notebook.axiomatic.page.N` (placeholder until Modonomicon is reachable) |
+| `reasoning/StructureBenchBlockEntity` | Structure Bench: Axioms / Certify (laws → Library certificate) / Apply (generic theorem + circuit naming a certified op) |
 | `client/` | `MachineScreen` (drawn with rectangles, no texture), screen registration |
 | `gametest/AxiomaticGameTests` | In-world tests on an empty stage structure |
 | `src/test/java/...` | JUnit tests. `KernelTest` proves zero_add (exactly the doc's 6 steps), succ_add, add_comm and "Double outputs evens", and checks that cheats are refused |
@@ -145,8 +146,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 ## Suggested next steps
 
 1. Statement Conveyor (unlocks after zero_add), Containment Chamber multiblock.
-2. A Structure Bench in game (show axioms, certify from laws, apply generic theorems); the
-   Rewriter using a certified equivalence (≡ mod n) at prime path stage 5.
+2. The Rewriter using a certified equivalence (≡ mod n) at prime path stage 5; monoids over a
+   subset (closure + relativised laws).
 3. A real GUI for the Library (it prints to chat now).
 3. Notebook (Modonomicon) given on first join: needs `maven.blamejared.com`/`modmaven.dev` allowed.
 4. Theorem cards and compact blocks; Prime Core recipe; Graph Lens.

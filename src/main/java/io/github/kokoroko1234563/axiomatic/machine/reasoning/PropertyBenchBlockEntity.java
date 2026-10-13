@@ -54,7 +54,8 @@ public class PropertyBenchBlockEntity extends ReasoningBlockEntity {
             seal = !seal;
         } else {
             List<String> props = data(level).state().signature().all().stream()
-                    .filter(d -> d instanceof Definition.Predicate).map(Definition::name).toList();
+                    .filter(io.github.kokoroko1234563.axiomatic.core.logic.Signature::isPredicate)
+                    .filter(d -> !d.name().contains("⟨")).map(Definition::name).toList();
             if (!props.isEmpty()) {
                 property = props.get((props.indexOf(property) + 1) % props.size());
             }
@@ -78,7 +79,8 @@ public class PropertyBenchBlockEntity extends ReasoningBlockEntity {
             Formula sealed = Formula.exists(ctx.variable(2), ctx.formula(0));
             return List.of(ctx.unproven(sealed));
         }
-        if (!(ctx.state().signature().get(property) instanceof Definition.Predicate def)) {
+        Definition def = ctx.state().signature().get(property);
+        if (!io.github.kokoroko1234563.axiomatic.core.logic.Signature.isPredicate(def)) {
             throw new ProofException(Component.translatable("status.axiomatic.unknown_property", property).getString());
         }
         List<Term> args = new ArrayList<>();
