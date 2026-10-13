@@ -1,0 +1,150 @@
+[
+  {
+    "page": 1,
+    "requires": null
+  },
+  {
+    "page": 2,
+    "requires": null
+  },
+  {
+    "page": 3,
+    "requires": null
+  },
+  {
+    "page": 4,
+    "requires": null
+  },
+  {
+    "page": 5,
+    "requires": null
+  },
+  {
+    "page": 6,
+    "requires": null
+  },
+  {
+    "page": 7,
+    "requires": null
+  },
+  {
+    "page": 8,
+    "requires": null
+  },
+  {
+    "page": 9,
+    "requires": null
+  },
+  {
+    "page": 10,
+    "requires": "axiomatic:proven"
+  },
+  {
+    "page": 11,
+    "requires": "axiomatic:proven"
+  },
+  {
+    "page": 12,
+    "requires": "axiomatic:proven"
+  },
+  {
+    "page": 13,
+    "requires": "axiomatic:proven"
+  },
+  {
+    "page": 14,
+    "requires": "axiomatic:proven"
+  },
+  {
+    "page": 15,
+    "requires": "axiomatic:proven"
+  },
+  {
+    "page": 16,
+    "requires": "axiomatic:induction"
+  },
+  {
+    "page": 17,
+    "requires": "axiomatic:induction"
+  },
+  {
+    "page": 18,
+    "requires": "axiomatic:induction"
+  },
+  {
+    "page": 19,
+    "requires": "axiomatic:induction"
+  },
+  {
+    "page": 20,
+    "requires": "axiomatic:circuit_board"
+  },
+  {
+    "page": 21,
+    "requires": "axiomatic:prime_core"
+  },
+  {
+    "page": 22,
+    "requires": "axiomatic:named"
+  },
+  {
+    "page": 23,
+    "requires": "axiomatic:named"
+  },
+  {
+    "page": 24,
+    "requires": "axiomatic:induction"
+  },
+  {
+    "page": 25,
+    "requires": "axiomatic:circuit_board"
+  },
+  {
+    "page": 26,
+    "requires": "axiomatic:induction"
+  },
+  {
+    "page": 27,
+    "requires": "axiomatic:conjecture"
+  },
+  {
+    "page": 28,
+    "requires": "axiomatic:prime_forged"
+  },
+  {
+    "page": 29,
+    "requires": "axiomatic:circuit_board"
+  },
+  {
+    "page": 30,
+    "requires": "axiomatic:circuit_board"
+  },
+  {
+    "page": 31,
+    "requires": "axiomatic:prime_forged"
+  },
+  {
+    "page": 32,
+    "requires": "axiomatic:named"
+  },
+  {
+    "page": 33,
+    "requires": "axiomatic:named"
+  },
+  {
+    "page": 34,
+    "requires": "axiomatic:structure"
+  },
+  {
+    "page": 35,
+    "requires": "axiomatic:structure"
+  },
+  {
+    "page": 36,
+    "requires": "axiomatic:prime_well"
+  },
+  {
+    "page": 37,
+    "requires": "axiomatic:conjecture"
+  }
+]

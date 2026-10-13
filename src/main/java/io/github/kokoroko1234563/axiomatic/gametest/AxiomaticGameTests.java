@@ -71,6 +71,7 @@ public final class AxiomaticGameTests {
         test("courier_runs_on_eulerian_networks", AxiomaticGameTests::courierRunsOnEulerianNetworks);
         test("courier_refuses_odd_networks", AxiomaticGameTests::courierRefusesOddNetworks);
         test("pipes_see_machine_inventories", AxiomaticGameTests::pipesSeeMachineInventories);
+        test("notebook_pages_unlock", AxiomaticGameTests::notebookPagesUnlock);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -234,6 +235,23 @@ public final class AxiomaticGameTests {
             h.assertTrue(target.getItem(0).is(ModRegistries.STATEMENT_ITEM.get()), "the statement should arrive");
             h.assertTrue(source.getItem(1).is(Items.DIRT), "other items stay");
         });
+    }
+
+    /** A fresh player's Notebook lacks the gated pages; earning "Q.E.D." adds its pages. */
+    private static void notebookPagesUnlock(GameTestHelper h) {
+        var player = h.makeMockServerPlayerInLevel();
+        player.getInventory().setItem(0, io.github.kokoroko1234563.axiomatic.book.Notebook.create());
+        io.github.kokoroko1234563.axiomatic.book.Notebook.refresh(player);
+        var content = player.getInventory().getItem(0).get(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT);
+        int before = content.pages().size();
+        h.assertTrue(before < io.github.kokoroko1234563.axiomatic.book.Notebook.PAGES, "gated pages are hidden: " + before);
+        var server = h.getLevel().getServer();
+        var proven = server.getAdvancements().get(Identifier.fromNamespaceAndPath(Axiomatic.MODID, "proven"));
+        player.getAdvancements().award(proven, "proven");
+        int after = player.getInventory().getItem(0).get(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT)
+                .pages().size();
+        h.assertValueEqual(after, before + 6, "Q.E.D. unlocks six pages");
+        h.succeed();
     }
 
     private static void milestonesAwardAdvancements(GameTestHelper h) {

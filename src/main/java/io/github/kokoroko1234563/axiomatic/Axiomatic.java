@@ -33,5 +33,6 @@ public class Axiomatic {
         modContainer.registerConfig(ModConfig.Type.COMMON, AxiomaticConfig.SPEC);
         NeoForge.EVENT_BUS.addListener(Paradox::onCrafted);
         NeoForge.EVENT_BUS.addListener(Notebook::onLogin);
+        NeoForge.EVENT_BUS.addListener(Notebook::onAdvancement);
     }
 }

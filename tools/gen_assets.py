@@ -122,6 +122,8 @@ def circuit_board():
     return img
 
 
+NOTEBOOK_GATES = {'Theorem cards': 'proven', 'Speed cards': 'proven', 'Reasoning': 'proven', 'Assumptions': 'proven', 'Opening exists': 'proven', 'Induction': 'proven', 'The Library': 'induction', 'Testing': 'induction', 'Deciders': 'induction', 'Conjectures': 'induction', 'Factories': 'induction', 'Sorting': 'induction', 'Prime Cores': 'circuit_board', 'Networks': 'circuit_board', 'Phases': 'circuit_board', 'Couriers': 'circuit_board', 'Prime Forge': 'prime_core', 'Structures': 'named', 'Monoids on a set': 'named', 'Equivalences': 'named', 'Arithmetic mod n': 'named', 'Safety': 'conjecture', 'Traps': 'conjecture', 'General recursion': 'prime_forged', 'Infinitely many': 'prime_forged', 'Faster machines': 'structure', 'Binary': 'structure', 'Perfect numbers': 'prime_well'}
+
 NOTEBOOK = [
     "The Mathematician's Notebook\n\nEverything here is built from Peano's axioms. Coal pays for energy; mathematics decides how wisely it is spent.",
     "Power\n\nCraft a Coal Dynamo (copper, furnace, redstone) and Copper Cables (3 copper make 8). Machines touching the dynamo or its cables get energy. One coal gives 16,000 units.",
@@ -655,6 +657,16 @@ def main():
     lang = dict(LANG)
     for i, page in enumerate(NOTEBOOK, start=1):
         lang[f"notebook.axiomatic.page.{i}"] = page
+    titles = {page.split("\n")[0] for page in NOTEBOOK}
+    assert set(NOTEBOOK_GATES) <= titles, set(NOTEBOOK_GATES) - titles
+    assert all(any(a[0] == req for a in ADVANCEMENTS) for req in NOTEBOOK_GATES.values())
+    # Which advancement unlocks each page (the server rebuilds Notebooks as they are earned).
+    gates = []
+    for i, page in enumerate(NOTEBOOK, start=1):
+        req = NOTEBOOK_GATES.get(page.split("\n")[0])
+        gates.append({"page": i, "requires": f"{NS}:{req}" if req else None})
+    write_json(os.path.join(DATA, "notebook_pages.json"), gates)
+    lang["notebook.axiomatic.more"] = "More pages appear in this Notebook as you prove things."
     pickaxe = []
     for name, (family, glyph, display) in MACHINES.items():
         save(casing(family, glyph), os.path.join(ASSETS, "textures", "block", name + ".png"))

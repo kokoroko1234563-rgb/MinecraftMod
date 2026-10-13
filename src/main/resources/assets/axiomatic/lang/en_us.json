@@ -158,6 +158,7 @@
   "message.axiomatic.lens_nothing": "Hold a numeral, circuit or statement in your other hand",
   "message.axiomatic.phase_a": "Cable phase A",
   "message.axiomatic.phase_b": "Cable phase B",
+  "notebook.axiomatic.more": "More pages appear in this Notebook as you prove things.",
   "notebook.axiomatic.page.1": "The Mathematician's Notebook\n\nEverything here is built from Peano's axioms. Coal pays for energy; mathematics decides how wisely it is spent.",
   "notebook.axiomatic.page.10": "Theorem cards\n\nThe Compiled Machine runs a defined function on numerals. A proven statement about it in the card slot certifies each output for 1 unit: no more searching.",
   "notebook.axiomatic.page.11": "Speed cards\n\nA proven a + b = b + a in the Compiled Machine's card slot is a speed card: the machine swaps its inputs to recurse on the smaller one. Only fully proven symmetries work.",
