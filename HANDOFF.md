@@ -71,6 +71,14 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `gametest/AxiomaticGameTests` | In-world tests on an empty stage structure |
 | `src/test/java/...` | JUnit tests. `KernelTest` proves zero_add (exactly the doc's 6 steps), succ_add, add_comm and "Double outputs evens", and checks that cheats are refused |
 
+## Fuzz tests (unit tests, fixed seeds)
+
+- `KernelFuzzTest`: random kernel derivations (instantiate, rewrite, ∧, assume, discharge, modus
+  ponens) are evaluated; a false theorem fails the build.
+- `SubstitutionFuzzTest`: capture-avoiding substitution agrees with evaluation.
+- `SolverFuzzTest`: the binary-age ∃ solver agrees with exhaustive search.
+- `CodecFuzzTest`: formulas survive the save codec.
+
 ## Decisions made (not all are in the design doc)
 
 - **Kernel is LCF-style**: theorems are objects only the kernel can construct, so every machine
