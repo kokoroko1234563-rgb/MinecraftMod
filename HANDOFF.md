@@ -230,8 +230,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 1. Compact blocks: inspecting a Compiled Machine's ports, theorem cards slotted into other
    machines (speed cards exist for the Compiled Machine).
-2. A worked mod-n example (multiplication mod n as a SetMonoid, ≡ mod n as an equivalence, laws
-   proven) would make a good game test and Notebook chapter.
+2. Multiplication mod n as a SetMonoid, and a Notebook chapter walking through mod-n arithmetic
+   (`ModArithmeticTest` already proves ≡ mod 5 an equivalence respecting + and rewrites with it).
 3. More network physics from the design: max-flow /
    min-cut throughput certificates, machine safety certificates (state graphs).
 4. Lock hypothesis items inside the Assumption Chamber physically.
