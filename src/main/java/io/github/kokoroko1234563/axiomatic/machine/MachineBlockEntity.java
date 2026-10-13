@@ -94,19 +94,24 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
             }
         }
         if (job != null) {
-            if (ticks < job.duration()) {
-                int remainingTicks = job.duration() - ticks;
-                long due = Math.ceilDiv(job.cost() - paid, remainingTicks);
-                if (energy >= due) {
-                    energy -= due;
-                    paid += due;
-                    ticks++;
+            // Pay at most an even share per tick, and whatever is in the buffer: a job whose
+            // share is more than the buffer holds just takes longer instead of stalling.
+            long owed = job.cost() - paid;
+            if (owed > 0) {
+                long rate = Math.max(1, Math.ceilDiv(job.cost(), Math.max(1, job.duration())));
+                long pay = Math.min(owed, Math.min(rate, energy));
+                if (pay > 0) {
+                    energy -= pay;
+                    paid += pay;
                     markChanged();
                 } else {
                     setStatus(Component.translatable("status.axiomatic.no_energy"));
                 }
             }
-            if (ticks >= job.duration() && insertOutputs(job.outputs())) {
+            if (ticks < job.duration()) {
+                ticks++;
+            }
+            if (ticks >= job.duration() && paid >= job.cost() && insertOutputs(job.outputs())) {
                 job = null;
                 markChanged();
             }
@@ -231,7 +236,12 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
 
     /** Progress of the current job from 0 to 1, for the screen. */
     public float progress() {
-        return job == null || job.duration() == 0 ? 0 : (float) ticks / job.duration();
+        if (job == null) {
+            return 0;
+        }
+        float time = job.duration() == 0 ? 1 : (float) ticks / job.duration();
+        float energyPaid = job.cost() == 0 ? 1 : (float) paid / job.cost();
+        return Math.min(time, energyPaid);
     }
 
     /** A line shown at the top of the screen, such as the selected property or mode. */
