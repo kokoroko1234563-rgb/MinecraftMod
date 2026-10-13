@@ -156,7 +156,7 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
 
     private record Search(Fact fact, long steps, boolean tooBig) {}
 
-    private record RangeRun(TestBench.Result result, long steps, Component problem) {}
+    private record RangeRun(TestBench.Result result, long steps, Component problem, java.util.Set<String> dependencies) {}
 
     /**
      * Range mode: checks the statement for every value of its variables from 0 to the bound
@@ -185,11 +185,13 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
             Evaluator evaluator = new Evaluator(sig, MAX_STEPS);
             Truth truth = new Truth(sig, deciders, evaluator, bound);
             try {
-                return new RangeRun(TestBench.test(formula, bound, truth), evaluator.steps(), null);
+                TestBench.Result result = TestBench.test(formula, bound, truth);
+                return new RangeRun(result, evaluator.steps(), null, java.util.Set.copyOf(truth.dependencies()));
             } catch (Evaluator.OutOfBudget e) {
-                return new RangeRun(null, evaluator.steps(), Component.translatable("status.axiomatic.too_big"));
+                return new RangeRun(null, evaluator.steps(), Component.translatable("status.axiomatic.too_big"), java.util.Set.of());
             } catch (IllegalArgumentException | ClassCastException e) {
-                return new RangeRun(null, evaluator.steps(), Component.translatable("status.axiomatic.not_computable"));
+                return new RangeRun(null, evaluator.steps(), Component.translatable("status.axiomatic.not_computable"),
+                        java.util.Set.of());
             }
         }, run -> {
             ItemStack now = items.get(0);
@@ -204,6 +206,14 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
             long cost = Math.max(1, run.steps());
             if (run.problem() != null) {
                 setStatus(run.problem());
+                return new Job(cost, 10, out);
+            }
+            // A test computed through a conjectural decider proves nothing either way: a Tested or
+            // Refuted status has no room for the conjecture it would rest on.
+            var conjectures = run.dependencies().stream().filter(d -> d.startsWith("conjecture:"))
+                    .map(d -> d.substring("conjecture:".length())).sorted().toList();
+            if (!conjectures.isEmpty()) {
+                setStatus(Component.translatable("status.axiomatic.test_conjectural", String.join(", ", conjectures)));
                 return new Job(cost, 10, out);
             }
             Library.Status status = state.library().recordTest(formula, run.result());

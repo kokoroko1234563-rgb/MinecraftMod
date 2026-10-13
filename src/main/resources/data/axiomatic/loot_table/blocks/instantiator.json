@@ -12,7 +12,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "axiomatic:instantiator"
+          "name": "axiomatic:instantiator",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "axiomatic:depends"
+              ]
+            }
+          ]
         }
       ]
     }

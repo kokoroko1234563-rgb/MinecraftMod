@@ -12,7 +12,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "axiomatic:rewriter"
+          "name": "axiomatic:rewriter",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "axiomatic:depends"
+              ]
+            }
+          ]
         }
       ]
     }

@@ -56,4 +56,15 @@ class ZeroFactorTest {
         assertEquals(Truth.Value.FALSE, truth(state).evaluate(f, java.util.Map.of()));
         assertTrue(Bounds.bounds(state.signature(), (Formula.Exists) f).getFirst().factor() != null);
     }
+
+    /** A refuted conjecture takes the decider links resting on it with it. */
+    @Test
+    void refutedConjecturesDropTheirDeciders() {
+        MathState state = MathState.newWorld();
+        state.deciders().restore(new Deciders.Link("Even", "add", java.util.Set.of("conjecture:evenHope")));
+        state.library().conjecture(state.kernel(), state.deciders(), "evenHope", Formula.pred("Even", Term.var("n")));
+        assertTrue(state.deciders().get("Even") != null);
+        state.library().refute("evenHope", java.util.Map.of("n", BigInteger.ONE));
+        assertNull(state.deciders().get("Even"));
+    }
 }

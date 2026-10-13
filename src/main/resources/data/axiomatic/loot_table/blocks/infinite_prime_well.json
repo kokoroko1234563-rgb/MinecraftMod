@@ -12,7 +12,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "axiomatic:infinite_prime_well"
+          "name": "axiomatic:infinite_prime_well",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "axiomatic:depends"
+              ]
+            }
+          ]
         }
       ]
     }

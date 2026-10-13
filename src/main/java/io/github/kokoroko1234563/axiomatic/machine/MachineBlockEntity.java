@@ -85,7 +85,15 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
     }
 
     protected void tick(ServerLevel level) {
-        if (job == null && level.getGameTime() % 4 == 0) {
+        // A machine built from parts resting on a refuted conjecture stops working.
+        if (!depends.isEmpty() && level.getGameTime() % 40 == 0) {
+            var refuted = data(level).state().library().refuted(java.util.Set.copyOf(depends));
+            unsound = !refuted.isEmpty();
+            if (unsound) {
+                setStatus(Component.translatable("status.axiomatic.machine_refuted", String.join(", ", refuted)));
+            }
+        }
+        if (job == null && !unsound && level.getGameTime() % 4 == 0) {
             job = tryStartJob(level);
             paid = 0;
             ticks = 0;
@@ -318,12 +326,34 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
         job = null;
     }
 
+    // ---- Risk carried from the parts it was crafted from ------------------------------------
+
+    /** Conjectures this machine's parts rest on (the DEPENDS component of its item). */
+    private List<String> depends = List.of();
+    private boolean unsound;
+
+    @Override
+    protected void applyImplicitComponents(net.minecraft.core.component.DataComponentGetter components) {
+        super.applyImplicitComponents(components);
+        List<String> deps = components.get(io.github.kokoroko1234563.axiomatic.registry.ModRegistries.DEPENDS.get());
+        depends = deps == null ? List.of() : List.copyOf(deps);
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        if (!depends.isEmpty()) {
+            components.set(io.github.kokoroko1234563.axiomatic.registry.ModRegistries.DEPENDS.get(), depends);
+        }
+    }
+
     // ---- Saving and syncing ---------------------------------------------------------------
 
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         ContainerHelper.saveAllItems(output, items);
+        output.store("depends", com.mojang.serialization.Codec.STRING.listOf(), depends);
         output.putLong("energy", energy);
         output.store("status", ComponentSerialization.CODEC, status);
         if (job != null) {
@@ -339,6 +369,7 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
 
     @Override
     protected void loadAdditional(ValueInput input) {
+        depends = input.read("depends", com.mojang.serialization.Codec.STRING.listOf()).orElse(List.of());
         super.loadAdditional(input);
         items = NonNullList.withSize(layout().slots().size(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(input, items);

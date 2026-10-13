@@ -12,7 +12,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "axiomatic:test_bench"
+          "name": "axiomatic:test_bench",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "axiomatic:depends"
+              ]
+            }
+          ]
         }
       ]
     }

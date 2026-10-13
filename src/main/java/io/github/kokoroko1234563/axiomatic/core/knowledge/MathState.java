@@ -40,6 +40,7 @@ public final class MathState {
         this.deciders = new Deciders(kernel.signature());
         this.library = new Library();
         library.onNamed(this::refreshArithmetic);
+        library.onRefuted(name -> deciders.forgetDependingOn("conjecture:" + name));
     }
 
     /** Native binary arithmetic follows the Library: on once binary is proven. */

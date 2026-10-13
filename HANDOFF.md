@@ -98,6 +98,19 @@ design (single player, out-of-scope multiplayer): theorems on items are rebuilt 
 without re-checking (`Kernel.restoreSaved`), so someone who edits item components (creative,
 /give) can forge a proven statement. A server-side theorem registry or an HMAC would close it.
 
+## Trust boundary audit (machines ↔ kernel)
+
+- Test Bench range mode refuses to record Tested/Refuted when the test went through a decider
+  resting on a conjecture (status `test_conjectural`); refuting a conjecture drops decider links
+  resting on it (`Library.onRefuted` → `Deciders.forgetDependingOn`); a conjectural link may be
+  replaced by a fully proven one in Link mode.
+- Every crafting recipe is `axiomatic:risky_shaped` (`crafting/RiskyShapedRecipe`, a ShapedRecipe
+  subclass so the recipe book still lays it out): `assemble` puts the inputs' conjectures in the
+  result's DEPENDS, so shift-click, the recipe book and Crafters keep the risk (the old
+  ItemCraftedEvent hook missed shift-click and Crafters, and is gone).
+- Machines keep DEPENDS from their item (implicit components, saved, copied back by the loot
+  table) and stop working once one of those conjectures is refuted; the item shows the risk line.
+
 ## Fuzz tests (unit tests, fixed seeds)
 
 - `KernelFuzzTest`: random kernel derivations (instantiate, rewrite, ∧, assume, discharge, modus

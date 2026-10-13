@@ -83,6 +83,12 @@ public final class Library {
     private final Map<String, Entry> statuses = new LinkedHashMap<>();
     private final Map<String, Theorem> named = new LinkedHashMap<>();
     private Runnable onNamed = () -> {};
+    private java.util.function.Consumer<String> onRefuted = name -> {};
+
+    /** Called when a conjecture is refuted, e.g. to drop decider links resting on it. */
+    public void onRefuted(java.util.function.Consumer<String> listener) {
+        onRefuted = listener;
+    }
 
     /** Called whenever a theorem is named (or restored), e.g. to notice that binary is proven. */
     public void onNamed(Runnable listener) {
@@ -271,6 +277,7 @@ public final class Library {
         c.state = ConjectureState.REFUTED;
         c.counterexample = Map.copyOf(counterexample);
         put(c.statement, new Refuted(c.counterexample));
+        onRefuted.accept(name);
     }
 
     /** Unpaid upkeep: the block stops working until paid again. Not a disaster. */

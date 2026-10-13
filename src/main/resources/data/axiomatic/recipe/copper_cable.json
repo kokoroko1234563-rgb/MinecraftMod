@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "axiomatic:risky_shaped",
   "category": "redstone",
   "key": {
     "C": "minecraft:copper_ingot"

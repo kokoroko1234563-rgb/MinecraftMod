@@ -352,7 +352,11 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
         var existing = forward.formula() instanceof io.github.kokoroko1234563.axiomatic.core.logic.Formula.Implies imp
                 && imp.conclusion() instanceof io.github.kokoroko1234563.axiomatic.core.logic.Formula.Pred p
                 ? deciders.get(p.name()) : null;
-        if (existing != null) {
+        // A link resting on a conjecture may be replaced by one that does not; otherwise a link stays.
+        boolean replace = existing != null && existing.dependencies().stream().anyMatch(d -> d.startsWith("conjecture:"))
+                && forward.dependencies().stream().noneMatch(d -> d.startsWith("conjecture:"))
+                && backward.dependencies().stream().noneMatch(d -> d.startsWith("conjecture:"));
+        if (existing != null && !replace) {
             setStatus(Component.translatable("status.axiomatic.linked", existing.property(), existing.function()));
             return List.of();
         }

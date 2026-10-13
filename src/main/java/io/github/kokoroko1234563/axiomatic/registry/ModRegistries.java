@@ -82,6 +82,12 @@ public final class ModRegistries {
     public static final DeferredRegister<IngredientType<?>> INGREDIENT_TYPES =
             DeferredRegister.create(NeoForgeRegistries.Keys.INGREDIENT_TYPES, Axiomatic.MODID);
 
+    public static final DeferredRegister<net.minecraft.world.item.crafting.RecipeSerializer<?>> RECIPE_SERIALIZERS =
+            DeferredRegister.create(Registries.RECIPE_SERIALIZER, Axiomatic.MODID);
+    public static final Supplier<net.minecraft.world.item.crafting.RecipeSerializer<net.minecraft.world.item.crafting.ShapedRecipe>>
+            RISKY_SHAPED = RECIPE_SERIALIZERS.register("risky_shaped",
+                    () -> io.github.kokoroko1234563.axiomatic.crafting.RiskyShapedRecipe.SERIALIZER);
+
     public static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS =
             DeferredRegister.create(Registries.SOUND_EVENT, Axiomatic.MODID);
 
@@ -295,6 +301,7 @@ public final class ModRegistries {
         COMPONENTS.register(bus);
         TABS.register(bus);
         INGREDIENT_TYPES.register(bus);
+        RECIPE_SERIALIZERS.register(bus);
         SOUNDS.register(bus);
     }
 }

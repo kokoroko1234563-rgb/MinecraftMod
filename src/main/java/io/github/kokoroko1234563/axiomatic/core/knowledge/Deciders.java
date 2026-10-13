@@ -46,6 +46,11 @@ public final class Deciders {
         return byProperty.values();
     }
 
+    /** Forgets every link resting on {@code dependency} (a refuted conjecture, say). */
+    public void forgetDependingOn(String dependency) {
+        byProperty.values().removeIf(l -> l.dependencies().contains(dependency));
+    }
+
     /** Puts back a saved decider link. */
     public void restore(Link link) {
         byProperty.put(link.property(), link);

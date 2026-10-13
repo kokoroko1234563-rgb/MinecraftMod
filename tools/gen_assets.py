@@ -540,6 +540,8 @@ LANG = {
     "status.axiomatic.courier_needs_euler": "Needs a network surveyed as Eulerian: every cable joined to an even number of cables",
     "status.axiomatic.courier_delivered": "Delivering to %s machines",
     "status.axiomatic.courier_nowhere": "No machine on the network takes this item",
+    "status.axiomatic.test_conjectural": "Not recorded: the test used a decider resting on %s",
+    "status.axiomatic.machine_refuted": "Built from parts resting on refuted %s: it no longer works",
     "status.axiomatic.needs_filter": "Put a property statement like Even(n) in the filter slot",
     "slot.axiomatic.conjecture_statement": "Unproven statement, renamed in an anvil",
     "status.axiomatic.too_many_ports": "%s has more than 3 inputs",
@@ -769,7 +771,11 @@ def main():
                                    "include": [f"{NS}:conjecture", "minecraft:custom_name"]}]
         if name == "factorization_vault":
             entry["functions"] = [{"function": "minecraft:copy_components", "source": "block_entity",
-                                   "include": [f"{NS}:vault_contents"]}]
+                                   "include": [f"{NS}:vault_contents", f"{NS}:depends"]}]
+        elif name in MACHINES:
+            # Machines keep the conjectures their parts rested on (see MachineBlockEntity).
+            entry["functions"] = [{"function": "minecraft:copy_components", "source": "block_entity",
+                                   "include": [f"{NS}:depends"]}]
         write_json(os.path.join(DATA, "loot_table", "blocks", name + ".json"), {
             "type": "minecraft:block",
             "pools": [{"rolls": 1, "bonus_rolls": 0,
@@ -782,7 +788,7 @@ def main():
 
     def shaped(name, pattern, key, count=1, category="redstone"):
         write_json(os.path.join(DATA, "recipe", name + ".json"), {
-            "type": "minecraft:crafting_shaped",
+            "type": f"{NS}:risky_shaped",
             "category": category,
             "key": key,
             "pattern": pattern,

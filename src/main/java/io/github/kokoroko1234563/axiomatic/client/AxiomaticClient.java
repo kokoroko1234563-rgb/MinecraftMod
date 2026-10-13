@@ -16,6 +16,17 @@ public class AxiomaticClient {
         DevTour.registerIfEnabled();
     }
 
+    /** Machines built from risky parts say so, like the parts themselves (RiskyItem). */
+    @SubscribeEvent
+    static void riskTooltip(net.neoforged.neoforge.event.entity.player.ItemTooltipEvent event) {
+        var stack = event.getItemStack();
+        java.util.List<String> deps = stack.get(ModRegistries.DEPENDS.get());
+        if (deps != null && !deps.isEmpty() && !(stack.getItem() instanceof io.github.kokoroko1234563.axiomatic.item.RiskyItem)) {
+            event.getToolTip().add(net.minecraft.network.chat.Component.translatable("tooltip.axiomatic.depends", deps.size())
+                    .withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE));
+        }
+    }
+
     @SubscribeEvent
     static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModRegistries.MACHINE_MENU.get(), MachineScreen::new);

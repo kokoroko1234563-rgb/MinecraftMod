@@ -18,7 +18,8 @@
               "function": "minecraft:copy_components",
               "source": "block_entity",
               "include": [
-                "axiomatic:vault_contents"
+                "axiomatic:vault_contents",
+                "axiomatic:depends"
               ]
             }
           ]

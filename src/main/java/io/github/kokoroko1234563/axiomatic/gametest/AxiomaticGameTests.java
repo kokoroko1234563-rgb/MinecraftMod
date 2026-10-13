@@ -607,6 +607,15 @@ public final class AxiomaticGameTests {
         h.assertTrue(match.get().value().assemble(good).is(ModRegistries.CIRCUIT_BOARD.get()), "result is a Circuit Board");
         h.assertFalse(level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, bad, level).isPresent(),
                 "uncertified numerals must not craft");
+        // Risk travels in the recipe result itself, so shift-click and Crafters keep it too.
+        ItemStack risky = NumeralItem.stack(NumeralData.of(2)
+                .withFact(new Fact("Even", List.of(BigInteger.TWO), java.util.Set.of("conjecture:hope"))), 1);
+        CraftingInput gamble = CraftingInput.of(3, 3, List.of(copper, risky, copper, certified, redstone, certified,
+                copper, certified, copper));
+        ItemStack board = level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, gamble, level).orElseThrow()
+                .value().assemble(gamble);
+        h.assertValueEqual(board.get(ModRegistries.DEPENDS.get()), List.of("conjecture:hope"), "the board rests on hope");
+        h.assertTrue(match.get().value().assemble(good).get(ModRegistries.DEPENDS.get()) == null, "a clean board is clean");
         h.succeed();
     }
 }

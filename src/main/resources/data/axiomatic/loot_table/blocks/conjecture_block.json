@@ -18,8 +18,7 @@
               "function": "minecraft:copy_components",
               "source": "block_entity",
               "include": [
-                "axiomatic:conjecture",
-                "minecraft:custom_name"
+                "axiomatic:depends"
               ]
             }
           ]

@@ -15,7 +15,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 /**
  * The cascade: anything built on a refuted conjecture fails with it. Items remember the
@@ -66,15 +65,4 @@ public final class Paradox {
         }
     }
 
-    /** Parts crafted from conjectural certificates carry the conjectures' risk. */
-    public static void onCrafted(PlayerEvent.ItemCraftedEvent event) {
-        Set<String> deps = new HashSet<>();
-        var grid = event.getInventory();
-        for (int i = 0; i < grid.getContainerSize(); i++) {
-            deps.addAll(conjecturesOf(grid.getItem(i)));
-        }
-        if (!deps.isEmpty()) {
-            event.getCrafting().set(ModRegistries.DEPENDS.get(), deps.stream().sorted().toList());
-        }
-    }
 }
