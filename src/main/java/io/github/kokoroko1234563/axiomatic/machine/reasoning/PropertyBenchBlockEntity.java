@@ -20,8 +20,14 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 /**
- * Property Bench. In property mode, circuits give the (unproven) statement "P(circuits)" for the
- * selected property or relation. In seal mode, a statement and a variable give "∃var. statement".
+ * Property Bench: composes unproven statements.
+ * <ul>
+ * <li>Property: circuits give "P(circuits)" for the selected property or relation.</li>
+ * <li>Seal: a statement and a variable give "∃var. statement".</li>
+ * <li>And / Implies: two statements give "P ∧ Q" / "P → Q".</li>
+ * <li>Not: a statement P gives "¬P", that is "P → ⊥".</li>
+ * </ul>
+ * These are claims, used to define properties, to test, to assume or to conjecture.
  */
 public class PropertyBenchBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
@@ -30,8 +36,10 @@ public class PropertyBenchBlockEntity extends ReasoningBlockEntity {
             MachineLayout.input(62, 31, "slot.axiomatic.variable_to_seal"), MachineLayout.output(116, 31, null)),
             List.of("button.axiomatic.next_property", "button.axiomatic.mode"));
 
+    public enum Mode { PROPERTY, SEAL, AND, IMPLIES, NOT }
+
     private String property = "Even";
-    private boolean seal;
+    private Mode mode = Mode.PROPERTY;
 
     public PropertyBenchBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.PROPERTY_BENCH.type(), pos, state);
@@ -44,14 +52,14 @@ public class PropertyBenchBlockEntity extends ReasoningBlockEntity {
 
     @Override
     public Component info() {
-        return seal ? Component.translatable("label.axiomatic.seal_mode")
-                : Component.translatable("label.axiomatic.property", property);
+        return mode == Mode.PROPERTY ? Component.translatable("label.axiomatic.property", property)
+                : Component.translatable("label.axiomatic.logic_mode." + mode.name().toLowerCase());
     }
 
     @Override
     public void onButton(ServerLevel level, Player player, int id) {
         if (id == 1) {
-            seal = !seal;
+            mode = Mode.values()[(mode.ordinal() + 1) % Mode.values().length];
         } else {
             List<String> props = data(level).state().signature().all().stream()
                     .filter(io.github.kokoroko1234563.axiomatic.core.logic.Signature::isPredicate)
@@ -65,19 +73,38 @@ public class PropertyBenchBlockEntity extends ReasoningBlockEntity {
 
     @Override
     protected List<Integer> consumed() {
-        return seal ? List.of(0) : items.get(1).isEmpty() ? List.of(0) : List.of(0, 1);
+        return switch (mode) {
+            case SEAL, NOT -> List.of(0);
+            case AND, IMPLIES -> List.of(0, 1);
+            case PROPERTY -> items.get(1).isEmpty() ? List.of(0) : List.of(0, 1);
+        };
     }
 
     @Override
     protected List<Integer> required() {
-        return seal ? List.of(0, 2) : List.of(0);
+        return switch (mode) {
+            case SEAL -> List.of(0, 2);
+            case AND, IMPLIES -> List.of(0, 1);
+            case PROPERTY, NOT -> List.of(0);
+        };
     }
 
     @Override
     protected List<ItemStack> apply(Context ctx) {
-        if (seal) {
-            Formula sealed = Formula.exists(ctx.variable(2), ctx.formula(0));
-            return List.of(ctx.unproven(sealed));
+        switch (mode) {
+            case SEAL -> {
+                return List.of(ctx.unproven(Formula.exists(ctx.variable(2), ctx.formula(0))));
+            }
+            case AND -> {
+                return List.of(ctx.unproven(Formula.and(ctx.formula(0), ctx.formula(1))));
+            }
+            case IMPLIES -> {
+                return List.of(ctx.unproven(Formula.implies(ctx.formula(0), ctx.formula(1))));
+            }
+            case NOT -> {
+                return List.of(ctx.unproven(Formula.not(ctx.formula(0))));
+            }
+            case PROPERTY -> {}
         }
         Definition def = ctx.state().signature().get(property);
         if (!io.github.kokoroko1234563.axiomatic.core.logic.Signature.isPredicate(def)) {
@@ -100,13 +127,17 @@ public class PropertyBenchBlockEntity extends ReasoningBlockEntity {
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.putString("property", property);
-        output.putBoolean("seal", seal);
+        output.putString("mode", mode.name());
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         property = input.getStringOr("property", "Even");
-        seal = input.getBooleanOr("seal", false);
+        try {
+            mode = Mode.valueOf(input.getStringOr("mode", "PROPERTY"));
+        } catch (IllegalArgumentException e) {
+            mode = Mode.PROPERTY;
+        }
     }
 }
