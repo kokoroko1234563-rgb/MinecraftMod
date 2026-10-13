@@ -14,6 +14,9 @@ alone. The full game design is in [docs/design.md](docs/design.md). Update this 
   places every machine, opens their screens and saves `run/screenshots/tour_*.png`, then quits.
   In the cloud it works headless: `Xvfb :42 -screen 0 1280x720x24 -nolisten tcp &` then
   `DISPLAY=:42 ./gradlew runClient -Pdevtour` (Mesa software rendering; no sound device is fine).
+  `-Pdevtour=library,certificate_sorter` takes only the named shots (names as in DevTour).
+- `runGameTestServer` re-saves `data/axiomatic/structure/empty_stage.nbt`; `git checkout` that
+  file before committing.
 - `bash tools/gen_sounds.sh` regenerates the synthesized sounds (needs ffmpeg with libvorbis).
 - `python3 tools/gen_assets.py` regenerates placeholder textures, models, blockstates, lang,
   loot tables, recipes and the empty game-test stage. Edit the script, not the generated files.
