@@ -149,6 +149,8 @@ public final class ModRegistries {
             "axiom_tablet_succ_injective", p -> new MathItems.AxiomTabletItem(p, "succ_injective"), p -> p.stacksTo(1)));
     public static final DeferredItem<Item> CIRCUIT_BOARD = tab(ITEMS.registerItem("circuit_board", RiskyItem::new));
     public static final DeferredItem<Item> PRIME_CORE = tab(ITEMS.registerItem("prime_core", RiskyItem::new));
+    public static final DeferredItem<Item> PERFECT_CORE = tab(ITEMS.registerItem("perfect_core", RiskyItem::new,
+            p -> p.rarity(net.minecraft.world.item.Rarity.EPIC)));
     public static final DeferredItem<Item> PARADOX_JUNK = tab(ITEMS.registerSimpleItem("paradox_junk"));
     public static final DeferredItem<GraphLensItem> GRAPH_LENS = tab(ITEMS.registerItem("graph_lens", GraphLensItem::new,
             p -> p.stacksTo(1)));

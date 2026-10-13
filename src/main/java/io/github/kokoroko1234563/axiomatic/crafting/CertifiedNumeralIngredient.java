@@ -20,11 +20,14 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
  * certified evens in a Circuit Board. Conjectural certificates are accepted unless
  * {@code proven_only} is set: that is the gamble, since parts made from them carry the risk.
  *
- * <p>JSON: {@code {"neoforge:ingredient_type": "axiomatic:certified_numeral", "property": "Even"}}
+ * <p>JSON: {@code {"neoforge:ingredient_type": "axiomatic:certified_numeral", "property": "Even"}}; add
+ * {@code "also": ["Mersenne"]} to require more certificates on the same numeral.
  */
-public record CertifiedNumeralIngredient(String property, boolean provenOnly) implements ICustomIngredient {
+public record CertifiedNumeralIngredient(String property, java.util.List<String> also, boolean provenOnly)
+        implements ICustomIngredient {
     public static final MapCodec<CertifiedNumeralIngredient> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Codec.STRING.fieldOf("property").forGetter(CertifiedNumeralIngredient::property),
+            Codec.STRING.listOf().optionalFieldOf("also", java.util.List.of()).forGetter(CertifiedNumeralIngredient::also),
             Codec.BOOL.optionalFieldOf("proven_only", false).forGetter(CertifiedNumeralIngredient::provenOnly))
             .apply(i, CertifiedNumeralIngredient::new));
 
@@ -32,7 +35,11 @@ public record CertifiedNumeralIngredient(String property, boolean provenOnly) im
 
     @Override
     public boolean test(ItemStack stack) {
-        return stack.is(ModRegistries.NUMERAL_ITEM.get()) && NumeralItem.data(stack).hasProperty(property, !provenOnly);
+        if (!stack.is(ModRegistries.NUMERAL_ITEM.get())) {
+            return false;
+        }
+        var data = NumeralItem.data(stack);
+        return data.hasProperty(property, !provenOnly) && also.stream().allMatch(p -> data.hasProperty(p, !provenOnly));
     }
 
     @Override

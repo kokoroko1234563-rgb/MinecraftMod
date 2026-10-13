@@ -60,6 +60,7 @@ public final class AxiomaticGameTests {
         test("surveyor_rejects_cycles", AxiomaticGameTests::surveyorRejectsCycles);
         test("prime_well_emits_primes", AxiomaticGameTests::primeWellEmitsPrimes);
         test("factorization_vault_stores_as_a_number", AxiomaticGameTests::vaultStoresAsANumber);
+        test("mersenne_and_the_perfect_core", AxiomaticGameTests::mersenneAndThePerfectCore);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -267,6 +268,34 @@ public final class AxiomaticGameTests {
                 .thenIdle(2)
                 .thenExecute(() -> h.assertValueEqual(vault.number(), BigInteger.valueOf(216), "2^3 × 3^3"))
                 .thenSucceed();
+    }
+
+    private static void mersenneAndThePerfectCore(GameTestHelper h) {
+        MachineBlockEntity bench = powered(h, ModRegistries.TEST_BENCH.get(), MachineBlockEntity.class);
+        var level = h.getLevel();
+        // Cycle the bench to Mersenne.
+        while (!((io.github.kokoroko1234563.axiomatic.machine.TestBenchBlockEntity) bench).property().equals("Mersenne")) {
+            bench.onButton(level, null, 0);
+        }
+        bench.setItem(0, NumeralItem.stack(NumeralData.of(31), 1));
+        h.succeedWhen(() -> {
+            NumeralData out = numeralIn(bench, 1);
+            h.assertTrue(out != null && out.hasProperty("Mersenne", false), "31 = 2^5 - 1 is certified Mersenne; status: "
+                    + bench.status().getString());
+            var seven = java.math.BigInteger.valueOf(7);
+            NumeralData proven = NumeralData.of(7).withFact(new Fact("Prime", List.of(seven), java.util.Set.of()))
+                    .withFact(new Fact("Mersenne", List.of(seven), java.util.Set.of()));
+            NumeralData risky = NumeralData.of(7).withFact(new Fact("Prime", List.of(seven), java.util.Set.of("conjecture:x")))
+                    .withFact(new Fact("Mersenne", List.of(seven), java.util.Set.of()));
+            ItemStack core = new ItemStack(ModRegistries.PRIME_CORE.get());
+            ItemStack netherite = new ItemStack(Items.NETHERITE_INGOT);
+            java.util.function.Function<NumeralData, CraftingInput> grid = m -> CraftingInput.of(3, 3, List.of(
+                    core, netherite, core, core, NumeralItem.stack(m, 1), core, core, core, core));
+            h.assertTrue(level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, grid.apply(proven), level).isPresent(),
+                    "a proven Mersenne prime crafts a Perfect Core");
+            h.assertFalse(level.recipeAccess().getRecipeFor(RecipeType.CRAFTING, grid.apply(risky), level).isPresent(),
+                    "a conjectural one does not");
+        });
     }
 
     private static void circuitBoardNeedsCertifiedEvens(GameTestHelper h) {

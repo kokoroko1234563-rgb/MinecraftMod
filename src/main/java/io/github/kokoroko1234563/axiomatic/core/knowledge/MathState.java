@@ -70,6 +70,12 @@ public final class MathState {
                 Formula.exists("q", Formula.eq(new Term.App("mul", List.of(d, q)), n)), "|"));
         // Prime(n) :⇔ 2 ≤ n ∧ ¬∃d. (2 ≤ d ∧ d < n ∧ d | n), with d < n written S(d) ≤ n
         Term two = Term.numeral(2);
+        // pow(a, 0) = 1, pow(a, S(b)) = pow(a, b) × a; Mersenne(n) :⇔ ∃p. n + 1 = 2^p
+        state.kernel.define(new Definition.PrimitiveRecursive("pow", List.of("a", "b"), Term.numeral(1),
+                new Term.App("mul", List.of(new Term.App("pow", List.of(a, b)), a)), "^"));
+        state.kernel.define(new Definition.Predicate("Mersenne", List.of("n"), Formula.exists("p", Formula.eq(
+                new Term.App("add", List.of(n, Term.numeral(1))), new Term.App("pow", List.of(Term.numeral(2), Term.var("p"))))),
+                null));
         state.kernel.define(new Definition.Predicate("Prime", List.of("n"), Formula.and(
                 Formula.pred("le", two, n),
                 Formula.not(Formula.exists("d", Formula.and(Formula.pred("le", two, d),

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "axiomatic:prime_core",
+    "N": "minecraft:netherite_ingot",
+    "M": {
+      "neoforge:ingredient_type": "axiomatic:certified_numeral",
+      "property": "Prime",
+      "also": [
+        "Mersenne"
+      ],
+      "proven_only": true
+    }
+  },
+  "pattern": [
+    "CNC",
+    "CMC",
+    "CCC"
+  ],
+  "result": {
+    "id": "axiomatic:perfect_core",
+    "count": 1
+  }
+}

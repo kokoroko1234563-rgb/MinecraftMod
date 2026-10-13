@@ -146,6 +146,7 @@ NOTEBOOK = [
     "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless.",
     "Infinitely many\n\nProve that above every n there is a prime: for all n, exists p, n <= p and Prime(p). That proof crafts the Infinite Prime Well, which emits primes forever. The Factorization Vault stores items as one number.",
     "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds.",
+    "Perfect numbers\n\nA Mersenne prime is a prime one less than a power of two, like 7 or 31. By Euclid and Euler each one gives a perfect number. A Perfect Core needs a numeral certified both Prime and Mersenne, without conjectures.",
     "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
 ]
 
@@ -179,6 +180,8 @@ ADVANCEMENTS = [
      "Forging Primes", "Forge a prime with a method card", "task"),
     ("prime_well", "prime_forged", "axiomatic:infinite_prime_well", ("item", "axiomatic:infinite_prime_well"),
      "Euclid's Theorem", "Craft the Infinite Prime Well, with a proof that primes never run out", "challenge"),
+    ("perfect", "prime_well", "axiomatic:perfect_core", ("item", "axiomatic:perfect_core"),
+     "Perfect", "Craft a Perfect Core from a proven Mersenne prime: 2^(p-1)(2^p - 1) is perfect", "challenge"),
     ("structure", "named", "axiomatic:structure_bench", ("milestone", "structure"),
      "Any Monoid Will Do", "Certify an operation as a monoid, equivalence or order", "goal"),
     ("implemented", "named", "axiomatic:implementation_bench", ("milestone", "implemented"),
@@ -346,6 +349,21 @@ def paradox_junk():
     return img
 
 
+def perfect_core():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    for x in range(16):
+        for y in range(16):
+            d = ((x - 7.5) ** 2 + (y - 7.5) ** 2) ** 0.5
+            if d < 7:
+                t = d / 7
+                px[x, y] = (int(255 - 60 * t), int(240 - 120 * t), int(150 + 80 * t), 255)
+    for i in range(3, 13):
+        px[i, 7] = (255, 255, 255, 255)
+        px[7, i] = (255, 255, 255, 255)
+    return img
+
+
 def lens():
     img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
     px = img.load()
@@ -389,6 +407,7 @@ ITEMS = {
     "prime_core": (prime_core, "Prime Core"),
     "paradox_junk": (paradox_junk, "Paradox Junk"),
     "graph_lens": (lambda: lens(), "Graph Lens"),
+    "perfect_core": (lambda: perfect_core(), "Perfect Core"),
 }
 
 LANG = {
@@ -756,6 +775,11 @@ def main():
            {"C": "minecraft:copper_ingot", "M": "minecraft:map", "O": "minecraft:compass", "B": board})
     shaped("implementation_bench", ["QBQ", "BOB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "O": "minecraft:observer"})
+    shaped("perfect_core", ["CNC", "CMC", "CCC"], {
+        "C": "axiomatic:prime_core", "N": "minecraft:netherite_ingot",
+        "M": {"neoforge:ingredient_type": f"{NS}:certified_numeral", "property": "Prime", "also": ["Mersenne"],
+              "proven_only": True},
+    }, category="misc")
     shaped("infinite_prime_well", ["CEC", "GZG", "CEC"], {
         "C": "axiomatic:prime_core", "E": "minecraft:ender_eye", "G": "minecraft:gold_block",
         "Z": {"neoforge:ingredient_type": f"{NS}:proven_statement", "statement": "∀n. ∃p. n ≤ p ∧ Prime(p)"},

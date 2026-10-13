@@ -1,0 +1,32 @@
+{
+  "parent": "axiomatic:prime_well",
+  "criteria": {
+    "perfect": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "axiomatic:perfect_core"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:perfect_core"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.perfect.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.perfect.description"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "perfect"
+    ]
+  ]
+}
