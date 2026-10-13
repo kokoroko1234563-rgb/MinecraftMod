@@ -41,6 +41,23 @@ public final class Kernel {
         return signature;
     }
 
+    /** The next stamp/fresh-variable number, saved with the world so names stay unique. */
+    public long nextId() {
+        return nextId;
+    }
+
+    public void setNextId(long nextId) {
+        this.nextId = Math.max(this.nextId, nextId);
+    }
+
+    /**
+     * Recreates a theorem that was proven before and saved (in the world or on an item). Only
+     * save-loading code may call this: anything else would bypass the checker.
+     */
+    public Theorem restoreSaved(Formula formula, List<Hypothesis> hypotheses, Set<String> dependencies, long steps) {
+        return new Theorem(formula, hypotheses, dependencies, steps);
+    }
+
     // ---- Axioms and definitions -----------------------------------------------------------
 
     /** Axiom 3: ¬(S(x) = 0). */

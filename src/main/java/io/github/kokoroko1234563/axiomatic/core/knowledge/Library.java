@@ -103,6 +103,32 @@ public final class Library {
         statuses.put(Syntax.key(statement), new Entry(statement, status));
     }
 
+    /** Every recorded status with its statement, for saving. */
+    public Map<Formula, Status> allStatuses() {
+        Map<Formula, Status> out = new LinkedHashMap<>();
+        statuses.values().forEach(e -> out.put(e.statement(), e.status()));
+        return out;
+    }
+
+    /** Puts back a saved status. */
+    public void restoreStatus(Formula statement, Status status) {
+        put(statement, status);
+    }
+
+    /** Puts back a saved conjecture. */
+    public void restoreConjecture(String name, Formula statement, ConjectureState state,
+            Map<String, BigInteger> counterexample) {
+        Conjecture c = new Conjecture(name, statement);
+        c.state = state;
+        c.counterexample = counterexample;
+        conjectures.put(name, c);
+    }
+
+    /** Puts back a saved named theorem without re-recording its status. */
+    public void restoreTheorem(String name, Theorem thm) {
+        named.put(name, thm);
+    }
+
     // ---- Named theorems -------------------------------------------------------------------
 
     /** Compiles a proof under a name, as a theorem block. */

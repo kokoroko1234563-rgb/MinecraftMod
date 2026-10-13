@@ -35,6 +35,15 @@ public final class Deciders {
         return byProperty.get(property);
     }
 
+    public java.util.Collection<Link> all() {
+        return byProperty.values();
+    }
+
+    /** Puts back a saved decider link. */
+    public void restore(Link link) {
+        byProperty.put(link.property(), link);
+    }
+
     /** Checks the two link theorems and registers {@code function} as the decider for {@code property}. */
     public Link register(String property, String function, Theorem forward, Theorem backward) {
         if (!(signature.get(property) instanceof Definition.Predicate pred)) {
