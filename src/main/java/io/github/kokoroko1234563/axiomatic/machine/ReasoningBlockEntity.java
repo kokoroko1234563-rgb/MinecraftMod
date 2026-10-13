@@ -52,6 +52,11 @@ public abstract class ReasoningBlockEntity extends MachineBlockEntity {
             if (data == null || !data.proven()) {
                 throw new ProofException(Component.translatable("status.axiomatic.needs_proven", i + 1).getString());
             }
+            var refuted = state.library().refuted(java.util.Set.copyOf(data.dependencies()));
+            if (!refuted.isEmpty()) {
+                throw new ProofException(Component.translatable("status.axiomatic.card_refuted",
+                        String.join(", ", refuted)).getString());
+            }
             return data.theorem(state.kernel());
         }
 

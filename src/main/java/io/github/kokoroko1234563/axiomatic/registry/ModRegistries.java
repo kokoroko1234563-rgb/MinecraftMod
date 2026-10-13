@@ -13,6 +13,10 @@ import io.github.kokoroko1234563.axiomatic.item.NumeralData;
 import io.github.kokoroko1234563.axiomatic.item.NumeralItem;
 import io.github.kokoroko1234563.axiomatic.item.StatementData;
 import io.github.kokoroko1234563.axiomatic.machine.CoalDynamoBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.CompiledMachineBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.ConjectureBlockEntity;
+import io.github.kokoroko1234563.axiomatic.machine.reasoning.ConjectureBenchBlockEntity;
+import io.github.kokoroko1234563.axiomatic.item.RiskyItem;
 import io.github.kokoroko1234563.axiomatic.machine.DuplicatorBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.MachineBlock;
 import io.github.kokoroko1234563.axiomatic.machine.MachineBlockEntity;
@@ -92,6 +96,13 @@ public final class ModRegistries {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CircuitData>> CIRCUIT =
             COMPONENTS.registerComponentType("circuit",
                     b -> b.persistent(CircuitData.CODEC).networkSynchronized(CircuitData.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> CONJECTURE =
+            COMPONENTS.registerComponentType("conjecture",
+                    b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));
+    /** Conjectures a crafted part depends on, from the certificates it was made with. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<String>>> DEPENDS =
+            COMPONENTS.registerComponentType("depends", b -> b.persistent(com.mojang.serialization.Codec.STRING.listOf())
+                    .networkSynchronized(ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list())));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> VARIABLE =
             COMPONENTS.registerComponentType("variable",
                     b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));
@@ -109,7 +120,9 @@ public final class ModRegistries {
             "axiom_tablet_succ_not_zero", p -> new MathItems.AxiomTabletItem(p, "succ_not_zero"), p -> p.stacksTo(1)));
     public static final DeferredItem<MathItems.AxiomTabletItem> TABLET_SUCC_INJECTIVE = tab(ITEMS.registerItem(
             "axiom_tablet_succ_injective", p -> new MathItems.AxiomTabletItem(p, "succ_injective"), p -> p.stacksTo(1)));
-    public static final DeferredItem<Item> CIRCUIT_BOARD = tab(ITEMS.registerSimpleItem("circuit_board"));
+    public static final DeferredItem<Item> CIRCUIT_BOARD = tab(ITEMS.registerItem("circuit_board", RiskyItem::new));
+    public static final DeferredItem<Item> PRIME_CORE = tab(ITEMS.registerItem("prime_core", RiskyItem::new));
+    public static final DeferredItem<Item> PARADOX_JUNK = tab(ITEMS.registerSimpleItem("paradox_junk"));
 
     // ---- Blocks ---------------------------------------------------------------------------
 
@@ -153,6 +166,14 @@ public final class ModRegistries {
             MapColor.COLOR_BLUE, ConjunctionPressBlockEntity::new);
     public static final Machine<ModusPonensPressBlockEntity> MODUS_PONENS_PRESS = machine("modus_ponens_press",
             MapColor.COLOR_BLUE, ModusPonensPressBlockEntity::new);
+    public static final Machine<CompiledMachineBlockEntity> COMPILED_MACHINE = machine("compiled_machine",
+            MapColor.GOLD, CompiledMachineBlockEntity::new);
+
+    // Conjectures (purple).
+    public static final Machine<ConjectureBenchBlockEntity> CONJECTURE_BENCH = machine("conjecture_bench",
+            MapColor.COLOR_PURPLE, ConjectureBenchBlockEntity::new);
+    public static final Machine<ConjectureBlockEntity> CONJECTURE_BLOCK = machine("conjecture_block",
+            MapColor.COLOR_PURPLE, ConjectureBlockEntity::new);
 
     // ---- Menus, ingredients, tab ----------------------------------------------------------
 

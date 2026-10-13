@@ -42,6 +42,10 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `crafting/CertifiedNumeralIngredient` | Recipe ingredient "numeral certified with property P" |
 | `machine/ReasoningBlockEntity` + `machine/reasoning/` | Reasoning machines: each applies one Kernel rule. The transformed statement is consumed; tools (equations, variables, circuits) stay |
 | `item/MathItems`, `StatementData`, `CircuitData` | Statement items (proven = Theorem, or unproven claim), circuits, Variable blocks (use in air to cycle name), Axiom Tablets |
+| `machine/CompiledMachineBlockEntity` | Compact block for a defined function: design slot (circuit f(…)), numeral ports, theorem card slot that certifies outputs |
+| `machine/ConjectureBlockEntity`, `reasoning/ConjectureBenchBlockEntity` | Conjectures: bench makes the card + block; block pays upkeep, goes dormant, fails on refutation |
+| `risk/Paradox` | Cascade: items depending on a refuted conjecture turn to paradox junk; crafted parts record conjectures (`axiomatic:depends`) |
+| `AxiomaticConfig` | `disasterBlockDamage` (default false), `conjectureUpkeep` |
 | `client/` | `MachineScreen` (drawn with rectangles, no texture), screen registration |
 | `gametest/AxiomaticGameTests` | In-world tests on an empty stage structure |
 | `src/test/java/...` | JUnit tests. `KernelTest` proves zero_add (exactly the doc's 6 steps), succ_add, add_comm and "Double outputs evens", and checks that cheats are refused |
@@ -71,8 +75,13 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - **Jobs**: a machine takes its inputs at once, computes the result immediately, then pays the
   cost over the job's duration before outputting. Test Bench search runs up to 20M steps.
 - **Test Bench witness cap** = the numeral's own value (covers Even, ≤-style properties).
-- **Conjecture Bench rule**: a statement may be conjectured only if `Truth.isRefutable` (no ∃ in
-  a positive position unless behind a linked decider). Bounded ∃ ("∃k ≤ n") is not yet recognised.
+- **Conjecture Bench rule**: a statement may be conjectured only if computation can catch it
+  failing on *some* numbers (`Truth.isRefutable`): Prime(2n+1) qualifies (a divisor refutes it),
+  "∀n ∃k. n = k + k" does not. Bounded ∃ ("∃k ≤ n") is not recognised, so Prime can be *refuted*
+  by search but only *certified* by a linked decider or a card. A conjecture's check never uses a
+  decider whose link depends on that same conjecture.
+- **Background checks** run when a conjectural card is used in a Compiled Machine (the card's
+  statement is computed for those inputs). Instances reached by other routes are not watched yet.
 - **Theorems on items/saves are trusted on load** via `Kernel.restoreSaved` (single-player).
 - Design-doc typo: under Structures, "- - over the even numbers" means "+ over the even numbers".
 - The doc's "prime path" table (7 stages) was missing from the copy we have; ask the owner for it.
@@ -94,11 +103,15 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
       Chamber (assume, ∃-open, discharge), Induction Engine, Conjunction/Modus Ponens Press.
       Game tests prove zero_add and "Double outputs evens" with the real machines.
       Not yet: Conjecture Bench, Graph Lens, Library block, Statement Conveyor, Test Bench range mode
-- [ ] Compact blocks: compile, name, inspect; typed ports; theorem cards
+- [~] Compact blocks: Compiled Machine runs any defined function with theorem cards (proven,
+      closure, or conjectural with background checks). Not yet: inspect, typed-port enforcement,
+      cards slotted into other machines
 - [~] Knowledge record: core done (statuses, certificates, conjectures) and saved per world;
       not yet surfaced in game (Library block)
-- [~] Conjecture blocks: core logic + 2n + 1 trap tested; no block yet
-- [~] Circuit Board recipe needs certified evens (done); Prime Core not yet
+- [x] Conjecture blocks with upkeep, background checks (on card use) and the 2n + 1 trap
+      (game test `two_n_plus_one_trap`); disasters drop paradox junk; config for block damage
+- [x] Circuit Board and Prime Core recipes needing certified numerals (Prime Core matches the
+      property named exactly "Prime")
 - [ ] The Notebook (Modonomicon) with Getting Started, Machines, Logic and Proof
 - [ ] Placeholder CC0 textures and sounds
 
@@ -118,7 +131,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 ## Suggested next steps
 
-1. Conjecture Bench + conjecture blocks with upkeep and background checks (core is done).
-2. Library block (lists named theorems, conjectures, statuses), Test Bench range mode.
+1. Library block (lists named theorems, conjectures, statuses), Test Bench range mode.
+2. Statement Conveyor (unlocks after zero_add), containment chamber.
 3. Notebook (Modonomicon) given on first join: needs `maven.blamejared.com`/`modmaven.dev` allowed.
 4. Theorem cards and compact blocks; Prime Core recipe; Graph Lens.

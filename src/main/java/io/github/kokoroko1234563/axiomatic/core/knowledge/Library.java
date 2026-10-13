@@ -168,7 +168,7 @@ public final class Library {
             throw new ProofException("Already refuted at " + r.counterexample());
         }
         if (!Truth.isRefutable(statement, kernel.signature(), deciders)) {
-            throw new ProofException("No machine could ever catch this failing: it relies on an unbounded ∃");
+            throw new ProofException("No machine could ever catch this failing: it only claims that something exists");
         }
         Theorem thm = kernel.conjecture(name, statement);
         conjectures.put(name, new Conjecture(name, statement));
@@ -192,7 +192,7 @@ public final class Library {
         if (c == null || c.state != ConjectureState.ACTIVE) {
             return false;
         }
-        if (truth.evaluate(c.statement, instance) == Truth.Value.FALSE) {
+        if (truth.ignoringDecidersFrom("conjecture:" + name).evaluate(c.statement, instance) == Truth.Value.FALSE) {
             c.state = ConjectureState.REFUTED;
             c.counterexample = Map.copyOf(instance);
             put(c.statement, new Refuted(c.counterexample));

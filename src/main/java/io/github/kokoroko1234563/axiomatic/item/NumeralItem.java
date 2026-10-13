@@ -32,6 +32,12 @@ public class NumeralItem extends Item {
     }
 
     @Override
+    public void inventoryTick(ItemStack stack, net.minecraft.server.level.ServerLevel level,
+            net.minecraft.world.entity.Entity owner, net.minecraft.world.entity.EquipmentSlot slot) {
+        io.github.kokoroko1234563.axiomatic.risk.Paradox.inventoryTick(stack, level, owner);
+    }
+
+    @Override
     public Component getName(ItemStack stack) {
         return Component.translatable("item.axiomatic.numeral.value", display(data(stack).value()));
     }

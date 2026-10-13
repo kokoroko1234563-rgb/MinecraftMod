@@ -43,6 +43,8 @@ GLYPHS = {
     "N": ["#   #", "##  #", "# # #", "#  ##", "#   #", "#   #", "#   #"],
     "^": ["     ", "  #  ", " # # ", "#   #", "#   #", "     ", "     "],
     ">": ["     ", "#    ", " ##  ", "   ##", " ##  ", "#    ", "     "],
+    "f": ["  ## ", " #   ", " #   ", "#### ", " #   ", " #   ", " #   "],
+    "!": ["  #  ", "  #  ", "  #  ", "  #  ", "  #  ", "     ", "  #  "],
 }
 
 
@@ -142,6 +144,9 @@ MACHINES = {
     "induction_engine": ("blue", "N", "Induction Engine"),
     "conjunction_press": ("blue", "^", "Conjunction Press"),
     "modus_ponens_press": ("blue", ">", "Modus Ponens Press"),
+    "compiled_machine": ("gold", "f", "Compiled Machine"),
+    "conjecture_bench": ("purple", "?", "Conjecture Bench"),
+    "conjecture_block": ("purple", "!", "Conjecture Block"),
 }
 
 def variable():
@@ -204,6 +209,31 @@ def tablet(mark):
     return img
 
 
+def prime_core():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    for x in range(16):
+        for y in range(16):
+            d = abs(x - 7.5) + abs(y - 7.5)
+            if d < 7:
+                px[x, y] = (255, 215, 80, 255) if d > 4.5 else (200, 60, 40, 255)
+    for x, y in [(7, 6), (8, 6), (6, 8), (9, 8), (7, 9), (8, 9)]:
+        px[x, y] = (255, 240, 200, 255)
+    return img
+
+
+def paradox_junk():
+    import random
+    rnd = random.Random(7)
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    for x in range(3, 13):
+        for y in range(4, 13):
+            if rnd.random() < 0.8:
+                px[x, y] = rnd.choice([(122, 64, 160, 255), (70, 30, 100, 255), (200, 60, 60, 255), (40, 40, 40, 255)])
+    return img
+
+
 ITEMS = {
     "numeral": (numeral, "Numeral"),
     "circuit_board": (circuit_board, "Circuit Board"),
@@ -212,6 +242,8 @@ ITEMS = {
     "statement": (statement, "Statement"),
     "axiom_tablet_succ_not_zero": (lambda: tablet("0"), "Axiom Tablet: S(x) ≠ 0"),
     "axiom_tablet_succ_injective": (lambda: tablet("S"), "Axiom Tablet: S is injective"),
+    "prime_core": (prime_core, "Prime Core"),
+    "paradox_junk": (paradox_junk, "Paradox Junk"),
 }
 
 LANG = {
@@ -300,6 +332,30 @@ LANG = {
     "tooltip.axiomatic.proven": "Proven (%s steps)",
     "tooltip.axiomatic.proven_conjectural": "Proven from conjectures",
     "tooltip.axiomatic.unproven": "Unproven",
+    "tooltip.axiomatic.depends": "Depends on %s unproven conjecture(s)",
+    "item.axiomatic.conjecture_block.named": "Conjecture: %s",
+    "label.axiomatic.conjecture": "Conjecture %s",
+    "label.axiomatic.no_design": "Insert a circuit f(…) as the design",
+    "label.axiomatic.computes": "Computes %s",
+    "slot.axiomatic.design": "Design: a circuit f(…)",
+    "slot.axiomatic.port_1": "Input 1",
+    "slot.axiomatic.port_2": "Input 2",
+    "slot.axiomatic.port_3": "Input 3",
+    "slot.axiomatic.card": "Theorem card",
+    "slot.axiomatic.conjecture_statement": "Unproven statement, renamed in an anvil",
+    "status.axiomatic.too_many_ports": "%s has more than 3 inputs",
+    "status.axiomatic.computed": "Computed %s (%s steps)",
+    "status.axiomatic.card_unproven": "The card must be a proven statement with no open assumptions",
+    "status.axiomatic.card_refuted": "Built on refuted conjecture: %s",
+    "status.axiomatic.card_dormant": "Conjecture %s is dormant: power its block",
+    "status.axiomatic.card_mismatch": "The card must conclude a property of %s(…) of plain variables",
+    "status.axiomatic.refuted_now": "Counterexample found! Conjecture %s is refuted",
+    "status.axiomatic.conjecture_needs_unproven": "Needs an unproven statement",
+    "status.axiomatic.conjecture_proven": "Proven: no more upkeep",
+    "status.axiomatic.conjecture_active": "Active, paying upkeep",
+    "status.axiomatic.conjecture_dormant": "Dormant: no energy for upkeep",
+    "message.axiomatic.disaster": "Disaster! Conjecture %s is refuted by the counterexample %s",
+    "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
 
@@ -344,11 +400,15 @@ def main():
 
     for block in pickaxe:
         name = block.split(":")[1]
+        entry = {"type": "minecraft:item", "name": block}
+        if name == "conjecture_block":
+            entry["functions"] = [{"function": "minecraft:copy_components", "source": "block_entity",
+                                   "include": [f"{NS}:conjecture", "minecraft:custom_name"]}]
         write_json(os.path.join(DATA, "loot_table", "blocks", name + ".json"), {
             "type": "minecraft:block",
             "pools": [{"rolls": 1, "bonus_rolls": 0,
                        "conditions": [{"condition": "minecraft:survives_explosion"}],
-                       "entries": [{"type": "minecraft:item", "name": block}]}],
+                       "entries": [entry]}],
             "random_sequence": f"{NS}:blocks/{name}",
         })
     write_json(os.path.join(ROOT, "data", "minecraft", "tags", "block", "mineable", "pickaxe.json"),
@@ -400,6 +460,15 @@ def main():
            {"B": board, "O": "minecraft:observer", "K": "minecraft:lapis_block"})
     shaped("conjunction_press", ["PBP", "LLL"], {"B": board, "P": "minecraft:piston", "L": "minecraft:lapis_lazuli"})
     shaped("modus_ponens_press", ["LBL", "PPP"], {"B": board, "P": "minecraft:piston", "L": "minecraft:lapis_lazuli"})
+    shaped("conjecture_bench", ["AAA", "LBL", "AAA"],
+           {"A": "minecraft:amethyst_shard", "L": "minecraft:lapis_lazuli", "B": board})
+    shaped("compiled_machine", ["CBC", "BRB", "CBC"],
+           {"C": "minecraft:copper_ingot", "B": board, "R": "minecraft:redstone_block"})
+    shaped("prime_core", ["GPG", "PRP", "GPG"], {
+        "G": "minecraft:gold_ingot",
+        "R": "minecraft:redstone",
+        "P": {"neoforge:ingredient_type": f"{NS}:certified_numeral", "property": "Prime"},
+    }, category="misc")
 
 
 def nbt_structure(path, size, data_version=4790):

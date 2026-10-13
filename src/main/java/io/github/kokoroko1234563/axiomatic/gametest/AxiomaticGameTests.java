@@ -47,6 +47,8 @@ public final class AxiomaticGameTests {
         test("circuit_board_needs_certified_evens", AxiomaticGameTests::circuitBoardNeedsCertifiedEvens);
         test("zero_add_by_machines", ProofGameTests::zeroAddByMachines);
         test("double_outputs_evens_by_machines", ProofGameTests::doubleOutputsEvensByMachines);
+        test("two_n_plus_one_trap", TrapGameTests::twoNPlusOneTrap);
+        test("theorem_card_certifies_outputs", TrapGameTests::theoremCardCertifiesOutputs);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {

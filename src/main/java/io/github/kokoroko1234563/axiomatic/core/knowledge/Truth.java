@@ -32,6 +32,7 @@ public final class Truth {
     private final Evaluator evaluator;
     private final BigInteger searchCap;
     private final Set<String> dependencies = new HashSet<>();
+    private String ignoredDependency;
 
     /**
      * @param evaluator does the computation and counts its cost; its budget bounds the total work
@@ -42,6 +43,15 @@ public final class Truth {
         this.deciders = deciders;
         this.evaluator = evaluator;
         this.searchCap = searchCap;
+    }
+
+    /**
+     * Do not use deciders whose link depends on {@code dependency}. Checking a conjecture must not
+     * rely on a decider linked by that same conjecture, or it could never fail.
+     */
+    public Truth ignoringDecidersFrom(String dependency) {
+        this.ignoredDependency = dependency;
+        return this;
     }
 
     /** Link-theorem dependencies of the deciders used so far (a conjectural link taints the answer). */
@@ -94,6 +104,9 @@ public final class Truth {
     /** Whether the property or relation holds for these numbers. */
     public Value property(String name, List<BigInteger> args) {
         Deciders.Link link = deciders.get(name);
+        if (link != null && ignoredDependency != null && link.dependencies().contains(ignoredDependency)) {
+            link = null;
+        }
         if (link != null) {
             dependencies.addAll(link.dependencies());
             return Value.of(evaluator.apply(link.function(), args).equals(BigInteger.ONE));
@@ -107,35 +120,40 @@ public final class Truth {
     }
 
     /**
-     * True when a false instance of {@code f} can always be detected by computation: every ∃ it
-     * relies on positively is behind a linked decider. Only such statements may be conjectured,
-     * since no machine could ever catch the others failing.
+     * True when computation can catch {@code f} failing on at least some numbers, which is the
+     * Conjecture Bench's rule: a statement no machine could ever catch failing (such as "∀n.
+     * ∃k. n = k + k") is refused. Prime(n) := 2 ≤ n ∧ ¬∃d. … qualifies, because finding a divisor
+     * shows it false, even though 2 ≤ n on its own could never be shown false by search.
      */
     public static boolean isRefutable(Formula f, Signature signature, Deciders deciders) {
-        return refutable(f, true, signature, deciders, new HashSet<>());
+        return canBeFalse(f, signature, deciders);
     }
 
-    private static boolean refutable(Formula f, boolean positive, Signature sig, Deciders deciders, Set<String> seen) {
+    private static boolean canBeFalse(Formula f, Signature sig, Deciders d) {
         return switch (f) {
             case Formula.Eq e -> true;
             case Formula.Bottom b -> true;
-            case Formula.And a -> refutable(a.left(), positive, sig, deciders, seen)
-                    && refutable(a.right(), positive, sig, deciders, seen);
-            case Formula.Implies i -> refutable(i.premise(), !positive, sig, deciders, seen)
-                    && refutable(i.conclusion(), positive, sig, deciders, seen);
-            // A positive ∃ that is false can never be shown false by search; a negative one is
-            // refuted by finding its witness.
-            case Formula.Exists ex -> !positive && refutable(ex.body(), positive, sig, deciders, seen);
-            case Formula.Pred p -> {
-                if (deciders.get(p.name()) != null) {
-                    yield true;
-                }
-                String key = p.name() + (positive ? "+" : "-");
-                if (!seen.add(key)) {
-                    yield true;
-                }
-                yield refutable(((Definition.Predicate) sig.get(p.name())).body(), positive, sig, deciders, seen);
-            }
+            case Formula.And a -> canBeFalse(a.left(), sig, d) || canBeFalse(a.right(), sig, d);
+            case Formula.Implies i -> canBeTrue(i.premise(), sig, d) && canBeFalse(i.conclusion(), sig, d);
+            // Not finding a witness never shows an ∃ false.
+            case Formula.Exists ex -> false;
+            // Definitions cannot refer to themselves, so unfolding always ends.
+            case Formula.Pred p -> d.get(p.name()) != null || canBeFalse(body(sig, p), sig, d);
         };
+    }
+
+    private static boolean canBeTrue(Formula f, Signature sig, Deciders d) {
+        return switch (f) {
+            case Formula.Eq e -> true;
+            case Formula.Bottom b -> false;
+            case Formula.And a -> canBeTrue(a.left(), sig, d) && canBeTrue(a.right(), sig, d);
+            case Formula.Implies i -> canBeFalse(i.premise(), sig, d) || canBeTrue(i.conclusion(), sig, d);
+            case Formula.Exists ex -> canBeTrue(ex.body(), sig, d);
+            case Formula.Pred p -> d.get(p.name()) != null || canBeTrue(body(sig, p), sig, d);
+        };
+    }
+
+    private static Formula body(Signature sig, Formula.Pred p) {
+        return ((Definition.Predicate) sig.get(p.name())).body();
     }
 }

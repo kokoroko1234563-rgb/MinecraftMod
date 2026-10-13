@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": "minecraft:gold_ingot",
+    "R": "minecraft:redstone",
+    "P": {
+      "neoforge:ingredient_type": "axiomatic:certified_numeral",
+      "property": "Prime"
+    }
+  },
+  "pattern": [
+    "GPG",
+    "PRP",
+    "GPG"
+  ],
+  "result": {
+    "id": "axiomatic:prime_core",
+    "count": 1
+  }
+}

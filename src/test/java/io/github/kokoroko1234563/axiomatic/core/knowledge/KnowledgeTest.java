@@ -171,6 +171,43 @@ class KnowledgeTest {
     }
 
     @Test
+    void primeConjectureIsCaughtByFindingADivisor() {
+        Term n = var("n");
+        Term d = var("d");
+        Term j = var("j");
+        // le(a, b) :⇔ ∃j. a + j = b; Prime(n) :⇔ 2 ≤ n ∧ ¬∃d. (2 ≤ d ∧ S(d) ≤ n ∧ divides(d, n) = 1)
+        kernel.define(new io.github.kokoroko1234563.axiomatic.core.logic.Definition.Predicate("le", List.of("a", "b"),
+                Formula.exists("j", Formula.eq(app("add", var("a"), j), var("b"))), "≤"));
+        kernel.define(new io.github.kokoroko1234563.axiomatic.core.logic.Definition.Predicate("Prime", List.of("n"),
+                Formula.and(Formula.pred("le", numeral(2), n), Formula.not(Formula.exists("d", Formula.and(
+                        Formula.pred("le", numeral(2), d), Formula.and(Formula.pred("le", succ(d), n),
+                                Formula.eq(app("divides", d, n), numeral(1))))))), null));
+        Formula claim = Formula.pred("Prime", succ(app("add", n, n)));
+        library.conjecture(kernel, deciders, "oddPrimes", claim);
+        Truth truth = new Truth(kernel.signature(), deciders, new Evaluator(kernel.signature(), 10_000_000),
+                BigInteger.valueOf(20));
+        assertFalse(library.observe("oddPrimes", Map.of("n", BigInteger.ONE), truth));
+        assertFalse(library.observe("oddPrimes", Map.of("n", BigInteger.valueOf(3)), truth));
+        assertTrue(library.observe("oddPrimes", Map.of("n", BigInteger.valueOf(4)), truth), "9 has the divisor 3");
+    }
+
+    @Test
+    void aConjecturedLinkCannotVouchForItself() {
+        Term n = var("n");
+        // "isZero is a decider for Even" is false (isZero(2) = 0 but Even(2)), and links via conjectures.
+        Formula decides = Formula.eq(app("isZero", n), numeral(1));
+        // The forward link could never be caught failing (Even is an unbounded ∃), so the bench
+        // refuses it; it is made directly here to set up the decider.
+        assertThrows(ProofException.class, () -> library.conjecture(kernel, deciders, "fakeF",
+                Formula.implies(decides, Formula.pred("Even", n))));
+        Theorem fwd = kernel.conjecture("fakeF", Formula.implies(decides, Formula.pred("Even", n)));
+        Theorem back = library.conjecture(kernel, deciders, "fakeB", Formula.implies(Formula.pred("Even", n), decides));
+        deciders.register("Even", "isZero", fwd, back);
+        // Checking fakeB at n = 2 must unfold Even (witness k = 1), not ask the decider fakeB vouches for.
+        assertTrue(library.observe("fakeB", Map.of("n", BigInteger.TWO), truth()));
+    }
+
+    @Test
     void statusesIgnoreVariableNames() {
         Term n = var("n");
         Theorem dbl = kernel.definingStatements("Double").get(0);

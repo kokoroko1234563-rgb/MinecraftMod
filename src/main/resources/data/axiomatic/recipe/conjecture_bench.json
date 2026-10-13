@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "minecraft:amethyst_shard",
+    "L": "minecraft:lapis_lazuli",
+    "B": "axiomatic:circuit_board"
+  },
+  "pattern": [
+    "AAA",
+    "LBL",
+    "AAA"
+  ],
+  "result": {
+    "id": "axiomatic:conjecture_bench",
+    "count": 1
+  }
+}

@@ -16,6 +16,9 @@
     "axiomatic:induction_engine",
     "axiomatic:conjunction_press",
     "axiomatic:modus_ponens_press",
+    "axiomatic:compiled_machine",
+    "axiomatic:conjecture_bench",
+    "axiomatic:conjecture_block",
     "axiomatic:copper_cable"
   ]
 }
