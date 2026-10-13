@@ -76,9 +76,12 @@ def casing(family, glyph=None):
     return img
 
 
-def cable():
+def cable(phase_b=False):
     img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
     base, dark, light = FAMILIES["copper"]
+    if phase_b:
+        # Phase B: tinned copper, silver with copper stripes.
+        base, light = (178, 186, 192), base
     px = img.load()
     for x in range(16):
         for y in range(16):
@@ -143,7 +146,7 @@ NOTEBOOK = [
     "Factories\n\nThe Statement Conveyor moves statements and circuits between machines; it needs a proven 0 + n = n to craft. The Duplicator copies statements for 1 unit. Every step still costs energy.",
     "Safety\n\nAn unpowered conjecture block goes dormant: safe, but its cards stop working. Seal a conjecture block in obsidian or tinted glass near a Containment Controller to keep its failure harmless.",
     "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
-    "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless.",
+    "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless. Click a cable to switch its phase (A copper, B silver): if neighbouring cables always differ, the Surveyor certifies alternating power at double speed. Mixed phases without that proof short out.",
     "Infinitely many\n\nProve that above every n there is a prime: for all n, exists p, n <= p and Prime(p). That proof crafts the Infinite Prime Well, which emits primes forever. The Factorization Vault stores items as one number.",
     "Equivalences\n\nCertify a relation as an Equivalence in the Structure Bench and the Rewriter accepts s ≡ t in place of an equation. It rewrites only inside functions that respect ≡: name a law like a ≡ b → c ≡ d → a + c ≡ b + d in the Library for each one.",
     "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds. Implement addition itself and numbers go binary: the Duplicator then pays for digits, not value.",
@@ -601,6 +604,12 @@ LANG = {
     "button.axiomatic.survey": "Survey",
     "label.axiomatic.network": "Network: %s nodes, %s edges",
     "status.axiomatic.no_network": "Touch a cable network to survey it",
+    "status.axiomatic.network_bipartite": "; phases alternate: certified for alternating power",
+    "status.axiomatic.network_clash": "; phases clash at %s %s %s (odd cycle or same-phase neighbours)",
+    "status.axiomatic.short_circuit": "Short circuit! Mixed phases need a surveyed two-colouring",
+    "status.axiomatic.burning_alternating": "Burning: alternating power (x2)",
+    "message.axiomatic.phase_a": "Cable phase A",
+    "message.axiomatic.phase_b": "Cable phase B",
     "status.axiomatic.network_tree": "A tree (%s cycles): certified, lossless. ",
     "status.axiomatic.network_cycles": "Not a tree: %s independent cycles, energy is lost. ",
     "status.axiomatic.network_even": "All degrees even.",
@@ -690,8 +699,16 @@ def main():
         "textures": {"all": tex, "particle": tex},
         "elements": [{"from": [5, 5, 5], "to": [11, 11, 11], "faces": faces}],
     })
+    save(cable(True), os.path.join(ASSETS, "textures", "block", "copper_cable_b.png"))
+    tex_b = f"{NS}:block/copper_cable_b"
+    write_json(os.path.join(ASSETS, "models", "block", "copper_cable_b.json"), {
+        "parent": "minecraft:block/block",
+        "textures": {"all": tex_b, "particle": tex_b},
+        "elements": [{"from": [5, 5, 5], "to": [11, 11, 11], "faces": faces}],
+    })
     write_json(os.path.join(ASSETS, "blockstates", "copper_cable.json"),
-               {"variants": {"": {"model": f"{NS}:block/copper_cable"}}})
+               {"variants": {"phase=false": {"model": f"{NS}:block/copper_cable"},
+                             "phase=true": {"model": f"{NS}:block/copper_cable_b"}}})
     write_json(os.path.join(ASSETS, "items", "copper_cable.json"),
                {"model": {"type": "minecraft:model", "model": f"{NS}:block/copper_cable"}})
     pickaxe.append(f"{NS}:copper_cable")

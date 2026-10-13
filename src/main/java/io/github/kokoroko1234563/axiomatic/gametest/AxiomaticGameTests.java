@@ -63,6 +63,8 @@ public final class AxiomaticGameTests {
         test("mersenne_and_the_perfect_core", AxiomaticGameTests::mersenneAndThePerfectCore);
         test("foreign_energy_powers_machines", AxiomaticGameTests::foreignEnergyPowersMachines);
         test("rewriter_uses_certified_equivalences", EquivalenceGameTest::rewritesUnderSuccessor);
+        test("two_coloured_network_runs_alternating", AxiomaticGameTests::twoColouredNetworkRunsAlternating);
+        test("clashing_phases_short_circuit", AxiomaticGameTests::clashingPhasesShortCircuit);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -244,6 +246,59 @@ public final class AxiomaticGameTests {
             h.setBlock(new BlockPos(3, 1, 2), ModRegistries.COPPER_CABLE.get());
         }
         h.getBlockEntity(new BlockPos(1, 1, 1), MachineBlockEntity.class).setItem(0, new ItemStack(Items.COAL, 4));
+    }
+
+    /**
+     * Dynamo at (1,1,1) with a Surveyor on top; cables A at (2,1,1), B at (3,1,1) and (2,2,1); a
+     * Successor at (4,1,1). With {@code clash}, a B cable at (3,2,1) touches two B cables.
+     */
+    private static io.github.kokoroko1234563.axiomatic.machine.CoalDynamoBlockEntity phased(GameTestHelper h, boolean clash) {
+        var cable = ModRegistries.COPPER_CABLE.get().defaultBlockState();
+        var b = cable.setValue(io.github.kokoroko1234563.axiomatic.energy.CableBlock.PHASE, true);
+        h.setBlock(new BlockPos(1, 1, 1), ModRegistries.COAL_DYNAMO.get());
+        h.setBlock(new BlockPos(2, 1, 1), cable);
+        h.setBlock(new BlockPos(3, 1, 1), b);
+        h.setBlock(new BlockPos(2, 2, 1), b);
+        if (clash) {
+            h.setBlock(new BlockPos(3, 2, 1), b);
+        }
+        h.setBlock(new BlockPos(4, 1, 1), ModRegistries.SUCCESSOR.get());
+        h.setBlock(new BlockPos(1, 2, 1), ModRegistries.NETWORK_SURVEYOR.get());
+        var dynamo = h.getBlockEntity(new BlockPos(1, 1, 1), io.github.kokoroko1234563.axiomatic.machine.CoalDynamoBlockEntity.class);
+        dynamo.setItem(0, new ItemStack(Items.COAL, 4));
+        h.getBlockEntity(new BlockPos(4, 1, 1), MachineBlockEntity.class).setItem(0, NumeralItem.stack(NumeralData.of(4), 1));
+        return dynamo;
+    }
+
+    private static void twoColouredNetworkRunsAlternating(GameTestHelper h) {
+        var dynamo = phased(h, false);
+        var successor = h.getBlockEntity(new BlockPos(4, 1, 1), MachineBlockEntity.class);
+        var level = h.getLevel();
+        h.succeedWhen(() -> {
+            var graph = io.github.kokoroko1234563.axiomatic.energy.EnergyNetwork.graph(level, h.absolutePos(new BlockPos(1, 1, 1)));
+            h.assertTrue(graph.alternating() && graph.twoColoured(), "phases A and B alternate");
+            h.assertTrue(io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level).isCertifiedBipartite(graph.signature()),
+                    "the surveyor touching the dynamo certifies the colouring");
+            h.assertTrue(dynamo.alternating() && !dynamo.shorted(), "the dynamo runs alternating power");
+            h.assertTrue(numeralIn(successor, 1) != null, "the successor ran on it");
+        });
+    }
+
+    private static void clashingPhasesShortCircuit(GameTestHelper h) {
+        var dynamo = phased(h, true);
+        var successor = h.getBlockEntity(new BlockPos(4, 1, 1), MachineBlockEntity.class);
+        var level = h.getLevel();
+        h.runAfterDelay(120, () -> {
+            var graph = io.github.kokoroko1234563.axiomatic.energy.EnergyNetwork.graph(level, h.absolutePos(new BlockPos(1, 1, 1)));
+            h.assertTrue(graph.alternating() && !graph.twoColoured(), "two B cables touch");
+            h.assertFalse(io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level).isCertifiedBipartite(graph.signature()),
+                    "a clashing colouring is not certified");
+            h.assertTrue(dynamo.shorted(), "the dynamo is shorted");
+            h.assertValueEqual(successor.energy(), 0L, "nothing reaches the machine over the cables");
+            h.assertTrue(h.getBlockEntity(new BlockPos(1, 2, 1), MachineBlockEntity.class).status().getString().contains("clash"),
+                    "the surveyor names the clash");
+            h.succeed();
+        });
     }
 
     private static void surveyorCertifiesTrees(GameTestHelper h) {

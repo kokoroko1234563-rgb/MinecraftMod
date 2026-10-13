@@ -24,6 +24,10 @@ public class CoalDynamoBlockEntity extends MachineBlockEntity {
     private int burnLeft;
     private List<EnergyNetwork.Consumer> consumers = List.of();
     private boolean lossless;
+    /** Alternating power: double output, fuel burns twice as fast. */
+    private boolean alternating;
+    /** Phases mixed on a network not certified two-coloured: nothing reaches the machines. */
+    private boolean shorted;
 
     public CoalDynamoBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.COAL_DYNAMO.type(), pos, state, 20_000);
@@ -65,17 +69,40 @@ public class CoalDynamoBlockEntity extends MachineBlockEntity {
             }
         }
         if (burnLeft > 0) {
-            burnLeft--;
-            energy = Math.min(capacity, energy + ENERGY_PER_TICK);
-            setStatus(Component.translatable(lossless ? "status.axiomatic.burning_lossless" : "status.axiomatic.burning"));
+            int speed = alternating ? 2 : 1;
+            burnLeft = Math.max(0, burnLeft - speed);
+            energy = Math.min(capacity, energy + (long) ENERGY_PER_TICK * speed);
+            setStatus(Component.translatable(shorted ? "status.axiomatic.short_circuit"
+                    : alternating ? "status.axiomatic.burning_alternating"
+                    : lossless ? "status.axiomatic.burning_lossless" : "status.axiomatic.burning"));
         } else {
-            setStatus(Component.translatable("status.axiomatic.no_fuel"));
+            setStatus(Component.translatable(shorted ? "status.axiomatic.short_circuit" : "status.axiomatic.no_fuel"));
         }
         if (level.getGameTime() % 20 == 0) {
-            // A network certified as a tree (by a Network Surveyor) transfers without loss.
-            lossless = io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level)
-                    .isCertifiedTree(EnergyNetwork.graph(level, worldPosition).signature());
+            // Certificates from a Network Surveyor: a tree transfers without loss; a two-coloured
+            // network with both phases runs alternating power. Mixed phases without one short out.
+            EnergyNetwork.Graph graph = EnergyNetwork.graph(level, worldPosition);
+            var networks = io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level);
+            lossless = networks.isCertifiedTree(graph.signature());
+            boolean certified = graph.alternating() && networks.isCertifiedBipartite(graph.signature());
+            boolean wasShorted = shorted;
+            shorted = graph.alternating() && !certified;
+            alternating = certified;
             consumers = EnergyNetwork.consumers(level, worldPosition, lossless);
+            if (shorted) {
+                // Only machines touching the dynamo still get power (a Surveyor there can check the
+                // network); the short burns off what the dynamo holds for the cables.
+                consumers = consumers.stream()
+                        .filter(c -> c.machine().getBlockPos().distManhattan(worldPosition) == 1).toList();
+                energy = 0;
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
+                        worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5, 8, 0.3, 0.2, 0.3, 0.1);
+                if (!wasShorted) {
+                    level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.REDSTONE_TORCH_BURNOUT,
+                            net.minecraft.sounds.SoundSource.BLOCKS, 0.6f, 1.0f);
+                }
+                markChanged();
+            }
         }
         if (energy > 0 && !consumers.isEmpty()) {
             consumers = consumers.stream().filter(c -> !c.machine().isRemoved()).toList();
@@ -86,6 +113,14 @@ public class CoalDynamoBlockEntity extends MachineBlockEntity {
             }
         }
         super.tick(level);
+    }
+
+    public boolean alternating() {
+        return alternating;
+    }
+
+    public boolean shorted() {
+        return shorted;
     }
 
     @Override

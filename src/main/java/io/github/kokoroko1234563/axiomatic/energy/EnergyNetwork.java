@@ -31,7 +31,8 @@ public final class EnergyNetwork {
     public record Consumer(MachineBlockEntity machine, double efficiency) {}
 
     /** The graph of a network: its nodes and edges, and a signature that changes with its shape. */
-    public record Graph(Set<BlockPos> cables, Set<BlockPos> machines, int edges, Map<BlockPos, Integer> degrees) {
+    public record Graph(Set<BlockPos> cables, Set<BlockPos> machines, int edges, Map<BlockPos, Integer> degrees,
+            Set<BlockPos> phaseB, List<BlockPos> clash) {
         public int nodes() {
             return cables.size() + machines.size();
         }
@@ -39,6 +40,16 @@ public final class EnergyNetwork {
         /** Connected (by construction) with one edge fewer than nodes: no cycles. */
         public boolean isTree() {
             return nodes() > 0 && edges == nodes() - 1;
+        }
+
+        /** Whether the cables use both phases: the network then runs alternating power. */
+        public boolean alternating() {
+            return !phaseB.isEmpty() && phaseB.size() < cables.size();
+        }
+
+        /** Whether every cable–cable edge joins different phases: a two-colouring of the cables. */
+        public boolean twoColoured() {
+            return clash.isEmpty();
         }
 
         public boolean allDegreesEven() {
@@ -49,7 +60,7 @@ public final class EnergyNetwork {
         public long signature() {
             long h = 1125899906842597L;
             for (BlockPos p : new TreeSet<>(cables)) {
-                h = 31 * h + p.asLong();
+                h = 31 * h + p.asLong() + (phaseB.contains(p) ? 17 : 0);
             }
             h = 31 * h + 7;
             for (BlockPos p : new TreeSet<>(machines)) {
@@ -84,7 +95,7 @@ public final class EnergyNetwork {
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
         for (Direction d : Direction.values()) {
             BlockPos n = start.relative(d);
-            if (isCable(level, n) && cables.add(n)) {
+            if (isCable(level, n) && cables.add(n.immutable())) {
                 queue.add(n);
             }
         }
@@ -99,6 +110,13 @@ public final class EnergyNetwork {
         }
         Set<BlockPos> machines = new HashSet<>();
         Map<BlockPos, Integer> degrees = new HashMap<>();
+        Set<BlockPos> phaseB = new HashSet<>();
+        for (BlockPos c : cables) {
+            if (CableBlock.phase(level.getBlockState(c))) {
+                phaseB.add(c);
+            }
+        }
+        List<BlockPos> clash = new ArrayList<>();
         int edges = 0;
         for (BlockPos c : cables) {
             for (Direction d : Direction.values()) {
@@ -107,6 +125,9 @@ public final class EnergyNetwork {
                     // Count each cable–cable edge once.
                     if (c.asLong() < n.asLong()) {
                         edges++;
+                        if (phaseB.contains(c) == phaseB.contains(n)) {
+                            clash.add(c);
+                        }
                     }
                     degrees.merge(c, 1, Integer::sum);
                 } else if (level.getBlockEntity(n) instanceof MachineBlockEntity) {
@@ -117,7 +138,7 @@ public final class EnergyNetwork {
                 }
             }
         }
-        return new Graph(cables, machines, edges, degrees);
+        return new Graph(cables, machines, edges, degrees, phaseB, clash);
     }
 
     private static boolean isCable(Level level, BlockPos pos) {

@@ -13,7 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * Network Surveyor: scans the cable network it touches into a graph and reports its nodes, edges,
  * cycles and degrees. A network that is a tree (one route to every machine) is certified, which
- * makes energy transfer on it lossless. Each survey costs energy per node; any change to the
+ * makes energy transfer on it lossless. A network whose cables use both phases is checked as a
+ * two-colouring; if no two neighbouring cables share a phase it is certified for alternating power.
+ * (Until then the network is shorted, so a Surveyor checking it should touch the dynamo.) Each survey costs energy per node; any change to the
  * network voids the certificate until the next survey.
  */
 public class NetworkSurveyorBlockEntity extends MachineBlockEntity {
@@ -65,9 +67,21 @@ public class NetworkSurveyorBlockEntity extends MachineBlockEntity {
             NetworkData.get(level).certifyTree(graph.signature());
         }
         report = Component.translatable("label.axiomatic.network", graph.nodes(), graph.edges());
-        setStatus(Component.translatable(tree ? "status.axiomatic.network_tree" : "status.axiomatic.network_cycles",
+        Component status = Component.translatable(tree ? "status.axiomatic.network_tree" : "status.axiomatic.network_cycles",
                 graph.edges() - graph.nodes() + 1).append(Component.translatable(graph.allDegreesEven()
-                        ? "status.axiomatic.network_even" : "status.axiomatic.network_odd")));
+                        ? "status.axiomatic.network_even" : "status.axiomatic.network_odd"));
+        if (graph.alternating()) {
+            // The player's phases are the claimed two-colouring; check every edge joins different ones.
+            if (graph.twoColoured()) {
+                NetworkData.get(level).certifyBipartite(graph.signature());
+                status = status.copy().append(Component.translatable("status.axiomatic.network_bipartite"));
+            } else {
+                BlockPos at = graph.clash().getFirst();
+                status = status.copy().append(Component.translatable("status.axiomatic.network_clash",
+                        at.getX(), at.getY(), at.getZ()));
+            }
+        }
+        setStatus(status);
         markChanged();
         return new Job(cost, 20, List.of());
     }

@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
+    "phase=false": {
       "model": "axiomatic:block/copper_cable"
+    },
+    "phase=true": {
+      "model": "axiomatic:block/copper_cable_b"
     }
   }
 }
