@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "R": "minecraft:redstone",
+    "D": "minecraft:dropper"
+  },
+  "pattern": [
+    "CCC",
+    "RDR",
+    "CCC"
+  ],
+  "result": {
+    "id": "axiomatic:duplicator",
+    "count": 1
+  }
+}

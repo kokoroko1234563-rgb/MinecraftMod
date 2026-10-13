@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "R": "minecraft:redstone",
+    "E": {
+      "neoforge:ingredient_type": "axiomatic:certified_numeral",
+      "property": "Even"
+    }
+  },
+  "pattern": [
+    "CEC",
+    "ERE",
+    "CEC"
+  ],
+  "result": {
+    "id": "axiomatic:circuit_board",
+    "count": 1
+  }
+}

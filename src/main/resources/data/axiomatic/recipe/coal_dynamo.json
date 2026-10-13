@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "F": "minecraft:furnace",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "CCC",
+    "CFC",
+    "CRC"
+  ],
+  "result": {
+    "id": "axiomatic:coal_dynamo",
+    "count": 1
+  }
+}

@@ -1,0 +1,277 @@
+#!/usr/bin/env python3
+"""Generates placeholder textures, models, blockstates, loot tables, tags and recipes.
+
+Run from the repository root:  python3 tools/gen_assets.py
+Re-running overwrites generated files; the language file is written in full too.
+Textures are original 16x16 pixel art in the doc's family colours (copper = computation,
+blue = reasoning, gold = proven, purple = conjecture, red = refuted), so they are free to use.
+Needs Pillow (pip install pillow).
+"""
+import json
+import os
+
+from PIL import Image
+
+ROOT = os.path.join(os.path.dirname(__file__), "..", "src", "main", "resources")
+ASSETS = os.path.join(ROOT, "assets", "axiomatic")
+DATA = os.path.join(ROOT, "data", "axiomatic")
+NS = "axiomatic"
+
+FAMILIES = {
+    "copper": ((193, 106, 58), (128, 62, 30), (236, 160, 110)),
+    "blue": ((59, 91, 165), (32, 50, 100), (120, 160, 230)),
+    "iron": ((150, 150, 158), (90, 90, 98), (210, 210, 218)),
+    "gold": ((222, 177, 45), (150, 110, 20), (255, 230, 120)),
+    "purple": ((122, 64, 160), (70, 30, 100), (190, 140, 230)),
+}
+
+# 5x7 glyphs, '#' = ink.
+GLYPHS = {
+    "0": [" ### ", "#   #", "#  ##", "# # #", "##  #", "#   #", " ### "],
+    "S": [" ####", "#    ", "#    ", " ### ", "    #", "    #", "#### "],
+    "2": [" ### ", "#   #", "    #", "   # ", "  #  ", " #   ", "#####"],
+    "?": [" ### ", "#   #", "    #", "   # ", "  #  ", "     ", "  #  "],
+    "~": ["     ", "  #  ", " ### ", "## ##", "#   #", "## ##", " ### "],  # flame
+    "E": ["#####", "#    ", "#    ", "#### ", "#    ", "#    ", "#####"],
+}
+
+
+def casing(family, glyph=None):
+    base, dark, light = FAMILIES[family]
+    img = Image.new("RGBA", (16, 16), base + (255,))
+    px = img.load()
+    for i in range(16):
+        px[i, 0] = light + (255,)
+        px[0, i] = light + (255,)
+        px[i, 15] = dark + (255,)
+        px[15, i] = dark + (255,)
+    # Rivets.
+    for x, y in [(2, 2), (13, 2), (2, 13), (13, 13)]:
+        px[x, y] = dark + (255,)
+    # Inner panel.
+    for x in range(4, 12):
+        for y in range(3, 13):
+            px[x, y] = (40, 40, 46, 255)
+    if glyph:
+        rows = GLYPHS[glyph]
+        for gy, row in enumerate(rows):
+            for gx, c in enumerate(row):
+                if c == "#":
+                    px[5 + gx, 4 + gy] = light + (255,)
+    return img
+
+
+def cable():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    base, dark, light = FAMILIES["copper"]
+    px = img.load()
+    for x in range(16):
+        for y in range(16):
+            px[x, y] = (base if (x + y) % 4 else light) + (255,)
+    return img
+
+
+def numeral():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    # A token: dark disc with an S-chain (three dots and a zero ring).
+    for x in range(16):
+        for y in range(16):
+            d = (x - 7.5) ** 2 + (y - 7.5) ** 2
+            if d < 49:
+                px[x, y] = (230, 220, 190, 255) if d > 36 else (60, 60, 70, 255)
+    for gy, row in enumerate(GLYPHS["0"]):
+        for gx, c in enumerate(row):
+            if c == "#":
+                px[5 + gx, 4 + gy] = (255, 210, 120, 255)
+    return img
+
+
+def circuit_board():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    px = img.load()
+    for x in range(2, 14):
+        for y in range(3, 13):
+            px[x, y] = (40, 110, 60, 255)
+    for x in range(3, 13):
+        px[x, 6] = (210, 150, 70, 255)
+        px[x, 10] = (210, 150, 70, 255)
+    for y in range(4, 12):
+        px[7, y] = (210, 150, 70, 255)
+    for x, y in [(4, 5), (10, 5), (5, 9), (11, 9)]:
+        px[x, y] = (230, 230, 230, 255)
+    return img
+
+
+def write_json(path, obj):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(obj, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+
+def save(img, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    img.save(path)
+
+
+# name -> (family, glyph, display name)
+MACHINES = {
+    "coal_dynamo": ("copper", "~", "Coal Dynamo"),
+    "zero_source": ("copper", "0", "Zero Source"),
+    "successor": ("copper", "S", "Successor"),
+    "duplicator": ("copper", "2", "Duplicator"),
+    "test_bench": ("iron", "?", "Test Bench"),
+}
+
+ITEMS = {
+    "numeral": (numeral, "Numeral"),
+    "circuit_board": (circuit_board, "Circuit Board"),
+}
+
+LANG = {
+    "itemGroup.axiomatic": "Axiomatic",
+    "block.axiomatic.copper_cable": "Copper Cable",
+    "item.axiomatic.numeral.value": "Numeral %s",
+    "tooltip.axiomatic.certified": "Certified: %s",
+    "tooltip.axiomatic.conjectural": " (conjectural)",
+    "tooltip.axiomatic.energy": "Energy: %s / %s",
+    "button.axiomatic.next_property": "Property ▶",
+    "label.axiomatic.property": "Property: %s",
+    "slot.axiomatic.fuel": "Fuel",
+    "status.axiomatic.no_energy": "Waiting for energy",
+    "status.axiomatic.output_full": "Output full",
+    "status.axiomatic.working": "Working",
+    "status.axiomatic.burning": "Burning",
+    "status.axiomatic.no_fuel": "No fuel",
+    "status.axiomatic.cost": "Cost: %s",
+    "status.axiomatic.property": "Testing for %s",
+    "status.axiomatic.unknown_property": "Unknown property %s",
+    "status.axiomatic.too_big": "Too big to search",
+    "status.axiomatic.certified": "%s(%s) certified, %s steps",
+    "status.axiomatic.not_certified": "No witness: %s(%s) not certified (%s steps)",
+}
+
+
+def main():
+    lang = dict(LANG)
+    pickaxe = []
+    for name, (family, glyph, display) in MACHINES.items():
+        save(casing(family, glyph), os.path.join(ASSETS, "textures", "block", name + ".png"))
+        write_json(os.path.join(ASSETS, "models", "block", name + ".json"),
+                   {"parent": "minecraft:block/cube_all", "textures": {"all": f"{NS}:block/{name}"}})
+        write_json(os.path.join(ASSETS, "blockstates", name + ".json"),
+                   {"variants": {"": {"model": f"{NS}:block/{name}"}}})
+        write_json(os.path.join(ASSETS, "items", name + ".json"),
+                   {"model": {"type": "minecraft:model", "model": f"{NS}:block/{name}"}})
+        lang[f"block.{NS}.{name}"] = display
+        pickaxe.append(f"{NS}:{name}")
+
+    # Cable: a thin cube in the middle of the block.
+    save(cable(), os.path.join(ASSETS, "textures", "block", "copper_cable.png"))
+    tex = f"{NS}:block/copper_cable"
+    faces = {d: {"texture": "#all"} for d in ["north", "south", "east", "west", "up", "down"]}
+    write_json(os.path.join(ASSETS, "models", "block", "copper_cable.json"), {
+        "parent": "minecraft:block/block",
+        "textures": {"all": tex, "particle": tex},
+        "elements": [{"from": [5, 5, 5], "to": [11, 11, 11], "faces": faces}],
+    })
+    write_json(os.path.join(ASSETS, "blockstates", "copper_cable.json"),
+               {"variants": {"": {"model": f"{NS}:block/copper_cable"}}})
+    write_json(os.path.join(ASSETS, "items", "copper_cable.json"),
+               {"model": {"type": "minecraft:model", "model": f"{NS}:block/copper_cable"}})
+    pickaxe.append(f"{NS}:copper_cable")
+
+    for name, (painter, display) in ITEMS.items():
+        save(painter(), os.path.join(ASSETS, "textures", "item", name + ".png"))
+        write_json(os.path.join(ASSETS, "models", "item", name + ".json"),
+                   {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/{name}"}})
+        write_json(os.path.join(ASSETS, "items", name + ".json"),
+                   {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
+        lang.setdefault(f"item.{NS}.{name}", display)
+
+    write_json(os.path.join(ASSETS, "lang", "en_us.json"), dict(sorted(lang.items())))
+
+    for block in pickaxe:
+        name = block.split(":")[1]
+        write_json(os.path.join(DATA, "loot_table", "blocks", name + ".json"), {
+            "type": "minecraft:block",
+            "pools": [{"rolls": 1, "bonus_rolls": 0,
+                       "conditions": [{"condition": "minecraft:survives_explosion"}],
+                       "entries": [{"type": "minecraft:item", "name": block}]}],
+            "random_sequence": f"{NS}:blocks/{name}",
+        })
+    write_json(os.path.join(ROOT, "data", "minecraft", "tags", "block", "mineable", "pickaxe.json"),
+               {"replace": False, "values": pickaxe})
+
+    def shaped(name, pattern, key, count=1, category="redstone"):
+        write_json(os.path.join(DATA, "recipe", name + ".json"), {
+            "type": "minecraft:crafting_shaped",
+            "category": category,
+            "key": key,
+            "pattern": pattern,
+            "result": {"id": f"{NS}:{name}", "count": count},
+        })
+
+    shaped("coal_dynamo", ["CCC", "CFC", "CRC"],
+           {"C": "minecraft:copper_ingot", "F": "minecraft:furnace", "R": "minecraft:redstone"})
+    shaped("copper_cable", ["CCC"], {"C": "minecraft:copper_ingot"}, count=8)
+    shaped("zero_source", ["SSS", "SCS", "SRS"],
+           {"S": "minecraft:stone", "C": "minecraft:copper_ingot", "R": "minecraft:redstone"})
+    shaped("successor", ["C C", "CRC", "C C"], {"C": "minecraft:copper_ingot", "R": "minecraft:repeater"})
+    shaped("duplicator", ["CCC", "RDR", "CCC"],
+           {"C": "minecraft:copper_ingot", "R": "minecraft:redstone", "D": "minecraft:dropper"})
+    shaped("test_bench", ["III", "IKI", "ICI"],
+           {"I": "minecraft:iron_ingot", "K": "minecraft:crafting_table", "C": "minecraft:comparator"})
+    shaped("circuit_board", ["CEC", "ERE", "CEC"], {
+        "C": "minecraft:copper_ingot",
+        "R": "minecraft:redstone",
+        "E": {"neoforge:ingredient_type": f"{NS}:certified_numeral", "property": "Even"},
+    }, category="misc")
+
+
+def nbt_structure(path, size, data_version=4790):
+    """Writes an all-air structure template, used as the stage for game tests."""
+    import gzip
+    import struct
+
+    def name(n):
+        b = n.encode()
+        return struct.pack(">H", len(b)) + b
+
+    def tag_int(n, v):
+        return b"\x03" + name(n) + struct.pack(">i", v)
+
+    def tag_string(n, v):
+        b = v.encode()
+        return b"\x08" + name(n) + struct.pack(">H", len(b)) + b
+
+    def tag_list(n, elem_type, payloads):
+        return b"\x09" + name(n) + bytes([elem_type]) + struct.pack(">i", len(payloads)) + b"".join(payloads)
+
+    def int_list_payload(values):
+        return b"\x03" + struct.pack(">i", len(values)) + b"".join(struct.pack(">i", v) for v in values)
+
+    blocks = []
+    for x in range(size[0]):
+        for y in range(size[1]):
+            for z in range(size[2]):
+                # compound payload: pos (list of int), state (int), end
+                pos = b"\x09" + name("pos") + int_list_payload([x, y, z])
+                blocks.append(pos + tag_int("state", 0) + b"\x00")
+    palette = [tag_string("Name", "minecraft:air") + b"\x00"]
+    root = (b"\x0a" + name("")
+            + tag_int("DataVersion", data_version)
+            + b"\x09" + name("size") + int_list_payload(list(size))
+            + tag_list("blocks", 10, blocks)
+            + tag_list("entities", 10, [])
+            + tag_list("palette", 10, palette)
+            + b"\x00")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with gzip.open(path, "wb") as f:
+        f.write(root)
+
+
+if __name__ == "__main__":
+    nbt_structure(os.path.join(DATA, "structure", "empty_stage.nbt"), (7, 4, 7))
+    main()

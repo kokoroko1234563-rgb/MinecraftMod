@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "R": "minecraft:repeater"
+  },
+  "pattern": [
+    "C C",
+    "CRC",
+    "C C"
+  ],
+  "result": {
+    "id": "axiomatic:successor",
+    "count": 1
+  }
+}

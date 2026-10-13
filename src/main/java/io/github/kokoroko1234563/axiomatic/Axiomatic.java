@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import io.github.kokoroko1234563.axiomatic.gametest.AxiomaticGameTests;
+import io.github.kokoroko1234563.axiomatic.registry.ModRegistries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -19,6 +21,7 @@ public class Axiomatic {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Axiomatic(IEventBus modEventBus, ModContainer modContainer) {
-        LOGGER.info("Axiomatic loading");
+        ModRegistries.register(modEventBus);
+        AxiomaticGameTests.register(modEventBus);
     }
 }

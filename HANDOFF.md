@@ -9,6 +9,9 @@ alone. The full game design is in [docs/design.md](docs/design.md). Update this 
 - `./gradlew build` builds `build/libs/axiomatic-<version>.jar` and runs the unit tests.
 - `./gradlew test` runs only the unit tests (fast, no game needed).
 - `./gradlew runClient` starts Minecraft with the mod (local machine only).
+- `./gradlew runGameTestServer` runs the in-world game tests headless (works in the cloud too).
+- `python3 tools/gen_assets.py` regenerates placeholder textures, models, blockstates, lang,
+  loot tables, recipes and the empty game-test stage. Edit the script, not the generated files.
 - In IntelliJ: open the folder as a Gradle project and set the project SDK to JDK 25.
 - Cloud sessions: `.claude/hooks/session-start.sh` installs JDK 25 automatically. The cloud
   environment's network must allow `maven.neoforged.net`, `libraries.minecraft.net`,
@@ -30,6 +33,15 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `core/logic/Syntax` | Free variables, capture-avoiding substitution, alpha-equivalence, rewriting |
 | `core/logic/Evaluator` | Runs circuits on numbers (BigInteger), counting steps for energy, with a budget |
 | `core/graph/PointedGraph`, `GraphCodec` | The one data format, binary save/load, and term/statement conversion |
+| `core/knowledge/` | Truth (3-valued evaluation), Deciders (+ link theorems), Fact/Certifier (numeral certificates), TestBench (range checks), Library (statuses, named theorems, conjectures), MathState (world save format, starter definitions) |
+| `registry/ModRegistries` | Every block, item, block entity, menu, component, ingredient type and the creative tab |
+| `machine/` | Machine framework (`MachineBlockEntity`: inventory, energy, jobs paid over time, sync; one `MachineMenu`; layouts) and each machine |
+| `energy/` | Copper Cable and the network search that delivers dynamo energy |
+| `item/` | Numeral item; `NumeralData` component = value + certificates |
+| `world/AxiomaticData` | SavedData wrapping `MathState` (base64 in level data) |
+| `crafting/CertifiedNumeralIngredient` | Recipe ingredient "numeral certified with property P" |
+| `client/` | `MachineScreen` (drawn with rectangles, no texture), screen registration |
+| `gametest/AxiomaticGameTests` | In-world tests on an empty stage structure |
 | `src/test/java/...` | JUnit tests. `KernelTest` proves zero_add (exactly the doc's 6 steps), succ_add, add_comm and "Double outputs evens", and checks that cheats are refused |
 
 ## Decisions made (not all are in the design doc)
@@ -50,33 +62,45 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - **Symmetry/transitivity of =** are derived from reflexivity + Rewriter, not separate rules.
 - Theorems record `dependencies` ("axiom:…", "def:…", "conjecture:…"); `isConjectural()` is how
   conjecture taint will cascade.
+- **Starter definitions**: new worlds come with `add` and `Even` defined (not proven anything),
+  because the opening hour certifies evens on the Test Bench before the Drafting Chamber exists.
+- **Energy is the mod's own** simple system (dynamo → cables → machines, no loss), not the NeoForge
+  transaction-based EnergyHandler API. 1 energy = 1 axiom use or computation step; coal = 16,000.
+- **Jobs**: a machine takes its inputs at once, computes the result immediately, then pays the
+  cost over the job's duration before outputting. Test Bench search runs up to 20M steps.
+- **Test Bench witness cap** = the numeral's own value (covers Even, ≤-style properties).
+- **Conjecture Bench rule**: a statement may be conjectured only if `Truth.isRefutable` (no ∃ in
+  a positive position unless behind a linked decider). Bounded ∃ ("∃k ≤ n") is not yet recognised.
+- **Theorems on items/saves are trusted on load** via `Kernel.restoreSaved` (single-player).
 - Design-doc typo: under Structures, "- - over the even numbers" means "+ over the even numbers".
 - The doc's "prime path" table (7 stages) was missing from the copy we have; ask the owner for it.
 
 ## Milestone 1 progress (from docs/design.md)
 
 - [x] NeoForge project for Minecraft 26.1.x, building a working jar
-- [x] Pointed-graph data format with save and load (binary; NBT wrapper still to do in game code)
+- [x] Pointed-graph data format with save and load (world save via MathState)
 - [~] Proof checker core. Done: Peano axioms 3–4, equality, induction, ∧, →, ∃ intro/elim,
       hypotheses and discharge, explicit / primitive-recursive / predicate definitions,
-      conjectures, step counting. **Not yet**: structures (closure theorems, monoid/equivalence/
-      order certificates), deciders + link theorems, Test Bench range checking, a pretty-printer
-      with infix symbols and leading ∀
-- [ ] Energy: Coal Dynamo, copper cables, energy per step
-- [ ] Vanilla crafting recipes for every Milestone 1 machine
-- [ ] Machines (blocks, block entities, GUIs) wrapping the kernel rules
+      conjectures, step counting, deciders + link theorems, Test Bench range checks, printer.
+      **Not yet**: monoid / equivalence / order certificates (structures)
+- [x] Energy: Coal Dynamo, copper cables, energy per step
+- [~] Vanilla crafting recipes: done for the machines that exist (dynamo, cable, Zero Source,
+      Successor, Duplicator, Test Bench, Circuit Board)
+- [~] Machines: Zero Source, Successor, Duplicator, Test Bench (numeral mode) done and game-tested.
+      Not yet: Drafting Chamber, Variable blocks, benches, reasoning machines, Graph Lens, Axiom Tablets
 - [ ] Compact blocks: compile, name, inspect; typed ports; theorem cards
-- [ ] Knowledge record (design statuses, numeral/tuple certificates), saved per world
-- [ ] Conjecture blocks with upkeep, background checks, the 2n + 1 trap
-- [ ] Circuit Board and Prime Core recipes needing certified numerals
+- [~] Knowledge record: core done (statuses, certificates, conjectures) and saved per world;
+      not yet surfaced in game (Library block)
+- [~] Conjecture blocks: core logic + 2n + 1 trap tested; no block yet
+- [~] Circuit Board recipe needs certified evens (done); Prime Core not yet
 - [ ] The Notebook (Modonomicon) with Getting Started, Machines, Logic and Proof
 - [ ] Placeholder CC0 textures and sounds
 
 ## Suggested next steps
 
-1. Finish the checker core: pretty-printer (infix + ∀), deciders with link theorems, Test Bench
-   range checks, closure theorems and certificates.
-2. Persistence: a per-world `SavedData` holding the signature, named theorems and the kernel's
-   fresh-id counter (theorems are saved as formula + dependencies and trusted on load).
-3. First playable slice: Numeral item (BigInteger in a data component), Zero Source, Successor,
-   Test Bench witness search for Even, then energy.
+1. Statement items (a Theorem or unproven Formula in a data component) and circuit items (a Term).
+2. Reasoning machines as 1–3 input machines calling one Kernel rule each (Instantiator,
+   Rewriter, Conjunction/Modus Ponens Press, Induction Engine, Witness Bench, Assumption Chamber).
+3. Drafting Chamber: assemble circuits from Variable blocks / numerals / defined functions,
+   compile definitions and name theorems (needs a name text box).
+4. Notebook (Modonomicon) given on first join; Library block; Conjecture Bench + upkeep.

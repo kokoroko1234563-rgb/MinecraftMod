@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "axiomatic:coal_dynamo",
+    "axiomatic:zero_source",
+    "axiomatic:successor",
+    "axiomatic:duplicator",
+    "axiomatic:test_bench",
+    "axiomatic:copper_cable"
+  ]
+}
