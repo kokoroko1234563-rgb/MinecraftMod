@@ -78,6 +78,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 - **Symmetry/transitivity of =** are derived from reflexivity + Rewriter, not separate rules.
 - Theorems record `dependencies` ("axiom:…", "def:…", "conjecture:…"); `isConjectural()` is how
   conjecture taint will cascade.
+- **Deciders** are linked in the Drafting Chamber's Link mode from the two proven link theorems
+  (variable names may differ from the definition's).
 - **Starter definitions**: new worlds come with `add` and `Even` defined (not proven anything),
   because the opening hour certifies evens on the Test Bench before the Drafting Chamber exists.
 - **Energy is the mod's own** simple system (dynamo → cables → machines, no loss), not the NeoForge

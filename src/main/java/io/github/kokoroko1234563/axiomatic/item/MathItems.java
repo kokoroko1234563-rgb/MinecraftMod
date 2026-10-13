@@ -118,7 +118,7 @@ public final class MathItems {
 
     /** A Variable block: stands for any number. Use it in the air to change its name. */
     public static class VariableItem extends Item {
-        public static final List<String> NAMES = List.of("n", "a", "b", "c", "d", "k", "m", "x", "y", "z");
+        public static final List<String> NAMES = List.of("n", "a", "b", "c", "d", "j", "k", "m", "p", "q", "x", "y", "z");
 
         public VariableItem(Properties properties) {
             super(properties);

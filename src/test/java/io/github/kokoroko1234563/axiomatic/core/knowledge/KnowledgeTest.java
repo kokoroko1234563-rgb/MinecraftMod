@@ -104,7 +104,7 @@ class KnowledgeTest {
         Theorem fwd = kernel.conjecture("linkF", Formula.implies(decides, holds));
         Theorem back = kernel.conjecture("linkB", Formula.implies(holds, decides));
         assertThrows(ProofException.class, () -> deciders.register("Even", "isEven", back, fwd));
-        deciders.register("Even", "isEven", fwd, back);
+        assertEquals("isEven", deciders.registerFromLinks(fwd, back).function());
 
         Truth truth = truth();
         assertEquals(Truth.Value.FALSE, truth.property("Even", nums(7)), "a decider can say no; search cannot");

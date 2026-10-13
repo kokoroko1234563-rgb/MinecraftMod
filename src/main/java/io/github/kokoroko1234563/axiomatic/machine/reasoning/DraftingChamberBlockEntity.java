@@ -45,7 +45,7 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
     /** Placeholder for the call one step down in a recursive definition. Not a valid player name. */
     public static final String RECURSIVE_CALL = "#rec";
 
-    public enum Mode { ASSEMBLE, DEFINE, NAME, TABLET }
+    public enum Mode { ASSEMBLE, DEFINE, NAME, TABLET, LINK }
 
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
             MachineLayout.input(26, 31, "slot.axiomatic.drafting_1"), MachineLayout.input(44, 31, "slot.axiomatic.drafting_2"),
@@ -120,6 +120,7 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
             case DEFINE -> define(ctx);
             case NAME -> name(ctx);
             case TABLET -> tablet(ctx);
+            case LINK -> link(ctx);
         };
     }
 
@@ -281,6 +282,30 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
         ItemStack out = ctx.proven(thm);
         out.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.literal(name));
         return List.of(out);
+    }
+
+    /**
+     * Link: proven "f(x) = 1 → P(x)" and "P(x) → f(x) = 1" make f the decider of P. From then on
+     * the Test Bench and background checks compute P with f.
+     */
+    private List<ItemStack> link(Context ctx) {
+        if (items.get(1).isEmpty()) {
+            return List.of();
+        }
+        var deciders = ctx.state().deciders();
+        Theorem forward = ctx.theorem(0);
+        Theorem backward = ctx.theorem(1);
+        var existing = forward.formula() instanceof io.github.kokoroko1234563.axiomatic.core.logic.Formula.Implies imp
+                && imp.conclusion() instanceof io.github.kokoroko1234563.axiomatic.core.logic.Formula.Pred p
+                ? deciders.get(p.name()) : null;
+        if (existing != null) {
+            setStatus(Component.translatable("status.axiomatic.linked", existing.property(), existing.function()));
+            return List.of();
+        }
+        var link = deciders.registerFromLinks(forward, backward);
+        data((ServerLevel) level).setDirty();
+        setStatus(Component.translatable("status.axiomatic.linked", link.property(), link.function()));
+        return List.of();
     }
 
     private List<ItemStack> tablet(Context ctx) {

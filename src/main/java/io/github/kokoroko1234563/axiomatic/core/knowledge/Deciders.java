@@ -45,6 +45,20 @@ public final class Deciders {
     }
 
     /** Checks the two link theorems and registers {@code function} as the decider for {@code property}. */
+    /**
+     * Reads the property and decider off a forward link {@code f(x̄) = 1 → P(x̄)} and registers it
+     * with {@link #register}. Returns null if the forward statement does not have that shape.
+     */
+    public Link registerFromLinks(Theorem forward, Theorem backward) {
+        if (forward.formula() instanceof io.github.kokoroko1234563.axiomatic.core.logic.Formula.Implies imp
+                && imp.premise() instanceof io.github.kokoroko1234563.axiomatic.core.logic.Formula.Eq eq
+                && eq.left() instanceof Term.App f
+                && imp.conclusion() instanceof io.github.kokoroko1234563.axiomatic.core.logic.Formula.Pred p) {
+            return register(p.name(), f.function(), forward, backward);
+        }
+        throw new ProofException("The first link must read f(x) = 1 → P(x)");
+    }
+
     public Link register(String property, String function, Theorem forward, Theorem backward) {
         if (!(signature.get(property) instanceof Definition.Predicate pred)) {
             throw new ProofException("Unknown property: " + property);
@@ -72,7 +86,8 @@ public final class Deciders {
         if (!thm.isClosed()) {
             throw new ProofException("The link theorem still depends on an open assumption");
         }
-        if (!Syntax.alphaEquals(thm.formula(), expected)) {
+        // Variable names do not matter: f(m) = 1 → P(m) links as well as f(n) = 1 → P(n).
+        if (!Syntax.key(thm.formula()).equals(Syntax.key(expected))) {
             throw new ProofException("Expected a proof of " + expected + ", got " + thm.formula());
         }
     }

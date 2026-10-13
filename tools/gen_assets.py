@@ -340,6 +340,8 @@ LANG = {
     "label.axiomatic.mode.define": "Define",
     "label.axiomatic.mode.name": "Name theorem",
     "label.axiomatic.mode.tablet": "Axiom tablet",
+    "label.axiomatic.mode.link": "Link a decider",
+    "status.axiomatic.linked": "%s is now decided by %s",
     "label.axiomatic.rewrite_ltr": "Left → right, %s",
     "label.axiomatic.rewrite_rtl": "Right → left, %s",
     "label.axiomatic.logic_mode.seal": "Seal with ∃ (statement + variable)",
