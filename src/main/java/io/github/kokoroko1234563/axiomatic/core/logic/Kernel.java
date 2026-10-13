@@ -19,7 +19,7 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Term.Var;
  * machine. A rule either returns a new {@link Theorem} or throws {@link ProofException}.
  *
  * <p>The logic: Peano axioms 3 and 4, equality (reflexivity plus rewriting, which gives symmetry,
- * transitivity and substitution), induction, ∧, →, ∃ and ⊥ (natural deduction without ex falso),
+ * transitivity and substitution), induction, ∧, →, ∃ and ⊥ (intuitionistic natural deduction),
  * definitions by explicit equation, primitive recursion, or statement. Axioms 1 and 2 are the
  * term syntax itself (0 and S).
  *
@@ -254,6 +254,15 @@ public final class Kernel {
             throw new ProofException("The premise " + premise.formula() + " does not match " + imp.premise());
         }
         return derive(imp.conclusion(), implication, premise);
+    }
+
+    /** Ex falso: from a proof of ⊥, any statement follows. */
+    public Theorem exFalso(Theorem bottom, Formula anything) {
+        if (!(bottom.formula() instanceof Formula.Bottom)) {
+            throw new ProofException("Ex falso needs a proof of ⊥, got: " + bottom.formula());
+        }
+        signature.checkFormula(anything);
+        return derive(anything, bottom);
     }
 
     // ---- Assumption Chamber ---------------------------------------------------------------

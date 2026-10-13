@@ -213,6 +213,18 @@ class KernelTest {
     }
 
     @Test
+    void exFalsoNeedsAProofOfBottom() {
+        // S(0) = 0 is refuted by axiom 3, so assuming it gives ⊥ and then anything.
+        Theorem hyp = kernel.assume(eq(succ(zero()), zero()));
+        Theorem bottom = kernel.modusPonens(kernel.instantiate(kernel.succNotZero(), "x", zero()), hyp);
+        Theorem anything = kernel.exFalso(bottom, eq(Term.numeral(1), Term.numeral(2)));
+        assertEquals(hyp.hypotheses(), anything.hypotheses(), "still depends on the absurd assumption");
+        Theorem result = kernel.discharge(anything, hyp.hypotheses().get(0));
+        assertProves(Formula.implies(eq(succ(zero()), zero()), eq(Term.numeral(1), Term.numeral(2))), result);
+        assertThrows(ProofException.class, () -> kernel.exFalso(kernel.reflexivity(zero()), eq(zero(), succ(zero()))));
+    }
+
+    @Test
     void conjecturesTaintWhatIsBuiltOnThem() {
         Theorem conj = kernel.conjecture("twoNPlusOne", eq(n, n));
         Theorem derived = kernel.instantiate(conj, "n", Term.numeral(4));

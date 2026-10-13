@@ -79,7 +79,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   in its "open as" slot, or as a fresh kernel variable (`k#7`, untypeable) if that slot is
   empty; `closeExists` checks it does not escape. Naming it lets players build witness
   circuits with it (needed for even + even = even).
-- **No ex falso** (⊥ does not prove everything) for now; add it if a proof needs it.
+- **Ex falso** is a kernel rule (`exFalso`), on the Modus Ponens Press: ⊥ in the first slot
+  makes the second slot's statement proven. The logic is intuitionistic (no excluded middle).
 - **Symmetry/transitivity of =** are derived from reflexivity + Rewriter, not separate rules.
 - Theorems record `dependencies` ("axiom:…", "def:…", "conjecture:…"); `isConjectural()` is how
   conjecture taint will cascade.
