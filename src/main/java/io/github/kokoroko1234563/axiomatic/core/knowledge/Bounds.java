@@ -1,9 +1,11 @@
 package io.github.kokoroko1234563.axiomatic.core.knowledge;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.github.kokoroko1234563.axiomatic.core.logic.Definition;
+import io.github.kokoroko1234563.axiomatic.core.logic.Evaluator;
 import io.github.kokoroko1234563.axiomatic.core.logic.Formula;
 import io.github.kokoroko1234563.axiomatic.core.logic.Signature;
 import io.github.kokoroko1234563.axiomatic.core.logic.Syntax;
@@ -31,7 +33,7 @@ public final class Bounds {
         return null;
     }
 
-    private static List<Formula> conjuncts(Formula f) {
+    static List<Formula> conjuncts(Formula f) {
         List<Formula> out = new ArrayList<>();
         if (f instanceof Formula.And a) {
             out.addAll(conjuncts(a.left()));
@@ -97,5 +99,64 @@ public final class Bounds {
                 && ex.body() instanceof Formula.Eq e && e.right().equals(new Term.Var(p.params().get(1)))
                 && e.left() instanceof Term.App add && isAdd(sig, add.function())
                 && add.args().equals(List.of(new Term.Var(p.params().get(0)), new Term.Var(ex.var())));
+    }
+
+    /** No v satisfies the conjunct. */
+    static final BigInteger NONE = BigInteger.valueOf(-1);
+
+    /**
+     * With binary arithmetic, solves a conjunct x + v = t or x × v = t (either order, either side,
+     * x and t without v), or v + v = t or v × v = t, for v: the only possible value, {@link #NONE} if there is none, or null
+     * if the conjunct does not pin v down (not of this shape, or 0 × v = 0).
+     */
+    static BigInteger solve(Signature sig, String v, Formula c, Evaluator ev, java.util.Map<String, BigInteger> env) {
+        if (!(c instanceof Formula.Eq e)) {
+            return null;
+        }
+        BigInteger r = solveSide(sig, v, e.left(), e.right(), ev, env);
+        return r != null ? r : solveSide(sig, v, e.right(), e.left(), ev, env);
+    }
+
+    private static BigInteger solveSide(Signature sig, String v, Term side, Term other, Evaluator ev,
+            java.util.Map<String, BigInteger> env) {
+        if (!(side instanceof Term.App a) || a.args().size() != 2 || Syntax.freeVars(other).contains(v)) {
+            return null;
+        }
+        boolean add = isAdd(sig, a.function());
+        if (!add && !isMul(sig, a.function())) {
+            return null;
+        }
+        Term.Var var = new Term.Var(v);
+        if (a.args().get(0).equals(var) && a.args().get(1).equals(var)) {
+            // v + v = t or v × v = t.
+            BigInteger t = ev.eval(other, env);
+            if (add) {
+                return t.testBit(0) ? NONE : t.shiftRight(1);
+            }
+            BigInteger root = t.sqrt();
+            return root.multiply(root).equals(t) ? root : NONE;
+        }
+        Term x;
+        if (a.args().get(1).equals(var)) {
+            x = a.args().get(0);
+        } else if (a.args().get(0).equals(var)) {
+            x = a.args().get(1);
+        } else {
+            return null;
+        }
+        if (Syntax.freeVars(x).contains(v)) {
+            return null;
+        }
+        BigInteger xv = ev.eval(x, env);
+        BigInteger t = ev.eval(other, env);
+        if (add) {
+            BigInteger d = t.subtract(xv);
+            return d.signum() < 0 ? NONE : d;
+        }
+        if (xv.signum() == 0) {
+            return t.signum() == 0 ? null : NONE;
+        }
+        BigInteger[] qr = t.divideAndRemainder(xv);
+        return qr[1].signum() == 0 ? qr[0] : NONE;
     }
 }

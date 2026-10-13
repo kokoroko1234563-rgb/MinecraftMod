@@ -87,6 +87,20 @@ public final class Truth {
             }
             case Formula.Exists ex -> {
                 Map<String, BigInteger> inner = new HashMap<>(env);
+                if (signature.nativeArithmetic()) {
+                    // Binary arithmetic: a conjunct like x + v = t or x × v = t names the only candidate.
+                    for (Formula c : Bounds.conjuncts(ex.body())) {
+                        BigInteger only = Bounds.solve(signature, ex.var(), c, evaluator, env);
+                        if (only != null) {
+                            if (only.equals(Bounds.NONE)) {
+                                yield Value.FALSE;
+                            }
+                            inner.put(ex.var(), only);
+                            Value v = evaluate(ex.body(), inner);
+                            yield v == Value.TRUE ? Value.TRUE : v == Value.FALSE ? Value.FALSE : Value.UNKNOWN;
+                        }
+                    }
+                }
                 Term boundTerm = Bounds.bound(signature, ex);
                 if (boundTerm != null) {
                     // A bounded ∃: searching up to the bound settles it either way.

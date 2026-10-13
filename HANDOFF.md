@@ -121,7 +121,9 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   Binary also switches on `Signature.nativeArithmetic` (kept in sync by `MathState.refreshArithmetic`
   via `Library.onNamed`; not saved, recomputed on load): the Evaluator then computes the canonical
   + and × with BigInteger, charging max bit length + 1 steps for + and the product of bit lengths
-  for ×. Prime(997) by trial division drops from > 2·10⁹ steps to within 2·10⁸.
+  for ×. Truth then also solves ∃ conjuncts x + v = t, x × v = t, v + v = t, v × v = t for v
+  (`Bounds.solve`) instead of searching: Prime(997) drops from > 2·10⁹ steps to < 10⁶, and
+  Prime(1,000,003) and Even(10³⁰) become cheap.
   (An earlier version unlocked this by implementing add, which a renamed copy of add could do.)
 - **Starter definitions**: new worlds come with `add`, `mul`, `pow`, `Even`, `le` (≤), `Divides`
   (|), `Mersenne` (∃p. n + 1 = 2^p) and `Prime` defined exactly as in the design doc (definitions only, nothing proven), because the

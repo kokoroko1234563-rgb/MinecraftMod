@@ -209,5 +209,16 @@ class BinaryTest {
         var truth = new Truth(loaded.signature(), loaded.deciders(), ev, java.math.BigInteger.valueOf(997));
         assertTrue(truth.property("Prime", List.of(java.math.BigInteger.valueOf(997))) == Truth.Value.TRUE,
                 "steps " + ev.steps());
+        assertTrue(ev.steps() < 1_000_000, "∃ solved by subtraction and division: " + ev.steps() + " steps");
+        // A seven-digit prime, and a composite caught by its divisor.
+        var big = new io.github.kokoroko1234563.axiomatic.core.logic.Evaluator(loaded.signature(), 200_000_000);
+        var bigTruth = new Truth(loaded.signature(), loaded.deciders(), big, java.math.BigInteger.valueOf(1_000_003));
+        assertTrue(bigTruth.property("Prime", List.of(java.math.BigInteger.valueOf(1_000_003))) == Truth.Value.TRUE);
+        assertTrue(bigTruth.property("Prime", List.of(java.math.BigInteger.valueOf(1_000_001))) == Truth.Value.FALSE);
+        assertTrue(bigTruth.property("Even", List.of(java.math.BigInteger.valueOf(1_000_002))) == Truth.Value.TRUE);
+        assertTrue(bigTruth.property("Even", List.of(java.math.BigInteger.valueOf(1_000_001))) == Truth.Value.FALSE);
+        long before = big.steps();
+        assertTrue(bigTruth.property("Even", List.of(java.math.BigInteger.TEN.pow(30))) == Truth.Value.TRUE);
+        assertTrue(big.steps() - before < 1_000, "Even(10^30) by halving: " + (big.steps() - before));
     }
 }
