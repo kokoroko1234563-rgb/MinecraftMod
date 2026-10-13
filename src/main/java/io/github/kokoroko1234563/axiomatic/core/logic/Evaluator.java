@@ -86,9 +86,8 @@ public final class Evaluator {
                 BigInteger result = add ? x.add(y) : x.multiply(y);
                 long digits = add ? Math.max(x.bitLength(), y.bitLength()) + 1
                         : (long) Math.max(1, x.bitLength()) * Math.max(1, y.bitLength());
-                for (long i = 0; i < digits; i++) {
-                    tick();
-                }
+                steps += digits - 1;
+                tick();
                 return result;
             }
         }

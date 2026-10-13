@@ -357,6 +357,8 @@ public final class AxiomaticGameTests {
         var handler = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
                 h.absolutePos(MACHINE), net.minecraft.core.Direction.UP);
         h.assertTrue(handler != null, "machines expose the item capability");
+        h.assertTrue(h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.Item.BLOCK,
+                h.absolutePos(MACHINE), null) == null, "not without a face, which would skip the take rules");
         var numeral = net.neoforged.neoforge.transfer.item.ItemResource.of(NumeralItem.stack(NumeralData.of(4), 1));
         var dirt = net.neoforged.neoforge.transfer.item.ItemResource.of(Items.DIRT);
         try (var tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {

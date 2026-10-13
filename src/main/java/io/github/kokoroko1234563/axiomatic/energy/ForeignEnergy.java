@@ -70,7 +70,8 @@ public final class ForeignEnergy implements EnergyHandler {
             accepted = amount;
             credit = (int) (total - units * rate);
         } else {
-            accepted = (int) (units * rate - credit);
+            // Credit is below one unit's worth unless the rate was lowered meanwhile.
+            accepted = (int) Math.max(0, units * rate - credit);
             credit = 0;
         }
         machine.setEnergyQuietly(machine.energy() + units);

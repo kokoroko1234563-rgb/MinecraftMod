@@ -45,6 +45,18 @@ public class CourierStationBlockEntity extends MachineBlockEntity {
     }
 
     @Override
+    protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("turn", turn);
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.world.level.storage.ValueInput input) {
+        super.loadAdditional(input);
+        turn = Math.max(0, input.getIntOr("turn", 0));
+    }
+
+    @Override
     protected Job tryStartJob(ServerLevel level) {
         return null;
     }
@@ -55,14 +67,11 @@ public class CourierStationBlockEntity extends MachineBlockEntity {
         if (level.getGameTime() % 10 != 0) {
             return;
         }
-        int cargo = -1;
+        boolean any = false;
         for (int i = 0; i < SLOTS; i++) {
-            if (!items.get(i).isEmpty()) {
-                cargo = i;
-                break;
-            }
+            any |= !items.get(i).isEmpty();
         }
-        if (cargo < 0) {
+        if (!any) {
             setStatus(Component.empty());
             return;
         }
@@ -83,22 +92,27 @@ public class CourierStationBlockEntity extends MachineBlockEntity {
         List<BlockPos> stops = new ArrayList<>(networks.stream().flatMap(g -> g.machines().stream()).distinct().toList());
         stops.remove(worldPosition);
         stops.sort(Comparator.comparingLong(BlockPos::asLong));
-        // One visit per run: the next machine that takes the item.
+        // One visit per run: the next machine that takes any of the cargo.
         for (int k = 0; k < stops.size(); k++) {
             BlockPos stop = stops.get((turn + k) % stops.size());
             if (!(level.getBlockEntity(stop) instanceof MachineBlockEntity machine)) {
                 continue;
             }
-            ItemStack one = items.get(cargo).copyWithCount(1);
-            ItemStack left = HopperBlockEntity.addItem(this, machine, one, Direction.UP);
-            if (left.isEmpty()) {
-                items.get(cargo).shrink(1);
-                energy -= ENERGY_PER_DELIVERY;
-                machine.setChanged();
-                turn = (turn + k + 1) % stops.size();
-                setStatus(Component.translatable("status.axiomatic.courier_delivered", stops.size()));
-                markChanged();
-                return;
+            for (int cargo = 0; cargo < SLOTS; cargo++) {
+                if (items.get(cargo).isEmpty()) {
+                    continue;
+                }
+                ItemStack one = items.get(cargo).copyWithCount(1);
+                ItemStack left = HopperBlockEntity.addItem(this, machine, one, Direction.UP);
+                if (left.isEmpty()) {
+                    items.get(cargo).shrink(1);
+                    energy -= ENERGY_PER_DELIVERY;
+                    machine.setChanged();
+                    turn = (turn + k + 1) % stops.size();
+                    setStatus(Component.translatable("status.axiomatic.courier_delivered", stops.size()));
+                    markChanged();
+                    return;
+                }
             }
         }
         setStatus(Component.translatable("status.axiomatic.courier_nowhere"));

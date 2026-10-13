@@ -16,7 +16,9 @@ public final class ModCapabilities {
     public static void register(RegisterCapabilitiesEvent event) {
         ForeignEnergy.register(event);
         for (ModRegistries.Machine<?> m : ModRegistries.MACHINES) {
-            event.registerBlockEntity(Capabilities.Item.BLOCK, m.type(), WorldlyContainerWrapper::new);
+            // Only through a face: without one NeoForge's wrapper skips the take rules entirely.
+            event.registerBlockEntity(Capabilities.Item.BLOCK, m.type(),
+                    (be, side) -> side == null ? null : new WorldlyContainerWrapper(be, side));
         }
     }
 }

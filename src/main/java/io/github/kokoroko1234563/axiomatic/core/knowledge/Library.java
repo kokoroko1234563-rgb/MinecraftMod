@@ -295,6 +295,8 @@ public final class Library {
         }
         c.state = ConjectureState.PROVEN;
         recordProof(proof);
+        // Theorems resting on it may now count as proven (the binary upgrade, for one).
+        onNamed.run();
     }
 
     /** Conjectures among these dependencies that have been refuted: anything built on them fails. */
@@ -324,7 +326,7 @@ public final class Library {
      */
     public boolean binaryProven(Signature signature) {
         for (Theorem t : named.values()) {
-            if (t.isClosed() && !t.isConjectural() && isBinaryDecomposition(t.formula(), signature)) {
+            if (t.isClosed() && unproven(t.dependencies()).isEmpty() && isBinaryDecomposition(t.formula(), signature)) {
                 return true;
             }
         }

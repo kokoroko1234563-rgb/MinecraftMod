@@ -175,6 +175,18 @@ class BinaryTest {
     }
 
     @Test
+    void aConjectureProvenLaterUnlocksIt() {
+        Library library = state.library();
+        Theorem proof = binary();
+        Theorem claim = library.conjecture(k, state.deciders(), "binary_hope", proof.formula());
+        library.name("binary_claim", claim);
+        assertFalse(library.binaryProven(state.signature()));
+        library.proveConjecture("binary_hope", proof);
+        assertTrue(library.binaryProven(state.signature()));
+        assertTrue(state.signature().nativeArithmetic(), "the listener noticed");
+    }
+
+    @Test
     void cheatsAreRefused() {
         Library library = state.library();
         Theorem thm = binary();
