@@ -11,6 +11,9 @@ For an in-game test route see `PLAYTEST.md`.
 - `./gradlew build` builds `build/libs/axiomatic-<version>.jar` and runs the unit tests.
 - `./gradlew test` runs only the unit tests (fast, no game needed).
 - `./gradlew runClient` starts Minecraft with the mod (local machine only).
+  The client runs with `-Xms512m -Xmx3G` (`build.gradle`). If Windows still reports "The paging
+  file is too small", close other programs, run `./gradlew --stop` to end old Gradle daemons, or let
+  Windows manage the paging file size (System → Advanced → Performance → Virtual memory).
 - `./gradlew runGameTestServer` runs the in-world game tests headless (works in the cloud too).
 - Dependencies: Modonomicon (required) and JEI (development runtime only) come from Modrinth's
   Maven (`api.modrinth.com/maven`, versions in `gradle.properties`). Modonomicon's own Cloudsmith

@@ -60,6 +60,9 @@ neoForge {
     runs {
         client {
             client()
+            // An explicit heap keeps Windows machines with a small paging file from failing to
+            // reserve memory at startup ("The paging file is too small", see HANDOFF.md).
+            jvmArguments.addAll '-Xms512m', '-Xmx3G'
             // ./gradlew runClient -Pdevtour : scripted screenshot tour (see client/DevTour.java);
             // -Pdevtour=library,certificate_sorter takes only those screenshots.
             if (project.hasProperty('devtour')) {
