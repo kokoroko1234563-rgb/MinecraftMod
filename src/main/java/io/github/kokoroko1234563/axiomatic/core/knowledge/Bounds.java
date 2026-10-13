@@ -23,14 +23,28 @@ public final class Bounds {
 
     /** The term bounding the ∃'s variable, or null if none is recognised. */
     public static Term bound(Signature sig, Formula.Exists ex) {
+        List<Bound> all = bounds(sig, ex);
+        return all.isEmpty() ? null : all.getFirst().limit();
+    }
+
+    /**
+     * A bound v ≤ limit, valid only when {@code factor} (if any) is not 0: x × v = t bounds v by t
+     * only for x ≥ 1, since 0 × v = 0 holds for every v.
+     */
+    public record Bound(Term limit, Term factor) {}
+
+    /** Every bound the conjuncts give, in order. */
+    public static List<Bound> bounds(Signature sig, Formula.Exists ex) {
         String v = ex.var();
+        List<Bound> out = new ArrayList<>();
         for (Formula c : conjuncts(ex.body())) {
-            Term t = boundFrom(sig, v, c);
-            if (t != null && !Syntax.freeVars(t).contains(v)) {
-                return t;
+            Bound b = boundFrom(sig, v, c);
+            if (b != null && !Syntax.freeVars(b.limit()).contains(v)
+                    && (b.factor() == null || !Syntax.freeVars(b.factor()).contains(v))) {
+                out.add(b);
             }
         }
-        return null;
+        return out;
     }
 
     static List<Formula> conjuncts(Formula f) {
@@ -44,34 +58,44 @@ public final class Bounds {
         return out;
     }
 
-    private static Term boundFrom(Signature sig, String v, Formula c) {
+    private static Bound boundFrom(Signature sig, String v, Formula c) {
         if (c instanceof Formula.Eq e) {
-            Term fromLeft = sumOrProductOf(sig, v, e.left()) ? e.right() : null;
-            if (fromLeft != null) {
-                return fromLeft;
-            }
-            return sumOrProductOf(sig, v, e.right()) ? e.left() : null;
+            Bound fromLeft = sumOrProductOf(sig, v, e.left(), e.right());
+            return fromLeft != null ? fromLeft : sumOrProductOf(sig, v, e.right(), e.left());
         }
         if (c instanceof Formula.Pred p && p.args().size() == 2 && isLe(sig, p.name())) {
             Term s = p.args().get(0);
             while (s instanceof Term.Succ su) {
                 s = su.arg();
             }
-            return s instanceof Term.Var var && var.name().equals(v) ? p.args().get(1) : null;
+            return s instanceof Term.Var var && var.name().equals(v) ? new Bound(p.args().get(1), null) : null;
         }
         return null;
     }
 
-    /** t is x + v, v + x, x × v or v × x for canonical + and ×. */
-    private static boolean sumOrProductOf(Signature sig, String v, Term t) {
-        if (!(t instanceof Term.App a) || a.args().size() != 2) {
-            return false;
+    /** side is x + v, v + x (bound: other), or x × v, v × x (bound: other, if x is not 0). */
+    private static Bound sumOrProductOf(Signature sig, String v, Term side, Term other) {
+        if (!(side instanceof Term.App a) || a.args().size() != 2) {
+            return null;
         }
-        if (!isAdd(sig, a.function()) && !isMul(sig, a.function())) {
-            return false;
+        boolean add = isAdd(sig, a.function());
+        if (!add && !isMul(sig, a.function())) {
+            return null;
         }
         Term.Var var = new Term.Var(v);
-        return a.args().get(0).equals(var) || a.args().get(1).equals(var);
+        Term x;
+        if (a.args().get(1).equals(var)) {
+            x = a.args().get(0);
+        } else if (a.args().get(0).equals(var)) {
+            x = a.args().get(1);
+        } else {
+            return null;
+        }
+        if (add) {
+            return new Bound(other, null);
+        }
+        // v × v = t also bounds v by t (v ≤ v² for every v), so no condition is needed.
+        return new Bound(other, x.equals(var) ? null : x);
     }
 
     /** a + 0 = a, a + S(b) = S(a + b). */

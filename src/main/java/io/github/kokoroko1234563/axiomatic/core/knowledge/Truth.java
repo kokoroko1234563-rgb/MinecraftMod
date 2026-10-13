@@ -101,10 +101,20 @@ public final class Truth {
                         }
                     }
                 }
-                Term boundTerm = Bounds.bound(signature, ex);
-                if (boundTerm != null) {
+                BigInteger bound = null;
+                for (Bounds.Bound b : Bounds.bounds(signature, ex)) {
+                    if (b.factor() != null && evaluator.eval(b.factor(), env).signum() == 0) {
+                        // 0 × v = t: false for every v unless t = 0, and then no bound at all.
+                        if (evaluator.eval(b.limit(), env).signum() != 0) {
+                            yield Value.FALSE;
+                        }
+                        continue;
+                    }
+                    bound = evaluator.eval(b.limit(), env);
+                    break;
+                }
+                if (bound != null) {
                     // A bounded ∃: searching up to the bound settles it either way.
-                    BigInteger bound = evaluator.eval(boundTerm, env);
                     boolean unknown = false;
                     for (BigInteger k = BigInteger.ZERO; k.compareTo(bound) <= 0; k = k.add(BigInteger.ONE)) {
                         inner.put(ex.var(), k);

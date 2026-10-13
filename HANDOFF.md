@@ -85,6 +85,10 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   digit count from logarithms instead of building the number each tick.
 
 ## Kernel audit (adversarial, this session)
+Second audit (general recursion clean): `Bounds` took x × v = t as v ≤ t even when x = 0, so
+computed certificates and Test Bench passes could be false (NoFive(x) :⇔ ¬∃v. x×v = 0 ∧ v = 5 at
+x = 0). Bounds now carry the factor that must be non-zero (`Bounds.Bound`); `ZeroFactorTest` and
+the oracle fuzz in `SolverFuzzTest` (independent brute-force semantics) cover it.
 
 Fixed, with `KernelTest` regressions: a "selector" whose two cases pick the same input guarded
 general-recursive calls it always makes (players could prove 0 = 1 through General recursion
@@ -99,7 +103,8 @@ without re-checking (`Kernel.restoreSaved`), so someone who edits item component
 - `KernelFuzzTest`: random kernel derivations (instantiate, rewrite, ∧, assume, discharge, modus
   ponens) are evaluated; a false theorem fails the build.
 - `SubstitutionFuzzTest`: capture-avoiding substitution agrees with evaluation.
-- `SolverFuzzTest`: the binary-age ∃ solver agrees with exhaustive search.
+- `SolverFuzzTest`: the binary-age ∃ solver agrees with exhaustive search, and both modes agree
+  with an independent brute-force oracle (this caught the 0 × v bound bug when re-run on old code).
 - `CodecFuzzTest`: formulas survive the save codec.
 
 ## Decisions made (not all are in the design doc)
