@@ -50,7 +50,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `machine/CompiledMachineBlockEntity` | Compact block for a defined function: design slot (circuit f(…)), numeral ports, theorem card slot that certifies outputs |
 | `machine/ConjectureBlockEntity`, `reasoning/ConjectureBenchBlockEntity` | Conjectures: bench makes the card + block; block pays upkeep, goes dormant, fails on refutation |
 | `risk/Paradox` | Cascade: items depending on a refuted conjecture turn to paradox junk; crafted parts record conjectures (`axiomatic:depends`) |
-| `AxiomaticConfig` | `disasterBlockDamage` (default false), `conjectureUpkeep` |
+| `AxiomaticConfig` | `disasterBlockDamage` (default false), `conjectureUpkeep`, `cableLossPerBlock` (0.02), `maxCableLoss` (0.5) |
 | `block/LibraryBlock` | Library: use it to list definitions, theorems, conjectures (with post-mortems) and statuses in chat |
 | `item/GraphLensItem` | Graph Lens: shows the pointed graph of the item in the other hand |
 | `book/Notebook` | The Notebook, given on first join: a vanilla written book whose pages are lang keys `notebook.axiomatic.page.N` (placeholder until Modonomicon is reachable) |

@@ -16,5 +16,13 @@ public final class AxiomaticConfig {
             .comment("Energy a conjecture block uses every 20 ticks while it is active.")
             .defineInRange("conjectureUpkeep", 20, 0, 1_000_000);
 
+    public static final ModConfigSpec.DoubleValue CABLE_LOSS = BUILDER
+            .comment("Fraction of energy lost per cable on the way to a machine, unless the network is a certified tree.")
+            .defineInRange("cableLossPerBlock", 0.02, 0.0, 1.0);
+
+    public static final ModConfigSpec.DoubleValue MAX_CABLE_LOSS = BUILDER
+            .comment("The most energy a long cable can lose, as a fraction.")
+            .defineInRange("maxCableLoss", 0.5, 0.0, 1.0);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 }

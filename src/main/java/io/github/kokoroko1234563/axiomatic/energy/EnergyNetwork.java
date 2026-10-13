@@ -61,6 +61,23 @@ public final class EnergyNetwork {
 
     private EnergyNetwork() {}
 
+    /** From the config when it is loaded (it is not in unit tests), else the defaults. */
+    private static double lossPerCable() {
+        try {
+            return io.github.kokoroko1234563.axiomatic.AxiomaticConfig.CABLE_LOSS.get();
+        } catch (IllegalStateException e) {
+            return LOSS_PER_CABLE;
+        }
+    }
+
+    private static double maxLoss() {
+        try {
+            return io.github.kokoroko1234563.axiomatic.AxiomaticConfig.MAX_CABLE_LOSS.get();
+        } catch (IllegalStateException e) {
+            return MAX_LOSS;
+        }
+    }
+
     /** The cable graph reachable through cables touching {@code start}. */
     public static Graph graph(Level level, BlockPos start) {
         Set<BlockPos> cables = new HashSet<>();
@@ -141,7 +158,7 @@ public final class EnergyNetwork {
                     }
                 } else if (!n.equals(generator) && reached.add(n.immutable())
                         && level.getBlockEntity(n) instanceof MachineBlockEntity m && m.acceptsEnergy()) {
-                    double efficiency = lossless ? 1.0 : Math.max(1 - MAX_LOSS, 1 - LOSS_PER_CABLE * h);
+                    double efficiency = lossless ? 1.0 : Math.max(1 - maxLoss(), 1 - lossPerCable() * h);
                     found.add(new Consumer(m, efficiency));
                 }
             }
