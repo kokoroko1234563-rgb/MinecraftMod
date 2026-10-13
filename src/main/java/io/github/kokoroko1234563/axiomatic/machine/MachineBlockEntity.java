@@ -52,6 +52,8 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
     private int ticks;
     private Component status = Component.empty();
     private boolean syncNeeded;
+    private java.util.concurrent.CompletableFuture<?> pending;
+    private java.util.function.Function<Object, Job> pendingCommit;
 
     protected MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, long capacity) {
         super(type, pos, state);
@@ -113,6 +115,58 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
             syncNeeded = false;
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
+    }
+
+    /**
+     * Runs {@code work} on a worker thread ({@link Async}) and, once it is done, {@code commit}
+     * on the server thread to turn its result into a job. Call it from {@link #tryStartJob}: the
+     * first call starts the work and returns null; later calls return null until the work is
+     * done, then return what {@code commit} returns. While work is pending, new {@code work} and
+     * {@code commit} arguments are ignored, so {@code commit} must re-check that the inputs it
+     * used are still there.
+     */
+    @SuppressWarnings("unchecked")
+    protected final <T> Job runAsync(java.util.function.Supplier<T> work, java.util.function.Function<T, Job> commit) {
+        if (pending == null) {
+            pending = java.util.concurrent.CompletableFuture.supplyAsync(work, Async.EXECUTOR);
+            pendingCommit = (java.util.function.Function<Object, Job>) commit;
+            setStatus(Component.translatable("status.axiomatic.computing"));
+            return null;
+        }
+        if (!pending.isDone()) {
+            return null;
+        }
+        java.util.function.Function<Object, Job> c = pendingCommit;
+        Object result;
+        try {
+            result = pending.join();
+        } catch (RuntimeException e) {
+            result = null;
+            setStatus(Component.translatable("status.axiomatic.compute_failed"));
+        } finally {
+            pending = null;
+            pendingCommit = null;
+        }
+        return result == null ? null : c.apply(result);
+    }
+
+    private Object failedKey;
+
+    /**
+     * Remembers that the inputs described by {@code key} were refused, so the machine does not
+     * redo the same expensive computation every few ticks. Any change to the inputs gives a new key.
+     */
+    protected void rememberFailure(Object key) {
+        failedKey = key;
+    }
+
+    protected boolean failedBefore(Object key) {
+        return key.equals(failedKey);
+    }
+
+    /** Whether a computation started by {@link #runAsync} is still running. */
+    protected boolean computing() {
+        return pending != null;
     }
 
     /** Puts all outputs into output slots if they all fit; otherwise changes nothing. */

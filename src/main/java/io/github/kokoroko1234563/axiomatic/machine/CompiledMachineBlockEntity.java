@@ -81,7 +81,7 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
         }
         MathState state = data(level).state();
         Definition def = state.signature().get(f);
-        if (def == null || def instanceof Definition.Predicate) {
+        if (!io.github.kokoroko1234563.axiomatic.core.logic.Signature.isFunction(def) || def instanceof Definition.Abstract) {
             setStatus(Component.translatable("status.axiomatic.unknown_function", f));
             return null;
         }
@@ -98,27 +98,99 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
             }
             inputs.add(NumeralItem.data(in));
         }
-        Evaluator evaluator = new Evaluator(state.signature(), MAX_STEPS);
-        BigInteger value;
-        try {
-            value = evaluator.apply(f, inputs.stream().map(NumeralData::value).toList());
-        } catch (Evaluator.OutOfBudget e) {
-            setStatus(Component.translatable("status.axiomatic.too_big"));
+        StatementData card = MathItems.statement(items.get(CARD));
+        Key key = new Key(f, inputs, card);
+        if (!computing() && (failedBefore(key) || !items.get(OUTPUT).isEmpty()
+                && items.get(OUTPUT).getCount() >= items.get(OUTPUT).getMaxStackSize())) {
             return null;
         }
-        NumeralData result = NumeralData.ZERO.withValue(value);
-        long cost = Math.max(1, evaluator.steps());
-
-        StatementData card = MathItems.statement(items.get(CARD));
+        Cards.Use use = null;
         if (card != null) {
             try {
-                Fact fact = certify(level, state, f, card, inputs, evaluator, value);
-                result = result.withFact(fact);
-                cost += 1;
+                use = Cards.prepare(state.library(), card);
             } catch (ProofException e) {
                 setStatus(Component.literal(e.getMessage()));
+                rememberFailure(key);
                 return null;
             }
+        }
+        // Compute on a worker thread with copies of the definitions; commit here.
+        var sig = state.signature().copy();
+        var deciders = state.deciders().copy(sig);
+        Cards.Use cardUse = use;
+        return runAsync(() -> run(sig, deciders, f, inputs, cardUse), r -> commit(level, state, key, arity, r));
+    }
+
+    /** What the inputs that started a computation were, to check they are still there at commit. */
+    private record Key(String function, List<NumeralData> inputs, StatementData card) {}
+
+    private record Result(BigInteger value, long steps, Cards.Outcome card, boolean tooBig) {}
+
+    /** Worker thread: computes f and applies the card. */
+    private static Result run(io.github.kokoroko1234563.axiomatic.core.logic.Signature sig,
+            io.github.kokoroko1234563.axiomatic.core.knowledge.Deciders deciders, String f, List<NumeralData> inputs,
+            Cards.Use use) {
+        Evaluator evaluator = new Evaluator(sig, MAX_STEPS);
+        try {
+            BigInteger value = evaluator.apply(f, inputs.stream().map(NumeralData::value).toList());
+            Cards.Outcome outcome = null;
+            if (use != null) {
+                Formula conclusion = use.card().formula();
+                while (conclusion instanceof Formula.Implies imp) {
+                    conclusion = imp.conclusion();
+                }
+                if (!(conclusion instanceof Formula.Pred p) || p.args().size() != 1
+                        || !(p.args().get(0) instanceof Term.App app) || !app.function().equals(f)
+                        || !app.args().stream().allMatch(t -> t instanceof Term.Var)) {
+                    outcome = new Cards.Outcome(null, Component.translatable("status.axiomatic.card_mismatch", f), null, null);
+                } else {
+                    Map<String, BigInteger> assignment = new HashMap<>();
+                    for (int i = 0; i < app.args().size(); i++) {
+                        assignment.put(((Term.Var) app.args().get(i)).name(), inputs.get(i).value());
+                    }
+                    List<Fact> premises = new ArrayList<>();
+                    inputs.forEach(n -> premises.addAll(n.facts()));
+                    // Witnesses are searched up to the largest number involved, as on the Test Bench.
+                    BigInteger cap = inputs.stream().map(NumeralData::value).reduce(value, BigInteger::max);
+                    // Typed ports: a card's premises about the inputs must be met by their certificates.
+                    outcome = use.evaluate(assignment, premises, false, new Truth(sig, deciders, evaluator, cap));
+                }
+            }
+            return new Result(value, evaluator.steps(), outcome, false);
+        } catch (Evaluator.OutOfBudget e) {
+            return new Result(null, evaluator.steps(), null, true);
+        }
+    }
+
+    /** Server thread: turns the result into a job if the inputs are still the same. */
+    private Job commit(ServerLevel level, MathState state, Key key, int arity, Result r) {
+        for (int i = 0; i < arity; i++) {
+            ItemStack in = items.get(1 + i);
+            if (in.isEmpty() || !NumeralItem.data(in).equals(key.inputs().get(i))) {
+                return null;
+            }
+        }
+        if (r.tooBig()) {
+            setStatus(Component.translatable("status.axiomatic.too_big"));
+            rememberFailure(key);
+            return null;
+        }
+        NumeralData result = NumeralData.ZERO.withValue(r.value());
+        long cost = Math.max(1, r.steps());
+        if (r.card() != null) {
+            if (r.card().commit(state.library())) {
+                data(level).setDirty();
+                setStatus(r.card().message());
+                rememberFailure(key);
+                return null;
+            }
+            if (r.card().fact() == null) {
+                setStatus(r.card().message());
+                rememberFailure(key);
+                return null;
+            }
+            result = result.withFact(r.card().fact());
+            cost += 1;
         }
         List<ItemStack> out = List.of(NumeralItem.stack(result, 1));
         if (!outputsFit(out)) {
@@ -127,37 +199,7 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
         for (int i = 0; i < arity; i++) {
             items.get(1 + i).shrink(1);
         }
-        setStatus(Component.translatable("status.axiomatic.computed", NumeralItem.display(value), cost));
+        setStatus(Component.translatable("status.axiomatic.computed", NumeralItem.display(r.value()), cost));
         return new Job(cost, (int) Math.clamp(cost / 100, 4, 400), out);
-    }
-
-    /**
-     * Applies a theorem card. The card must conclude a property of f applied to its variables;
-     * those variables take this machine's inputs in order. Premises are matched against the
-     * inputs' certificates.
-     */
-    private Fact certify(ServerLevel level, MathState state, String f, StatementData card, List<NumeralData> inputs,
-            Evaluator evaluator, BigInteger output) {
-        Cards.usable(state.library(), card);
-        Formula conclusion = card.formula();
-        while (conclusion instanceof Formula.Implies imp) {
-            conclusion = imp.conclusion();
-        }
-        if (!(conclusion instanceof Formula.Pred p) || p.args().size() != 1
-                || !(p.args().get(0) instanceof Term.App app) || !app.function().equals(f)
-                || !app.args().stream().allMatch(t -> t instanceof Term.Var)) {
-            throw new ProofException(Component.translatable("status.axiomatic.card_mismatch", f).getString());
-        }
-        Map<String, BigInteger> assignment = new HashMap<>();
-        for (int i = 0; i < app.args().size(); i++) {
-            assignment.put(((Term.Var) app.args().get(i)).name(), inputs.get(i).value());
-        }
-        List<Fact> premises = new ArrayList<>();
-        inputs.forEach(n -> premises.addAll(n.facts()));
-        // Witnesses are searched up to the largest number involved, as on the Test Bench.
-        BigInteger cap = inputs.stream().map(NumeralData::value).reduce(output, BigInteger::max);
-        Truth truth = new Truth(state.signature(), state.deciders(), evaluator, cap);
-        // Typed ports: a card's premises about the inputs must be met by their certificates.
-        return Cards.apply(state.library(), card, assignment, premises, false, truth, () -> data(level).setDirty());
     }
 }

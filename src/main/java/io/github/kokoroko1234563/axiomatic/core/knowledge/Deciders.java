@@ -31,6 +31,13 @@ public final class Deciders {
         this.signature = signature;
     }
 
+    /** An independent copy over {@code signature} (see {@link Signature#copy}). */
+    public Deciders copy(Signature signature) {
+        Deciders out = new Deciders(signature);
+        out.byProperty.putAll(byProperty);
+        return out;
+    }
+
     public Link get(String property) {
         return byProperty.get(property);
     }

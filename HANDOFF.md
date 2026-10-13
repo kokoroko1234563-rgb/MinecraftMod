@@ -85,8 +85,12 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   because the opening hour certifies evens on the Test Bench before the Drafting Chamber exists.
 - **Energy is the mod's own** simple system (dynamo → cables → machines, no loss), not the NeoForge
   transaction-based EnergyHandler API. 1 energy = 1 axiom use or computation step; coal = 16,000.
-- **Jobs**: a machine takes its inputs at once, computes the result immediately, then pays the
-  cost over the job's duration before outputting. Test Bench search runs up to 20M steps.
+- **Jobs**: a machine takes its inputs, computes the result, then pays the cost over the job's
+  duration before outputting. Heavy computation (Test Bench, Compiled Machine, Prime Forge)
+  runs on worker threads (`machine/Async`, `MachineBlockEntity.runAsync`) over copies of the
+  definitions (`Signature.copy`, `Deciders.copy`); results, including conjecture refutations,
+  are committed on the server thread after re-checking the inputs. The evaluator does about
+  40M steps/s. Refused inputs are remembered so the same work is not redone every 4 ticks.
 - **Test Bench witness cap** = the numeral's own value (covers Even, ≤-style properties).
 - **Conjecture Bench rule**: a statement may be conjectured only if computation can catch it
   failing on *some* numbers (`Truth.isRefutable`): Prime(2n+1) qualifies (a divisor refutes it),

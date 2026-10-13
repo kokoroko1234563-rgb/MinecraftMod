@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
-import io.github.kokoroko1234563.axiomatic.core.knowledge.Fact;
 import io.github.kokoroko1234563.axiomatic.core.knowledge.MathState;
 import io.github.kokoroko1234563.axiomatic.core.knowledge.Truth;
 import io.github.kokoroko1234563.axiomatic.core.logic.Evaluator;
@@ -33,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class PrimeForgeBlockEntity extends MachineBlockEntity {
     /** Candidates tried per run before giving up. */
     public static final int MAX_CANDIDATES = 10_000;
-    private static final long MAX_STEPS = 50_000_000;
+    private static final long MAX_STEPS = 400_000_000;
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
             MachineLayout.input(26, 31, "slot.axiomatic.candidate"), MachineLayout.input(62, 31, "slot.axiomatic.method_card"),
             MachineLayout.output(116, 31, null)), List.of());
@@ -63,52 +62,78 @@ public class PrimeForgeBlockEntity extends MachineBlockEntity {
         if (in.isEmpty() || card == null) {
             return null;
         }
+        NumeralData candidate = NumeralItem.data(in);
+        Object key = java.util.List.of(candidate, card);
+        if (!computing() && (failedBefore(key) || !items.get(2).isEmpty()
+                && items.get(2).getCount() >= items.get(2).getMaxStackSize())) {
+            return null;
+        }
         MathState state = data(level).state();
         String variable;
+        Cards.Use use;
         try {
             variable = methodVariable(card);
-            Cards.usable(state.library(), card);
+            use = Cards.prepare(state.library(), card);
         } catch (ProofException e) {
             setStatus(Component.literal(e.getMessage()));
+            rememberFailure(key);
             return null;
         }
-        BigInteger start = NumeralItem.data(in).value();
-        Evaluator evaluator = new Evaluator(state.signature(), MAX_STEPS);
-        Fact found = null;
+        var sig = state.signature().copy();
+        var deciders = state.deciders().copy(sig);
+        return runAsync(() -> search(sig, deciders, use, variable, candidate.value()), r -> {
+            ItemStack now = items.get(0);
+            if (now.isEmpty() || !NumeralItem.data(now).equals(candidate)) {
+                return null;
+            }
+            long cost = Math.max(1, r.steps());
+            if (r.outcome() != null && r.outcome().commit(state.library())) {
+                // This candidate refuted the method's conjecture: the candidate is used up.
+                data(level).setDirty();
+                setStatus(r.outcome().message());
+                now.shrink(1);
+                return null;
+            }
+            if (r.outcome() == null || r.outcome().fact() == null) {
+                setStatus(r.tooBig() ? Component.translatable("status.axiomatic.too_big")
+                        : Component.translatable("status.axiomatic.forge_none", MAX_CANDIDATES));
+                rememberFailure(key);
+                return null;
+            }
+            BigInteger prime = r.outcome().fact().args().get(0);
+            List<ItemStack> out = List.of(NumeralItem.stack(NumeralData.ZERO.withValue(prime).withFact(r.outcome().fact()), 1));
+            if (!outputsFit(out)) {
+                return null;
+            }
+            now.shrink(1);
+            setStatus(Component.translatable("status.axiomatic.forged", NumeralItem.display(prime), cost));
+            return new Job(cost, (int) Math.clamp(cost / 200, 10, 600), out);
+        });
+    }
+
+    private record Forged(Cards.Outcome outcome, long steps, boolean tooBig) {}
+
+    /**
+     * Worker thread: tries candidates upward. Stops at the first one the method certifies, or at
+     * the first one that refutes the method's conjecture.
+     */
+    private static Forged search(io.github.kokoroko1234563.axiomatic.core.logic.Signature sig,
+            io.github.kokoroko1234563.axiomatic.core.knowledge.Deciders deciders, Cards.Use use, String variable,
+            BigInteger start) {
+        Evaluator evaluator = new Evaluator(sig, MAX_STEPS);
         BigInteger value = start;
         try {
-            for (int i = 0; i < MAX_CANDIDATES && found == null; i++, value = value.add(BigInteger.ONE)) {
-                Truth truth = new Truth(state.signature(), state.deciders(), evaluator, value);
-                try {
-                    found = Cards.apply(state.library(), card, Map.of(variable, value), List.of(), true, truth,
-                            () -> data(level).setDirty());
-                } catch (ProofException e) {
-                    if (!state.library().refuted(java.util.Set.copyOf(card.dependencies())).isEmpty()) {
-                        // This candidate refuted the method's conjecture: stop here.
-                        setStatus(Component.literal(e.getMessage()));
-                        in.shrink(1);
-                        return null;
-                    }
-                    // The method does not vouch for this candidate: try the next one.
+            for (int i = 0; i < MAX_CANDIDATES; i++, value = value.add(BigInteger.ONE)) {
+                Cards.Outcome outcome = use.evaluate(Map.of(variable, value), List.of(), true,
+                        new Truth(sig, deciders, evaluator, value));
+                if (outcome.fact() != null || outcome.refutedConjecture() != null) {
+                    return new Forged(outcome, evaluator.steps(), false);
                 }
             }
+            return new Forged(null, evaluator.steps(), false);
         } catch (Evaluator.OutOfBudget e) {
-            setStatus(Component.translatable("status.axiomatic.too_big"));
-            return null;
+            return new Forged(null, evaluator.steps(), true);
         }
-        if (found == null) {
-            setStatus(Component.translatable("status.axiomatic.forge_none", MAX_CANDIDATES));
-            return null;
-        }
-        BigInteger prime = found.args().get(0);
-        List<ItemStack> out = List.of(NumeralItem.stack(NumeralData.ZERO.withValue(prime).withFact(found), 1));
-        if (!outputsFit(out)) {
-            return null;
-        }
-        in.shrink(1);
-        long cost = Math.max(1, evaluator.steps());
-        setStatus(Component.translatable("status.axiomatic.forged", NumeralItem.display(prime), cost));
-        return new Job(cost, (int) Math.clamp(cost / 200, 10, 600), out);
     }
 
     /** The card's one variable, which the forge counts up; its conclusion must be P(variable). */

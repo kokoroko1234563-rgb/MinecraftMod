@@ -25,6 +25,16 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Term.Zero;
 public final class Signature {
     private final Map<String, Definition> definitions = new LinkedHashMap<>();
 
+    /**
+     * An independent copy, for computing on another thread while the world keeps changing.
+     * Definitions themselves are immutable, so they are shared.
+     */
+    public Signature copy() {
+        Signature out = new Signature();
+        out.definitions.putAll(definitions);
+        return out;
+    }
+
     public Definition get(String name) {
         return definitions.get(name);
     }

@@ -470,6 +470,8 @@ LANG = {
     "status.axiomatic.forge_none": "No prime found in %s candidates",
     "status.axiomatic.forged": "Forged %s (%s steps)",
     "status.axiomatic.method_shape": "The method card must read H(n) → P(n), with one variable",
+    "status.axiomatic.computing": "Computing…",
+    "status.axiomatic.compute_failed": "The computation failed",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 

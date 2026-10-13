@@ -245,6 +245,24 @@ public final class Library {
         return false;
     }
 
+    /** Active conjectures that a use of this card must be checked against. */
+    public List<Conjecture> watching(Set<String> cardDependencies, Formula cardStatement) {
+        return conjectures.values().stream().filter(c -> c.state == ConjectureState.ACTIVE
+                && cardDependencies.contains("conjecture:" + c.name)
+                && io.github.kokoroko1234563.axiomatic.core.logic.Syntax.alphaEquals(c.statement, cardStatement)).toList();
+    }
+
+    /** Records a counterexample found by a background check made elsewhere (another thread). */
+    public void refute(String name, Map<String, BigInteger> counterexample) {
+        Conjecture c = conjectures.get(name);
+        if (c == null || c.state == ConjectureState.REFUTED || c.state == ConjectureState.PROVEN) {
+            return;
+        }
+        c.state = ConjectureState.REFUTED;
+        c.counterexample = Map.copyOf(counterexample);
+        put(c.statement, new Refuted(c.counterexample));
+    }
+
     /** Unpaid upkeep: the block stops working until paid again. Not a disaster. */
     public void setDormant(String name, boolean dormant) {
         Conjecture c = conjectures.get(name);

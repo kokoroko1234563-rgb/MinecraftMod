@@ -13,6 +13,7 @@ import io.github.kokoroko1234563.axiomatic.item.MathItems;
 import io.github.kokoroko1234563.axiomatic.item.StatementData;
 import io.github.kokoroko1234563.axiomatic.core.knowledge.Truth;
 import io.github.kokoroko1234563.axiomatic.core.logic.Definition;
+import io.github.kokoroko1234563.axiomatic.core.logic.Formula;
 import io.github.kokoroko1234563.axiomatic.core.logic.Evaluator;
 import io.github.kokoroko1234563.axiomatic.item.NumeralData;
 import io.github.kokoroko1234563.axiomatic.item.NumeralItem;
@@ -35,7 +36,7 @@ import net.minecraft.world.level.storage.ValueOutput;
  */
 public class TestBenchBlockEntity extends MachineBlockEntity {
     /** Hard limit on one search, so a huge numeral cannot freeze the server. */
-    public static final long MAX_STEPS = 20_000_000;
+    public static final long MAX_STEPS = 200_000_000;
     private static final MachineLayout LAYOUT = new MachineLayout(
             List.of(MachineLayout.input(44, 31, "slot.axiomatic.test_subject"), MachineLayout.output(116, 31, null),
                     MachineLayout.input(62, 31, "slot.axiomatic.test_bound")),
@@ -114,26 +115,44 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
             in.shrink(1);
             return new Job(0, 1, out);
         }
-        Evaluator evaluator = new Evaluator(state.signature(), MAX_STEPS);
-        Truth truth = new Truth(state.signature(), state.deciders(), evaluator, n.value());
-        Fact fact;
-        try {
-            fact = Certifier.byComputation(truth, property, List.of(n.value()));
-        } catch (Evaluator.OutOfBudget e) {
-            setStatus(Component.translatable("status.axiomatic.too_big"));
+        ItemStack outSlot = items.get(1);
+        if (!computing() && !outSlot.isEmpty() && outSlot.getCount() >= outSlot.getMaxStackSize()) {
             return null;
         }
-        NumeralData result = fact == null ? n : n.withFact(fact);
-        List<ItemStack> out = List.of(NumeralItem.stack(result, 1));
-        if (!outputsFit(out)) {
-            return null;
-        }
-        in.shrink(1);
-        long cost = Math.max(1, evaluator.steps());
-        setStatus(Component.translatable(fact == null ? "status.axiomatic.not_certified" : "status.axiomatic.certified",
-                property, NumeralItem.display(n.value()), cost));
-        return new Job(cost, (int) Math.clamp(cost / 100, 10, 400), out);
+        // Search on a worker thread with copies of the definitions; commit here.
+        var sig = state.signature().copy();
+        var deciders = state.deciders().copy(sig);
+        String prop = property;
+        return runAsync(() -> {
+            Evaluator evaluator = new Evaluator(sig, MAX_STEPS);
+            Truth truth = new Truth(sig, deciders, evaluator, n.value());
+            try {
+                return new Search(Certifier.byComputation(truth, prop, List.of(n.value())), evaluator.steps(), false);
+            } catch (Evaluator.OutOfBudget e) {
+                return new Search(null, evaluator.steps(), true);
+            }
+        }, search -> {
+            ItemStack now = items.get(0);
+            if (now.isEmpty() || !NumeralItem.data(now).equals(n)) {
+                return null;
+            }
+            NumeralData result = search.fact() == null ? n : n.withFact(search.fact());
+            List<ItemStack> out = List.of(NumeralItem.stack(result, 1));
+            if (!outputsFit(out)) {
+                return null;
+            }
+            now.shrink(1);
+            long cost = Math.max(1, search.steps());
+            setStatus(search.tooBig() ? Component.translatable("status.axiomatic.too_big")
+                    : Component.translatable(search.fact() == null ? "status.axiomatic.not_certified" : "status.axiomatic.certified",
+                            prop, NumeralItem.display(n.value()), cost));
+            return new Job(cost, (int) Math.clamp(cost / 100, 10, 400), out);
+        });
     }
+
+    private record Search(Fact fact, long steps, boolean tooBig) {}
+
+    private record RangeRun(TestBench.Result result, long steps, Component problem) {}
 
     /**
      * Range mode: checks the statement for every value of its variables from 0 to the bound
@@ -152,35 +171,49 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
             setStatus(Component.translatable("status.axiomatic.too_many_cases", cases.toString()));
             return null;
         }
-        List<ItemStack> out = List.of(in.copyWithCount(1));
-        if (!outputsFit(out)) {
+        if (!computing() && !outputsFit(List.of(in.copyWithCount(1)))) {
             return null;
         }
-        Evaluator evaluator = new Evaluator(state.signature(), MAX_STEPS);
-        Truth truth = new Truth(state.signature(), state.deciders(), evaluator, bound);
-        TestBench.Result result;
-        try {
-            result = TestBench.test(st.formula(), bound, truth);
-        } catch (Evaluator.OutOfBudget e) {
-            setStatus(Component.translatable("status.axiomatic.too_big"));
-            return null;
-        } catch (IllegalArgumentException | ClassCastException e) {
-            setStatus(Component.translatable("status.axiomatic.not_computable"));
-            return null;
-        }
-        in.shrink(1);
-        Library.Status status = state.library().recordTest(st.formula(), result);
-        data(level).setDirty();
-        setStatus(switch (result) {
-            case TestBench.Passed p -> Component.translatable("status.axiomatic.tested", bound.toString(), p.cases());
-            case TestBench.Counterexample c -> Component.translatable("status.axiomatic.counterexample", c.assignment().toString());
-            case TestBench.Inconclusive i -> Component.translatable("status.axiomatic.inconclusive", i.assignment().toString());
+        var sig = state.signature().copy();
+        var deciders = state.deciders().copy(sig);
+        Formula formula = st.formula();
+        return runAsync(() -> {
+            Evaluator evaluator = new Evaluator(sig, MAX_STEPS);
+            Truth truth = new Truth(sig, deciders, evaluator, bound);
+            try {
+                return new RangeRun(TestBench.test(formula, bound, truth), evaluator.steps(), null);
+            } catch (Evaluator.OutOfBudget e) {
+                return new RangeRun(null, evaluator.steps(), Component.translatable("status.axiomatic.too_big"));
+            } catch (IllegalArgumentException | ClassCastException e) {
+                return new RangeRun(null, evaluator.steps(), Component.translatable("status.axiomatic.not_computable"));
+            }
+        }, run -> {
+            ItemStack now = items.get(0);
+            if (now.isEmpty() || !st.equals(MathItems.statement(now))) {
+                return null;
+            }
+            List<ItemStack> out = List.of(now.copyWithCount(1));
+            if (!outputsFit(out)) {
+                return null;
+            }
+            now.shrink(1);
+            long cost = Math.max(1, run.steps());
+            if (run.problem() != null) {
+                setStatus(run.problem());
+                return new Job(cost, 10, out);
+            }
+            Library.Status status = state.library().recordTest(formula, run.result());
+            data(level).setDirty();
+            setStatus(switch (run.result()) {
+                case TestBench.Passed p -> Component.translatable("status.axiomatic.tested", bound.toString(), p.cases());
+                case TestBench.Counterexample c -> Component.translatable("status.axiomatic.counterexample", c.assignment().toString());
+                case TestBench.Inconclusive i -> Component.translatable("status.axiomatic.inconclusive", i.assignment().toString());
+            });
+            if (status instanceof Library.Proven) {
+                setStatus(Component.translatable("status.axiomatic.already_proven"));
+            }
+            return new Job(cost, (int) Math.clamp(cost / 100, 10, 400), out);
         });
-        if (status instanceof Library.Proven) {
-            setStatus(Component.translatable("status.axiomatic.already_proven"));
-        }
-        long cost = Math.max(1, evaluator.steps());
-        return new Job(cost, (int) Math.clamp(cost / 100, 10, 400), out);
     }
 
     @Override
