@@ -113,7 +113,8 @@ public final class DevTour {
         STEPS.add(new Step(10, mc -> shot(mc, "inventory")));
         String[] machines = {"test_bench", "drafting_chamber", "assumption_chamber", "rewriter", "compiled_machine",
                 "coal_dynamo", "structure_bench", "conjecture_bench", "zero_source", "successor", "duplicator",
-                "factorization_vault", "infinite_prime_well", "network_surveyor", "equivalence_bench", "prime_forge", "certificate_sorter"};
+                "factorization_vault", "infinite_prime_well", "network_surveyor", "equivalence_bench", "prime_forge", "certificate_sorter",
+                "courier_station"};
         for (int i = 0; i < machines.length; i++) {
             int index = i;
             String name = machines[i];
@@ -182,7 +183,7 @@ public final class DevTour {
                 ModRegistries.ZERO_SOURCE.get(), ModRegistries.SUCCESSOR.get(), ModRegistries.DUPLICATOR.get(),
                 ModRegistries.FACTORIZATION_VAULT.get(), ModRegistries.PRIME_WELL.get(), ModRegistries.NETWORK_SURVEYOR.get(),
                 ModRegistries.EQUIVALENCE_BENCH.get(), ModRegistries.PRIME_FORGE.get(),
-                ModRegistries.CERTIFICATE_SORTER.get()));
+                ModRegistries.CERTIFICATE_SORTER.get(), ModRegistries.COURIER_STATION.get()));
         for (int i = 0; i < ROW.size(); i++) {
             level.setBlockAndUpdate(position(i), ROW.get(i).defaultBlockState());
         }
