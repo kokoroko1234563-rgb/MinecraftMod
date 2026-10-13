@@ -141,6 +141,7 @@ NOTEBOOK = [
     "Factories\n\nThe Statement Conveyor moves statements and circuits between machines; it needs a proven 0 + n = n to craft. The Duplicator copies statements for 1 unit. Every step still costs energy.",
     "Safety\n\nAn unpowered conjecture block goes dormant: safe, but its cards stop working. Seal a conjecture block in obsidian or tinted glass near a Containment Controller to keep its failure harmless.",
     "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
+    "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless.",
     "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds.",
     "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
 ]
@@ -248,6 +249,7 @@ MACHINES = {
     "structure_bench": ("blue", "M", "Structure Bench"),
     "prime_forge": ("gold", "P", "Prime Forge"),
     "implementation_bench": ("blue", "=", "Implementation Bench"),
+    "network_surveyor": ("copper", "N", "Network Surveyor"),
     "conjecture_bench": ("purple", "?", "Conjecture Bench"),
     "conjecture_block": ("purple", "!", "Conjecture Block"),
 }
@@ -561,6 +563,14 @@ LANG = {
     "subtitles.axiomatic.working": "Machine hums",
     "slot.axiomatic.implementation_proof": "Proof of fast(x) = slow(x)",
     "status.axiomatic.implemented": "%s is now computed by %s",
+    "button.axiomatic.survey": "Survey",
+    "label.axiomatic.network": "Network: %s nodes, %s edges",
+    "status.axiomatic.no_network": "Touch a cable network to survey it",
+    "status.axiomatic.network_tree": "A tree (%s cycles): certified, lossless. ",
+    "status.axiomatic.network_cycles": "Not a tree: %s independent cycles, energy is lost. ",
+    "status.axiomatic.network_even": "All degrees even.",
+    "status.axiomatic.network_odd": "Some degrees odd.",
+    "status.axiomatic.burning_lossless": "Burning (lossless tree network)",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
@@ -730,6 +740,8 @@ def main():
            {"O": "minecraft:obsidian", "T": "minecraft:tinted_glass", "B": board})
     shaped("structure_bench", ["QBQ", "BKB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "K": "minecraft:lapis_block"})
+    shaped("network_surveyor", ["CMC", "OBO", "CCC"],
+           {"C": "minecraft:copper_ingot", "M": "minecraft:map", "O": "minecraft:compass", "B": board})
     shaped("implementation_bench", ["QBQ", "BOB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "O": "minecraft:observer"})
     shaped("prime_forge", ["KCK", "PFP", "KKK"],

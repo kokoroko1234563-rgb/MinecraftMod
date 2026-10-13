@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "M": "minecraft:map",
+    "O": "minecraft:compass",
+    "B": "axiomatic:circuit_board"
+  },
+  "pattern": [
+    "CMC",
+    "OBO",
+    "CCC"
+  ],
+  "result": {
+    "id": "axiomatic:network_surveyor",
+    "count": 1
+  }
+}

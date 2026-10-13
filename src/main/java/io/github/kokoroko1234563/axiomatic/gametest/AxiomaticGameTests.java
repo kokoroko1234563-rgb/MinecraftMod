@@ -56,6 +56,8 @@ public final class AxiomaticGameTests {
         test("statement_conveyor_moves_statements", AxiomaticGameTests::conveyorMovesStatements);
         test("even_add_by_machines", EvenAddGameTest::evenAdd);
         test("milestones_award_advancements", AxiomaticGameTests::milestonesAwardAdvancements);
+        test("surveyor_certifies_tree_networks", AxiomaticGameTests::surveyorCertifiesTrees);
+        test("surveyor_rejects_cycles", AxiomaticGameTests::surveyorRejectsCycles);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -197,6 +199,44 @@ public final class AxiomaticGameTests {
         h.assertTrue(zero != null, "the zero advancement should load");
         h.succeedWhen(() -> h.assertTrue(player.getAdvancements().getOrStartProgress(zero).isDone(),
                 "making a 0 near the player should award 'Zero'"));
+    }
+
+    /** Dynamo — cable — cable — Successor, with a surveyor on the first cable. */
+    private static void network(GameTestHelper h, boolean withLoop) {
+        h.setBlock(new BlockPos(1, 1, 1), ModRegistries.COAL_DYNAMO.get());
+        h.setBlock(new BlockPos(2, 1, 1), ModRegistries.COPPER_CABLE.get());
+        h.setBlock(new BlockPos(3, 1, 1), ModRegistries.COPPER_CABLE.get());
+        h.setBlock(new BlockPos(4, 1, 1), ModRegistries.SUCCESSOR.get());
+        h.setBlock(new BlockPos(2, 2, 1), ModRegistries.NETWORK_SURVEYOR.get());
+        if (withLoop) {
+            h.setBlock(new BlockPos(2, 1, 2), ModRegistries.COPPER_CABLE.get());
+            h.setBlock(new BlockPos(3, 1, 2), ModRegistries.COPPER_CABLE.get());
+        }
+        h.getBlockEntity(new BlockPos(1, 1, 1), MachineBlockEntity.class).setItem(0, new ItemStack(Items.COAL, 4));
+    }
+
+    private static void surveyorCertifiesTrees(GameTestHelper h) {
+        network(h, false);
+        var level = h.getLevel();
+        h.succeedWhen(() -> {
+            var graph = io.github.kokoroko1234563.axiomatic.energy.EnergyNetwork.graph(level, h.absolutePos(new BlockPos(1, 1, 1)));
+            h.assertTrue(graph.isTree(), "a line with one branch is a tree");
+            h.assertTrue(io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level).isCertifiedTree(graph.signature()),
+                    "the surveyor should certify it");
+        });
+    }
+
+    private static void surveyorRejectsCycles(GameTestHelper h) {
+        network(h, true);
+        var level = h.getLevel();
+        var surveyor = h.getBlockEntity(new BlockPos(2, 2, 1), MachineBlockEntity.class);
+        h.succeedWhen(() -> {
+            var graph = io.github.kokoroko1234563.axiomatic.energy.EnergyNetwork.graph(level, h.absolutePos(new BlockPos(1, 1, 1)));
+            h.assertFalse(graph.isTree(), "a square of cables has a cycle");
+            h.assertTrue(surveyor.status().getString().contains("Not a tree"), "status: " + surveyor.status().getString());
+            h.assertFalse(io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level).isCertifiedTree(graph.signature()),
+                    "never certified");
+        });
     }
 
     private static void circuitBoardNeedsCertifiedEvens(GameTestHelper h) {

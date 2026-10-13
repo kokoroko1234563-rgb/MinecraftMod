@@ -20,6 +20,7 @@
     "axiomatic:structure_bench",
     "axiomatic:prime_forge",
     "axiomatic:implementation_bench",
+    "axiomatic:network_surveyor",
     "axiomatic:conjecture_bench",
     "axiomatic:conjecture_block",
     "axiomatic:statement_conveyor",

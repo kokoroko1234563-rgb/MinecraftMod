@@ -22,7 +22,8 @@ public class CoalDynamoBlockEntity extends MachineBlockEntity {
             List.of(MachineLayout.fuel(80, 31, "slot.axiomatic.fuel")), List.of());
 
     private int burnLeft;
-    private List<MachineBlockEntity> consumers = List.of();
+    private List<EnergyNetwork.Consumer> consumers = List.of();
+    private boolean lossless;
 
     public CoalDynamoBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.COAL_DYNAMO.type(), pos, state, 20_000);
@@ -66,15 +67,18 @@ public class CoalDynamoBlockEntity extends MachineBlockEntity {
         if (burnLeft > 0) {
             burnLeft--;
             energy = Math.min(capacity, energy + ENERGY_PER_TICK);
-            setStatus(Component.translatable("status.axiomatic.burning"));
+            setStatus(Component.translatable(lossless ? "status.axiomatic.burning_lossless" : "status.axiomatic.burning"));
         } else {
             setStatus(Component.translatable("status.axiomatic.no_fuel"));
         }
         if (level.getGameTime() % 20 == 0) {
-            consumers = EnergyNetwork.consumers(level, worldPosition);
+            // A network certified as a tree (by a Network Surveyor) transfers without loss.
+            lossless = io.github.kokoroko1234563.axiomatic.world.NetworkData.get(level)
+                    .isCertifiedTree(EnergyNetwork.graph(level, worldPosition).signature());
+            consumers = EnergyNetwork.consumers(level, worldPosition, lossless);
         }
         if (energy > 0 && !consumers.isEmpty()) {
-            consumers = consumers.stream().filter(m -> !m.isRemoved()).toList();
+            consumers = consumers.stream().filter(c -> !c.machine().isRemoved()).toList();
             long sent = EnergyNetwork.distribute(consumers, energy);
             if (sent > 0) {
                 energy -= sent;

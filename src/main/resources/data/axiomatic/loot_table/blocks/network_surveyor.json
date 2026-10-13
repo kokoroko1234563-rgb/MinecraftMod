@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "axiomatic:network_surveyor"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "axiomatic:blocks/network_surveyor"
+}
