@@ -54,6 +54,7 @@ public final class AxiomaticGameTests {
         test("test_bench_range_mode", AxiomaticGameTests::testBenchRangeMode);
         test("structure_bench_certify_and_apply", StructureGameTests::certifyAndApply);
         test("statement_conveyor_moves_statements", AxiomaticGameTests::conveyorMovesStatements);
+        test("even_add_by_machines", EvenAddGameTest::evenAdd);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {

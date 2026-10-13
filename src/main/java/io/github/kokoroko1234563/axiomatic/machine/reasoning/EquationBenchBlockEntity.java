@@ -11,7 +11,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import io.github.kokoroko1234563.axiomatic.core.logic.Formula;
 
-/** Equation Bench: two circuits give the (unproven) statement "left = right". */
+/**
+ * Equation Bench: two circuits give the (unproven) statement "left = right"; the same circuit
+ * twice gives the proven "t = t" (reflexivity of equality).
+ */
 public class EquationBenchBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
             MachineLayout.input(26, 31, "slot.axiomatic.left"), MachineLayout.input(44, 31, "slot.axiomatic.right"),
@@ -38,6 +41,10 @@ public class EquationBenchBlockEntity extends ReasoningBlockEntity {
 
     @Override
     protected List<ItemStack> apply(Context ctx) {
+        if (ctx.term(0).equals(ctx.term(1))) {
+            // The same circuit on both sides: equality is reflexive, so this one is proven.
+            return List.of(ctx.proven(ctx.state().kernel().reflexivity(ctx.term(0))));
+        }
         Formula f = Formula.eq(ctx.term(0), ctx.term(1));
         ctx.state().signature().checkFormula(f);
         return List.of(ctx.unproven(f));

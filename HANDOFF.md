@@ -68,8 +68,11 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   variables cannot be instantiated or inducted on.
 - **Primitive recursion recurses on the last parameter**: f(x̄, 0) = base, f(x̄, S(y)) = step,
   where step may call f only as f(x̄, y).
-- **Rewriter** takes an occurrence index (reading order, 0-based; negative = all), and skips
-  positions where an ∃ binds one of the equation's variables.
+- **Rewriter** (machine) rewrites by pattern (`core/logic/Tactics.rewriteMatching`, built only
+  from kernel rules): the equation's free variables match any subterm, except variables locked
+  by its assumptions. The occurrence button picks a match in reading order (or all). The
+  kernel's own `rewrite` is literal and skips positions where an ∃ binds an equation variable.
+- **Equation Bench** gives the proven "t = t" when both circuits are the same (reflexivity).
 - **Instantiator** substitutes several variables simultaneously (so a := b, b := a swaps).
 - **Discharge** may discharge an assumption the conclusion never used (still valid).
 - **∃ elimination**: the Assumption Chamber opens a proven (possibly stamped) ∃ as the variable
@@ -129,7 +132,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
       Bench (numeral mode), Drafting Chamber (assemble / define / name / tablet modes), Variable
       blocks, Equation/Property/Witness Bench, Axiom Tablets, Instantiator, Rewriter, Assumption
       Chamber (assume, ∃-open, discharge), Induction Engine, Conjunction/Modus Ponens Press.
-      Game tests prove zero_add and "Double outputs evens" with the real machines.
+      Game tests prove zero_add, "Double outputs evens" and even + even = even (nested
+      chambers, ∃ opened as named variables, pattern rewrites) with the real machines.
       Also done: Conjecture Bench, Graph Lens (also inspects a Compiled Machine), Library block,
       Test Bench range mode (Tested statements work as cards inside their range), Statement
       Conveyor (recipe needs a proven "∀n. 0 + n = n"), Containment Controller (a conjecture

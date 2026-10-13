@@ -16,8 +16,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 /**
  * Rewriter: in a proven statement, replaces the left side of a proven equation by its right side
- * (or the reverse). The occurrence button picks which occurrence, in reading order, or all.
- * The equation stays in its slot.
+ * (or the reverse). The equation's variables match anything, so "x + y = y + x" rewrites any sum;
+ * the occurrence button picks which match, in reading order, or all. The equation stays.
  */
 public class RewriterBlockEntity extends ReasoningBlockEntity {
     private static final int MAX_OCCURRENCE = 8;
@@ -67,7 +67,9 @@ public class RewriterBlockEntity extends ReasoningBlockEntity {
 
     @Override
     protected List<ItemStack> apply(Context ctx) {
-        return List.of(ctx.proven(ctx.state().kernel().rewrite(ctx.theorem(0), ctx.theorem(1), rightToLeft, occurrence)));
+        // Pattern rewriting: the equation's free variables match any subterm (like rw).
+        return List.of(ctx.proven(io.github.kokoroko1234563.axiomatic.core.logic.Tactics.rewriteMatching(
+                ctx.state().kernel(), ctx.theorem(0), ctx.theorem(1), rightToLeft, occurrence)));
     }
 
     @Override
