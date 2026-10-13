@@ -216,8 +216,14 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 ## Suggested next steps
 
-0. Binary recursion definitions + binary induction in the kernel, so the binary upgrade
-   (`Signature.binaryNumerals`) becomes reachable.
+0. **Decision needed: how the binary upgrade becomes reachable** (`Signature.binaryNumerals`).
+   Every evaluation is unary, so no implementation of + can be fast. Options:
+   A. Gate on a proven decomposition theorem, e.g. ∀n. n = (half(n) + half(n)) + par(n) with
+      half/par/flip defined by primitive recursion (provable by induction using the lemma
+      flip(flip(par n)) = par n), and then let the Evaluator compute canonical + and × natively.
+   B. A binary-recursion definition kind (f(0), f(2n+1) from f(n), f(2n+2) from f(n+1)) with a
+      binary induction rule, plus native doubling/halving in the Evaluator for its constructors.
+   A is much smaller and fits "once binary is proven" in the design.
 1. Compact blocks: inspecting a Compiled Machine's ports, theorem cards slotted into other
    machines (speed cards exist for the Compiled Machine).
 2. A worked mod-n example (multiplication mod n as a SetMonoid, ≡ mod n as an equivalence, laws
