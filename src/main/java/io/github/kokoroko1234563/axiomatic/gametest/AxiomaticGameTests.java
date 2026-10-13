@@ -239,6 +239,8 @@ public final class AxiomaticGameTests {
     }
 
     /** A fresh player's Notebook lacks the gated pages; earning "Q.E.D." adds its pages. */
+    // Advancements need a ServerPlayer; GameTestHelper has no non-deprecated way to make one yet.
+    @SuppressWarnings("removal")
     private static void notebookPagesUnlock(GameTestHelper h) {
         var player = h.makeMockServerPlayerInLevel();
         player.getInventory().setItem(0, io.github.kokoroko1234563.axiomatic.book.Notebook.create());
@@ -255,6 +257,8 @@ public final class AxiomaticGameTests {
         h.succeed();
     }
 
+    // Advancements need a ServerPlayer; GameTestHelper has no non-deprecated way to make one yet.
+    @SuppressWarnings("removal")
     private static void milestonesAwardAdvancements(GameTestHelper h) {
         var player = h.makeMockServerPlayerInLevel();
         player.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(3, 2, 3)));
