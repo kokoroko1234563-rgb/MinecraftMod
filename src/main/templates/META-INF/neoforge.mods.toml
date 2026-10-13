@@ -80,6 +80,14 @@ A Peano tech mod: build machines from definitions, make the factory cheaper with
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.${mod_id}]]
+    modId="modonomicon"
+    type="required"
+    reason="The Mathematician's Notebook is a Modonomicon book"
+    versionRange="[2.17,)"
+    ordering="NONE"
+    side="BOTH"
+
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.

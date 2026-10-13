@@ -1,0 +1,48 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:primes/prime_cores",
+  "category": "axiomatic:primes",
+  "name": "book.axiomatic.notebook.primes.prime_cores.name",
+  "description": "book.axiomatic.notebook.primes.prime_cores.description",
+  "icon": {
+    "id": "axiomatic:prime_core"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 0,
+  "y": 0,
+  "sort_number": 0,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/circuit_board"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "text",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.primes.prime_cores.name",
+      "text": "book.axiomatic.notebook.primes.prime_cores.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "recipe_0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "recipe_id_1": "axiomatic:prime_core",
+      "text": "book.axiomatic.notebook.primes.prime_cores.prime_core.note"
+    }
+  ]
+}

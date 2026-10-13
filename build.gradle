@@ -26,7 +26,19 @@ sourceSets.main.resources {
 }
 
 repositories {
-    // Add here additional repositories if required by some of the dependencies below.
+    // Modrinth serves every mod as a Maven repository. Modonomicon's own Cloudsmith repository is
+    // not reachable from the cloud sessions, so it comes from here.
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 base {
@@ -120,6 +132,11 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.13.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // The guide book (The Mathematician's Notebook) is a Modonomicon book.
+    implementation "maven.modrinth:modonomicon:${modonomicon_version}"
+    // JEI shows recipes in development and playtests; Axiomatic does not depend on it.
+    localRuntime "maven.modrinth:jei:${jei_version}"
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

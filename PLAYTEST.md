@@ -6,6 +6,8 @@ creative tab), or a survival world to check recipes and costs. Machines show wha
 hover over each slot, and a status line under the slots says what went wrong.
 
 Tips:
+- The Notebook (Modonomicon) has a chapter map; each machine's entry shows its recipe. New entries
+  appear as you earn the milestones. JEI is also loaded in the development client for recipe lookup.
 - `/give @s axiomatic:<id>` works for every block and item.
 - The Graph Lens (in the other hand) shows the pointed graph of a numeral, circuit or statement.
 - Rename an item in an anvil to give a definition or theorem its name.

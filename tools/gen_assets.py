@@ -542,6 +542,9 @@ LANG = {
     "status.axiomatic.courier_nowhere": "No machine on the network takes this item",
     "status.axiomatic.test_conjectural": "Not recorded: the test used a decider resting on %s",
     "status.axiomatic.machine_refuted": "Built from parts resting on refuted %s: it no longer works",
+    "ingredient.axiomatic.certified": "Any numeral certified %s",
+    "ingredient.axiomatic.certified_proven": "Any numeral certified %s (proven, not conjectural)",
+    "ingredient.axiomatic.proven_statement": "A proven statement: %s",
     "status.axiomatic.needs_filter": "Put a property statement like Even(n) in the filter slot",
     "slot.axiomatic.conjecture_statement": "Unproven statement, renamed in an anvil",
     "status.axiomatic.too_many_ports": "%s has more than 3 inputs",
@@ -655,20 +658,171 @@ LANG = {
 }
 
 
+# ---- The Mathematician's Notebook (a Modonomicon book) -------------------------------------
+#
+# Each NOTEBOOK page becomes an entry (title = its first line). Entries are grouped into the
+# chapters below, laid out left to right, and show the recipes of the machines they introduce.
+# An entry gated in NOTEBOOK_GATES unlocks with that advancement, through Modonomicon research:
+# advancement hook -> fact -> node -> entry condition.
+
+BOOK = "notebook"
+CHAPTERS = [
+    ("basics", "Getting Started", "axiomatic:coal_dynamo", [
+        ("The Mathematician's Notebook", []), ("Power", ["coal_dynamo", "copper_cable"]),
+        ("First numbers", ["zero_source", "successor", "duplicator"]), ("Certificates", ["test_bench"]),
+        ("Circuit Boards", ["circuit_board"]), ("Circuits", ["drafting_chamber", "variable"]),
+        ("Definitions", []), ("Statements", ["equation_bench", "property_bench"]),
+        ("First proof", ["witness_bench", "graph_lens"]),
+    ]),
+    ("logic", "Logic and Proof", "axiomatic:induction_engine", [
+        ("Reasoning", ["instantiator", "rewriter", "conjunction_press", "modus_ponens_press"]),
+        ("Assumptions", ["assumption_chamber"]), ("Opening exists", []),
+        ("Induction", ["induction_engine", "axiom_tablet_succ_not_zero", "axiom_tablet_succ_injective"]),
+        ("The Library", ["library"]), ("Theorem cards", ["compiled_machine"]), ("Speed cards", []),
+    ]),
+    ("risk", "Testing and Risk", "axiomatic:conjecture_bench", [
+        ("Testing", []), ("Deciders", []), ("Conjectures", ["conjecture_bench"]),
+        ("Safety", ["containment_controller"]), ("Traps", []),
+    ]),
+    ("factory", "Factories and Networks", "axiomatic:statement_conveyor", [
+        ("Factories", ["statement_conveyor"]), ("Sorting", ["certificate_sorter"]),
+        ("Networks", ["network_surveyor"]), ("Phases", []), ("Couriers", ["courier_station"]),
+    ]),
+    ("primes", "The Prime Path", "axiomatic:prime_core", [
+        ("Prime Cores", ["prime_core"]), ("Prime Forge", ["prime_forge"]), ("General recursion", []),
+        ("Infinitely many", ["infinite_prime_well", "factorization_vault"]), ("Perfect numbers", ["perfect_core"]),
+    ]),
+    ("structures", "Structures and Speed", "axiomatic:structure_bench", [
+        ("Structures", ["structure_bench"]), ("Monoids on a set", []), ("Equivalences", ["equivalence_bench"]),
+        ("Arithmetic mod n", []), ("Faster machines", ["implementation_bench"]), ("Binary", []),
+    ]),
+]
+
+
+# Captions under recipes whose ingredients are not plain items.
+RECIPE_NOTES = {
+    "circuit_board": "The four numerals must be certified Even (Test Bench, or a theorem card).",
+    "prime_core": "The four numerals must be certified Prime.",
+    "perfect_core": "The numeral must be certified both Prime and Mersenne, by proof or computation: no conjectures.",
+    "statement_conveyor": "The scroll is a proven statement: ∀n. 0 + n = n (zero\\_add).",
+    "infinite_prime_well": "The scroll is a proven statement: ∀n. ∃p. n ≤ p ∧ Prime(p), that primes never run out.",
+}
+
+
+def slug(title):
+    return "".join(c if c.isalnum() else "_" for c in title.lower()).strip("_")
+
+
+def book_text(text):
+    """Modonomicon text is Markdown: keep underscores literal (zero_add, add_comm)."""
+    return text.replace("_", "\\_")
+
+
+def write_book(lang):
+    import shutil
+    root = os.path.join(DATA, "modonomicon", "books", BOOK)
+    shutil.rmtree(root, ignore_errors=True)
+    pages = {page.split("\n")[0]: page for page in NOTEBOOK}
+    placed = [t for _, _, _, entries in CHAPTERS for t, _ in entries]
+    assert sorted(placed) == sorted(pages), (set(pages) ^ set(placed))
+    assert set(NOTEBOOK_GATES) <= set(pages), set(NOTEBOOK_GATES) - set(pages)
+    recipes = {f[:-5] for f in os.listdir(os.path.join(DATA, "recipe"))} if os.path.isdir(os.path.join(DATA, "recipe")) else None
+
+    key = f"book.{NS}.{BOOK}"
+    write_json(os.path.join(root, "book.json"), {
+        "name": f"{key}.name", "tooltip": f"{key}.tooltip", "description": f"{key}.description",
+        "model": "modonomicon:modonomicon_purple", "creative_tab": f"{NS}:main",
+        "generate_book_item": True, "display_mode": "node", "page_display_mode": "double_page",
+        "default_allow_page_split": True, "default_auto_scale": True, "show_recently_unlocked": True,
+        "allow_open_book_with_invalid_links": True, "font": "modonomicon:default",
+        "turn_page_sound": "modonomicon:turn_page",
+    })
+    lang[f"{key}.name"] = "The Mathematician's Notebook"
+    lang[f"{key}.tooltip"] = "Mathematics from Peano's axioms, one machine at a time"
+    lang[f"{key}.description"] = "Chapters open as you prove things."
+
+    # Research: one node per gating advancement.
+    gates = sorted(set(NOTEBOOK_GATES.values()))
+    for g in gates:
+        assert any(a[0] == g for a in ADVANCEMENTS), g
+    research = os.path.join(DATA, "modonomicon", "research", BOOK)
+    shutil.rmtree(research, ignore_errors=True)
+    write_json(os.path.join(research, "facts.json"), [{"id": f"{NS}:{BOOK}/{g}_done"} for g in gates])
+    write_json(os.path.join(research, "values.json"), [])
+    write_json(os.path.join(research, "hooks.json"), [
+        {"id": f"{NS}:{BOOK}/{g}_hook", "fact_id": f"{NS}:{BOOK}/{g}_done",
+         "trigger_type": "modonomicon:advancement", "trigger_target": f"{NS}:{g}"} for g in gates])
+    write_json(os.path.join(research, "nodes.json"), [
+        {"id": f"{NS}:{BOOK}/{g}", "required_facts": [f"{NS}:{BOOK}/{g}_done"]} for g in gates])
+
+    none = {"type": "modonomicon:none"}
+    for ci, (cat, cat_name, icon, entries) in enumerate(CHAPTERS):
+        cat_key = f"{key}.{cat}"
+        write_json(os.path.join(root, "categories", cat + ".json"), {
+            "name": f"{cat_key}.name", "description": "", "icon": {"id": icon}, "sort_number": ci,
+            "display_mode": "node", "show_category_button": True,
+            "background": "modonomicon:textures/gui/dark_slate_seamless.png",
+            "background_width": 512, "background_height": 512, "background_overscan": 1.25,
+            "background_parallax_layers": [], "background_rendering_mode": "fit",
+            "background_texture_zoom_multiplier": 1.0, "max_scroll_x": 512, "max_scroll_y": 512,
+        })
+        lang[f"{cat_key}.name"] = cat_name
+        previous = None
+        for ei, (title, machines) in enumerate(entries):
+            eid = slug(title)
+            ekey = f"{cat_key}.{eid}"
+            body = pages[title].split("\n\n", 1)[1] if "\n\n" in pages[title] else ""
+            lang[f"{ekey}.name"] = title
+            lang[f"{ekey}.description"] = body.split(". ")[0][:60]
+            lang[f"{ekey}.text"] = book_text(body)
+            entry_pages = [{"type": "modonomicon:text", "id": "text", "condition": none, "sort_number": 0,
+                            "title": f"{ekey}.name", "text": f"{ekey}.text", "show_title_separator": True}]
+            # Recipes two to a page; one with a caption gets a page of its own.
+            groups, pending = [], []
+            for m in machines:
+                assert recipes is None or m in recipes, m
+                if m in RECIPE_NOTES:
+                    groups.append([m])
+                else:
+                    pending.append(m)
+                    if len(pending) == 2:
+                        groups.append(pending)
+                        pending = []
+            if pending:
+                groups.append(pending)
+            for gi, group in enumerate(groups):
+                page = {"type": "modonomicon:crafting_recipe", "id": f"recipe_{gi}", "condition": none,
+                        "sort_number": 1 + gi, "recipe_id_1": f"{NS}:{group[0]}"}
+                if len(group) > 1:
+                    page["recipe_id_2"] = f"{NS}:{group[1]}"
+                if group[0] in RECIPE_NOTES:
+                    note_key = f"{ekey}.{group[0]}.note"
+                    lang[note_key] = RECIPE_NOTES[group[0]]
+                    page["text"] = note_key
+                entry_pages.append(page)
+            gate = NOTEBOOK_GATES.get(title)
+            entry = {
+                "type": "modonomicon:content", "id": f"{NS}:{cat}/{eid}", "category": f"{NS}:{cat}",
+                "name": f"{ekey}.name", "description": f"{ekey}.description",
+                "icon": {"id": f"{NS}:{machines[0]}" if machines and not machines[0].startswith("axiom_tablet")
+                         else icon},
+                "background": {"sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/"
+                               + ("square_gold" if machines else "square_gray"), "width": 26, "height": 26},
+                "x": 2 * (ei % 5), "y": 2 * (ei // 5), "sort_number": ei,
+                "condition": {"type": "modonomicon:research_node_unlocked", "node_id": f"{NS}:{BOOK}/{gate}"}
+                if gate else none,
+                "marker_condition": none,
+                "pages": entry_pages,
+            }
+            if previous:
+                entry["parents"] = [{"entry": previous}]
+            write_json(os.path.join(root, "entries", cat, eid + ".json"), entry)
+            previous = f"{NS}:{cat}/{eid}"
+
+
 def main():
     lang = dict(LANG)
-    for i, page in enumerate(NOTEBOOK, start=1):
-        lang[f"notebook.axiomatic.page.{i}"] = page
-    titles = {page.split("\n")[0] for page in NOTEBOOK}
-    assert set(NOTEBOOK_GATES) <= titles, set(NOTEBOOK_GATES) - titles
-    assert all(any(a[0] == req for a in ADVANCEMENTS) for req in NOTEBOOK_GATES.values())
-    # Which advancement unlocks each page (the server rebuilds Notebooks as they are earned).
-    gates = []
-    for i, page in enumerate(NOTEBOOK, start=1):
-        req = NOTEBOOK_GATES.get(page.split("\n")[0])
-        gates.append({"page": i, "requires": f"{NS}:{req}" if req else None})
-    write_json(os.path.join(DATA, "notebook_pages.json"), gates)
-    lang["notebook.axiomatic.more"] = "More pages appear in this Notebook as you prove things."
+    write_book(lang)
     pickaxe = []
     for name, (family, glyph, display) in MACHINES.items():
         save(casing(family, glyph), os.path.join(ASSETS, "textures", "block", name + ".png"))

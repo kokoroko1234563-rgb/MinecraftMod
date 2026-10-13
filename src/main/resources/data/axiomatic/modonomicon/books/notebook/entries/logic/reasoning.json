@@ -1,0 +1,58 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:logic/reasoning",
+  "category": "axiomatic:logic",
+  "name": "book.axiomatic.notebook.logic.reasoning.name",
+  "description": "book.axiomatic.notebook.logic.reasoning.description",
+  "icon": {
+    "id": "axiomatic:instantiator"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 0,
+  "y": 0,
+  "sort_number": 0,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/proven"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "text",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.logic.reasoning.name",
+      "text": "book.axiomatic.notebook.logic.reasoning.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "recipe_0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "recipe_id_1": "axiomatic:instantiator",
+      "recipe_id_2": "axiomatic:rewriter"
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "recipe_1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "recipe_id_1": "axiomatic:conjunction_press",
+      "recipe_id_2": "axiomatic:modus_ponens_press"
+    }
+  ]
+}

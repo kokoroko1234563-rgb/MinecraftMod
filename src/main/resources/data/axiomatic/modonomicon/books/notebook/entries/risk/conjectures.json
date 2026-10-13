@@ -1,0 +1,52 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:risk/conjectures",
+  "category": "axiomatic:risk",
+  "name": "book.axiomatic.notebook.risk.conjectures.name",
+  "description": "book.axiomatic.notebook.risk.conjectures.description",
+  "icon": {
+    "id": "axiomatic:conjecture_bench"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 4,
+  "y": 0,
+  "sort_number": 2,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/induction"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "text",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.risk.conjectures.name",
+      "text": "book.axiomatic.notebook.risk.conjectures.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "recipe_0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "recipe_id_1": "axiomatic:conjecture_bench"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:risk/deciders"
+    }
+  ]
+}

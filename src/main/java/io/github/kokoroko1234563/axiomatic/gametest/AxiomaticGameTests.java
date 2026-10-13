@@ -71,7 +71,7 @@ public final class AxiomaticGameTests {
         test("courier_runs_on_eulerian_networks", AxiomaticGameTests::courierRunsOnEulerianNetworks);
         test("courier_refuses_odd_networks", AxiomaticGameTests::courierRefusesOddNetworks);
         test("pipes_see_machine_inventories", AxiomaticGameTests::pipesSeeMachineInventories);
-        test("notebook_pages_unlock", AxiomaticGameTests::notebookPagesUnlock);
+        test("notebook_is_a_modonomicon_book", AxiomaticGameTests::notebookIsAModonomiconBook);
         test("dynamo_judges_each_network", AxiomaticGameTests::dynamoJudgesEachNetwork);
         test("breaking_an_unpaid_job_drops_nothing", AxiomaticGameTests::breakingAnUnpaidJobDropsNothing);
         test("vault_keeps_contents_when_broken", AxiomaticGameTests::vaultKeepsContentsWhenBroken);
@@ -240,29 +240,55 @@ public final class AxiomaticGameTests {
         });
     }
 
-    /** A fresh player's Notebook lacks the gated pages; earning "Q.E.D." adds its pages. */
-    // Advancements need a ServerPlayer; GameTestHelper has no non-deprecated way to make one yet.
-    @SuppressWarnings("removal")
-    private static void notebookPagesUnlock(GameTestHelper h) {
-        var player = h.makeMockServerPlayerInLevel();
-        player.getInventory().setItem(0, io.github.kokoroko1234563.axiomatic.book.Notebook.create());
-        io.github.kokoroko1234563.axiomatic.book.Notebook.refresh(player);
-        var content = player.getInventory().getItem(0).get(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT);
-        int before = content.pages().size();
-        h.assertTrue(before < io.github.kokoroko1234563.axiomatic.book.Notebook.PAGES, "gated pages are hidden: " + before);
-        var server = h.getLevel().getServer();
-        var proven = server.getAdvancements().get(Identifier.fromNamespaceAndPath(Axiomatic.MODID, "proven"));
-        player.getAdvancements().award(proven, "proven");
-        int after = player.getInventory().getItem(0).get(net.minecraft.core.component.DataComponents.WRITTEN_BOOK_CONTENT)
-                .pages().size();
-        h.assertValueEqual(after, before + 6, "Q.E.D. unlocks six pages");
+    /** The Notebook is the Modonomicon book "axiomatic:notebook", and the book data loads. */
+    private static void notebookIsAModonomiconBook(GameTestHelper h) {
+        ItemStack book = io.github.kokoroko1234563.axiomatic.book.Notebook.create();
+        h.assertValueEqual(book.get(com.klikli_dev.modonomicon.registry.DataComponentRegistry.BOOK_ID.get()),
+                io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK, "the book item names the Notebook");
+        var loaded = com.klikli_dev.modonomicon.data.BookDataManager.get()
+                .getBook(io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK);
+        h.assertTrue(loaded != null, "the Notebook's book data loaded");
+        h.assertValueEqual(loaded.getCategories().size(), 6, "six chapters");
         h.succeed();
     }
 
-    // Advancements need a ServerPlayer; GameTestHelper has no non-deprecated way to make one yet.
-    @SuppressWarnings("removal")
+    /** Modonomicon's payloads, which a real client's network handshake would open. */
+    private static final List<String> MODONOMICON_PAYLOADS = List.of("add_bookmark", "book_category_read",
+            "book_closed", "book_entry_read", "click_command_link", "click_research_progress_button",
+            "open_book_on_client", "reload_resources_done", "reload_resources_on_client", "remove_bookmark",
+            "request_sync_book_states", "request_sync_research_state", "research", "research_toast",
+            "save_book_state", "save_category_state", "save_entry_state", "sync_book_data", "sync_book_visual_states",
+            "sync_multiblock_data", "sync_research_data", "sync_research_state");
+
+    /**
+     * A mock ServerPlayer for advancement tests, built like GameTestHelper's deprecated
+     * makeMockServerPlayerInLevel, but with Modonomicon's payload channels open before it logs
+     * in, as a real client's handshake would open them (Modonomicon syncs the book on login and
+     * research on every advancement).
+     */
+    static net.minecraft.server.level.ServerPlayer mockPlayer(GameTestHelper h) {
+        var level = h.getLevel();
+        var cookie = net.minecraft.server.network.CommonListenerCookie.createInitial(
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "test-mock-player"), false);
+        var player = new net.minecraft.server.level.ServerPlayer(level.getServer(), level, cookie.gameProfile(),
+                cookie.clientInformation()) {
+            @Override
+            public net.minecraft.world.level.GameType gameMode() {
+                return net.minecraft.world.level.GameType.CREATIVE;
+            }
+        };
+        var connection = new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
+        new io.netty.channel.embedded.EmbeddedChannel(connection);
+        var channels = net.neoforged.neoforge.network.registration.ChannelAttributes.getOrCreateAdHocChannels(connection);
+        for (String id : MODONOMICON_PAYLOADS) {
+            channels.add(Identifier.fromNamespaceAndPath("modonomicon", id));
+        }
+        level.getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
+        return player;
+    }
+
     private static void milestonesAwardAdvancements(GameTestHelper h) {
-        var player = h.makeMockServerPlayerInLevel();
+        var player = mockPlayer(h);
         player.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(3, 2, 3)));
         powered(h, ModRegistries.ZERO_SOURCE.get(), MachineBlockEntity.class);
         var server = h.getLevel().getServer();

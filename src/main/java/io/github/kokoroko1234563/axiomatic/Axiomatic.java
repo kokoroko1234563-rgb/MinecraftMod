@@ -32,6 +32,5 @@ public class Axiomatic {
         modEventBus.addListener(io.github.kokoroko1234563.axiomatic.network.LibraryPayload::register);
         modContainer.registerConfig(ModConfig.Type.COMMON, AxiomaticConfig.SPEC);
         NeoForge.EVENT_BUS.addListener(Notebook::onLogin);
-        NeoForge.EVENT_BUS.addListener(Notebook::onAdvancement);
     }
 }

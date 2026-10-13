@@ -1,0 +1,56 @@
+[
+  {
+    "id": "axiomatic:notebook/circuit_board",
+    "required_facts": [
+      "axiomatic:notebook/circuit_board_done"
+    ]
+  },
+  {
+    "id": "axiomatic:notebook/conjecture",
+    "required_facts": [
+      "axiomatic:notebook/conjecture_done"
+    ]
+  },
+  {
+    "id": "axiomatic:notebook/induction",
+    "required_facts": [
+      "axiomatic:notebook/induction_done"
+    ]
+  },
+  {
+    "id": "axiomatic:notebook/named",
+    "required_facts": [
+      "axiomatic:notebook/named_done"
+    ]
+  },
+  {
+    "id": "axiomatic:notebook/prime_core",
+    "required_facts": [
+      "axiomatic:notebook/prime_core_done"
+    ]
+  },
+  {
+    "id": "axiomatic:notebook/prime_forged",
+    "required_facts": [
+      "axiomatic:notebook/prime_forged_done"
+    ]
+  },
+  {
+    "id": "axiomatic:notebook/prime_well",
+    "required_facts": [
+      "axiomatic:notebook/prime_well_done"
+    ]
+  },
+  {
+    "id": "axiomatic:notebook/proven",
+    "required_facts": [
+      "axiomatic:notebook/proven_done"
+    ]
+  },
+  {
+    "id": "axiomatic:notebook/structure",
+    "required_facts": [
+      "axiomatic:notebook/structure_done"
+    ]
+  }
+]

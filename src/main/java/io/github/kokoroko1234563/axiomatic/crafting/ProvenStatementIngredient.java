@@ -54,6 +54,11 @@ public record ProvenStatementIngredient(String statement) implements ICustomIngr
 
     @Override
     public SlotDisplay display() {
-        return new SlotDisplay.ItemSlotDisplay(ModRegistries.STATEMENT_ITEM);
+        // Shown as a statement item named after the statement it needs.
+        ItemStack example = new ItemStack(ModRegistries.STATEMENT_ITEM.get());
+        example.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,
+                net.minecraft.network.chat.Component.translatable("ingredient.axiomatic.proven_statement", statement()));
+        return new SlotDisplay.ItemStackSlotDisplay(new net.minecraft.world.item.ItemStackTemplate(
+                example.getItem(), example.getComponentsPatch()));
     }
 }

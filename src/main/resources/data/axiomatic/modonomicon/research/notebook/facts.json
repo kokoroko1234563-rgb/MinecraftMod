@@ -1,0 +1,29 @@
+[
+  {
+    "id": "axiomatic:notebook/circuit_board_done"
+  },
+  {
+    "id": "axiomatic:notebook/conjecture_done"
+  },
+  {
+    "id": "axiomatic:notebook/induction_done"
+  },
+  {
+    "id": "axiomatic:notebook/named_done"
+  },
+  {
+    "id": "axiomatic:notebook/prime_core_done"
+  },
+  {
+    "id": "axiomatic:notebook/prime_forged_done"
+  },
+  {
+    "id": "axiomatic:notebook/prime_well_done"
+  },
+  {
+    "id": "axiomatic:notebook/proven_done"
+  },
+  {
+    "id": "axiomatic:notebook/structure_done"
+  }
+]

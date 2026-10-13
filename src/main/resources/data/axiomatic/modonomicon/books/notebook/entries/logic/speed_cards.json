@@ -1,0 +1,43 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:logic/speed_cards",
+  "category": "axiomatic:logic",
+  "name": "book.axiomatic.notebook.logic.speed_cards.name",
+  "description": "book.axiomatic.notebook.logic.speed_cards.description",
+  "icon": {
+    "id": "axiomatic:induction_engine"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gray",
+    "width": 26,
+    "height": 26
+  },
+  "x": 2,
+  "y": 2,
+  "sort_number": 6,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/proven"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "text",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.logic.speed_cards.name",
+      "text": "book.axiomatic.notebook.logic.speed_cards.text",
+      "show_title_separator": true
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:logic/theorem_cards"
+    }
+  ]
+}

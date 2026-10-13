@@ -1,0 +1,48 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:factory/factories",
+  "category": "axiomatic:factory",
+  "name": "book.axiomatic.notebook.factory.factories.name",
+  "description": "book.axiomatic.notebook.factory.factories.description",
+  "icon": {
+    "id": "axiomatic:statement_conveyor"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 0,
+  "y": 0,
+  "sort_number": 0,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/induction"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "text",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.factory.factories.name",
+      "text": "book.axiomatic.notebook.factory.factories.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "recipe_0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "recipe_id_1": "axiomatic:statement_conveyor",
+      "text": "book.axiomatic.notebook.factory.factories.statement_conveyor.note"
+    }
+  ]
+}

@@ -57,8 +57,25 @@ public record CertifiedNumeralIngredient(String property, java.util.List<String>
         return ModRegistries.CERTIFIED_NUMERAL_INGREDIENT.get();
     }
 
+    /**
+     * Recipe viewers and the Notebook show an example numeral carrying the required certificates,
+     * named "Any numeral certified …", so the requirement is visible.
+     */
     @Override
     public SlotDisplay display() {
-        return new SlotDisplay.ItemSlotDisplay(ModRegistries.NUMERAL_ITEM);
+        java.util.List<String> all = new java.util.ArrayList<>();
+        all.add(property);
+        all.addAll(also);
+        long value = all.contains("Prime") || all.contains("Mersenne") ? 7 : all.contains("Even") ? 2 : 1;
+        var data = io.github.kokoroko1234563.axiomatic.item.NumeralData.of(value);
+        for (String p : all) {
+            data = data.withFact(new io.github.kokoroko1234563.axiomatic.core.knowledge.Fact(p,
+                    java.util.List.of(java.math.BigInteger.valueOf(value)), java.util.Set.of()));
+        }
+        ItemStack example = NumeralItem.stack(data, 1);
+        example.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.translatable(
+                provenOnly ? "ingredient.axiomatic.certified_proven" : "ingredient.axiomatic.certified", String.join(" + ", all)));
+        return new SlotDisplay.ItemStackSlotDisplay(new net.minecraft.world.item.ItemStackTemplate(
+                example.getItem(), example.getComponentsPatch()));
     }
 }

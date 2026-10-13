@@ -135,15 +135,33 @@ public final class DevTour {
         STEPS.add(new Step(30, mc -> shot(mc, "library")));
         STEPS.add(new Step(10, mc -> ((LibraryScreen) mc.screen).select(1)));
         STEPS.add(new Step(20, mc -> shot(mc, "library_theorems")));
-        // The longest Notebook pages, to check they fit.
-        STEPS.add(new Step(10, mc -> {
-            var book = new net.minecraft.client.gui.screens.inventory.BookViewScreen(
-                    net.minecraft.client.gui.screens.inventory.BookViewScreen.BookAccess.fromItem(
-                            io.github.kokoroko1234563.axiomatic.book.Notebook.create()));
-            mc.setScreen(book);
-            book.setPage(30);
-        }));
-        STEPS.add(new Step(20, mc -> shot(mc, "notebook_long_page")));
+        // The Notebook (Modonomicon): the chapter map, then an entry with its recipe page.
+        STEPS.add(new Step(10, mc -> mc.setScreen(null)));
+        STEPS.add(new Step(10, mc -> com.klikli_dev.modonomicon.client.gui.BookGuiManager.get().openBook(
+                com.klikli_dev.modonomicon.client.gui.book.BookAddress.ignoreSaved(
+                        io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK,
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "basics"), null, -1))));
+        STEPS.add(new Step(30, mc -> shot(mc, "notebook")));
+        STEPS.add(new Step(10, mc -> com.klikli_dev.modonomicon.client.gui.BookGuiManager.get().openBook(
+                com.klikli_dev.modonomicon.client.gui.book.BookAddress.ignoreSaved(
+                        io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK,
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "basics"),
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "basics/power"), 0))));
+        STEPS.add(new Step(30, mc -> shot(mc, "notebook_power")));
+        STEPS.add(new Step(10, mc -> com.klikli_dev.modonomicon.client.gui.BookGuiManager.get().openBook(
+                com.klikli_dev.modonomicon.client.gui.book.BookAddress.ignoreSaved(
+                        io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK,
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "primes"),
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "primes/prime_cores"), 0))));
+        STEPS.add(new Step(30, mc -> shot(mc, "notebook_prime_cores")));
+        STEPS.add(new Step(10, mc -> com.klikli_dev.modonomicon.client.gui.BookGuiManager.get().openBook(
+                com.klikli_dev.modonomicon.client.gui.book.BookAddress.ignoreSaved(
+                        io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK,
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "factory"),
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "factory/factories"), 0))));
+        STEPS.add(new Step(20, mc -> hoverSlotAt(mc, 0.61, 0.255)));
+        STEPS.add(new Step(30, mc -> shot(mc, "notebook_factories")));
+
         STEPS.add(new Step(10, mc -> mc.setScreen(null)));
         STEPS.add(new Step(20, mc -> {
             Axiomatic.LOGGER.info("Dev tour finished");
@@ -268,6 +286,12 @@ public final class DevTour {
         double x = (left + 8 + 18 * hotbarSlot + 8) * scale;
         double y = (top + 142 + 8) * scale;
         org.lwjgl.glfw.GLFW.glfwSetCursorPos(mc.getWindow().handle(), x, y);
+    }
+
+    /** Moves the mouse to a point given as fractions of the window, so a tooltip shows. */
+    private static void hoverSlotAt(Minecraft mc, double fx, double fy) {
+        var window = mc.getWindow();
+        org.lwjgl.glfw.GLFW.glfwSetCursorPos(window.handle(), window.getScreenWidth() * fx, window.getScreenHeight() * fy);
     }
 
     private static void shot(Minecraft mc, String name) {

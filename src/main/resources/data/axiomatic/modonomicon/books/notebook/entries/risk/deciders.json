@@ -1,0 +1,43 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:risk/deciders",
+  "category": "axiomatic:risk",
+  "name": "book.axiomatic.notebook.risk.deciders.name",
+  "description": "book.axiomatic.notebook.risk.deciders.description",
+  "icon": {
+    "id": "axiomatic:conjecture_bench"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gray",
+    "width": 26,
+    "height": 26
+  },
+  "x": 2,
+  "y": 0,
+  "sort_number": 1,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/induction"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "text",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.risk.deciders.name",
+      "text": "book.axiomatic.notebook.risk.deciders.text",
+      "show_title_separator": true
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:risk/testing"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "axiomatic:notebook/circuit_board_hook",
+    "fact_id": "axiomatic:notebook/circuit_board_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:circuit_board"
+  },
+  {
+    "id": "axiomatic:notebook/conjecture_hook",
+    "fact_id": "axiomatic:notebook/conjecture_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:conjecture"
+  },
+  {
+    "id": "axiomatic:notebook/induction_hook",
+    "fact_id": "axiomatic:notebook/induction_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:induction"
+  },
+  {
+    "id": "axiomatic:notebook/named_hook",
+    "fact_id": "axiomatic:notebook/named_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:named"
+  },
+  {
+    "id": "axiomatic:notebook/prime_core_hook",
+    "fact_id": "axiomatic:notebook/prime_core_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:prime_core"
+  },
+  {
+    "id": "axiomatic:notebook/prime_forged_hook",
+    "fact_id": "axiomatic:notebook/prime_forged_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:prime_forged"
+  },
+  {
+    "id": "axiomatic:notebook/prime_well_hook",
+    "fact_id": "axiomatic:notebook/prime_well_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:prime_well"
+  },
+  {
+    "id": "axiomatic:notebook/proven_hook",
+    "fact_id": "axiomatic:notebook/proven_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:proven"
+  },
+  {
+    "id": "axiomatic:notebook/structure_hook",
+    "fact_id": "axiomatic:notebook/structure_done",
+    "trigger_type": "modonomicon:advancement",
+    "trigger_target": "axiomatic:structure"
+  }
+]

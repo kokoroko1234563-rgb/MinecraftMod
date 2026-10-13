@@ -1,0 +1,19 @@
+{
+  "name": "book.axiomatic.notebook.structures.name",
+  "description": "",
+  "icon": {
+    "id": "axiomatic:structure_bench"
+  },
+  "sort_number": 5,
+  "display_mode": "node",
+  "show_category_button": true,
+  "background": "modonomicon:textures/gui/dark_slate_seamless.png",
+  "background_width": 512,
+  "background_height": 512,
+  "background_overscan": 1.25,
+  "background_parallax_layers": [],
+  "background_rendering_mode": "fit",
+  "background_texture_zoom_multiplier": 1.0,
+  "max_scroll_x": 512,
+  "max_scroll_y": 512
+}

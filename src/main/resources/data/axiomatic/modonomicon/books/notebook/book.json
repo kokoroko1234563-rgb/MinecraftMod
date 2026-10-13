@@ -1,0 +1,16 @@
+{
+  "name": "book.axiomatic.notebook.name",
+  "tooltip": "book.axiomatic.notebook.tooltip",
+  "description": "book.axiomatic.notebook.description",
+  "model": "modonomicon:modonomicon_purple",
+  "creative_tab": "axiomatic:main",
+  "generate_book_item": true,
+  "display_mode": "node",
+  "page_display_mode": "double_page",
+  "default_allow_page_split": true,
+  "default_auto_scale": true,
+  "show_recently_unlocked": true,
+  "allow_open_book_with_invalid_links": true,
+  "font": "modonomicon:default",
+  "turn_page_sound": "modonomicon:turn_page"
+}

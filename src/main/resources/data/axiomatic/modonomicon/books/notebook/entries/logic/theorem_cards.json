@@ -1,0 +1,52 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:logic/theorem_cards",
+  "category": "axiomatic:logic",
+  "name": "book.axiomatic.notebook.logic.theorem_cards.name",
+  "description": "book.axiomatic.notebook.logic.theorem_cards.description",
+  "icon": {
+    "id": "axiomatic:compiled_machine"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 0,
+  "y": 2,
+  "sort_number": 5,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/proven"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "text",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.logic.theorem_cards.name",
+      "text": "book.axiomatic.notebook.logic.theorem_cards.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "recipe_0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "recipe_id_1": "axiomatic:compiled_machine"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:logic/the_library"
+    }
+  ]
+}
