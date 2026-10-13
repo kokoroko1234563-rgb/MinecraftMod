@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:named",
+  "criteria": {
+    "structure": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "structure"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:structure_bench"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.structure.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.structure.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "structure"
+    ]
+  ]
+}

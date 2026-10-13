@@ -145,6 +145,7 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
             long cost = Math.max(1, search.steps());
             if (search.fact() != null) {
                 playSound(ModRegistries.SOUND_CERTIFIED, 0.7f);
+                io.github.kokoroko1234563.axiomatic.progress.Milestones.award(level, worldPosition, io.github.kokoroko1234563.axiomatic.progress.Milestones.CERTIFIED);
             }
             setStatus(search.tooBig() ? Component.translatable("status.axiomatic.too_big")
                     : Component.translatable(search.fact() == null ? "status.axiomatic.not_certified" : "status.axiomatic.certified",

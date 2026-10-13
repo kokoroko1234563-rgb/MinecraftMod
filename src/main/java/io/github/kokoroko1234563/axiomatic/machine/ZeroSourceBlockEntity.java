@@ -32,6 +32,7 @@ public class ZeroSourceBlockEntity extends MachineBlockEntity {
             return null;
         }
         setStatus(Component.translatable("status.axiomatic.working"));
+        io.github.kokoroko1234563.axiomatic.progress.Milestones.award(level, worldPosition, io.github.kokoroko1234563.axiomatic.progress.Milestones.NUMERAL);
         return new Job(1, 10, out);
     }
 }

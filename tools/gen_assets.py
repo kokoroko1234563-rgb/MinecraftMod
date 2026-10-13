@@ -146,6 +146,75 @@ NOTEBOOK = [
 ]
 
 
+# The advancement tree: (id, parent, icon, criterion, title, description, frame).
+# A criterion is ("item", item id) for inventory_changed or ("milestone", name) for machines.
+ADVANCEMENTS = [
+    ("power", "root", "axiomatic:coal_dynamo", ("item", "axiomatic:coal_dynamo"),
+     "Let There Be Power", "Craft a Coal Dynamo", "task"),
+    ("zero", "power", "axiomatic:zero_source", ("milestone", "numeral"),
+     "Zero", "Make the number 0 in a Zero Source", "task"),
+    ("certified", "zero", "axiomatic:test_bench", ("milestone", "certified"),
+     "Twelve Is Even", "Certify a numeral on the Test Bench", "task"),
+    ("circuit_board", "certified", "axiomatic:circuit_board", ("item", "axiomatic:circuit_board"),
+     "Even Better", "Craft a Circuit Board from certified evens", "task"),
+    ("defined", "zero", "axiomatic:drafting_chamber", ("milestone", "defined"),
+     "By Definition", "Compile your first definition", "task"),
+    ("proven", "defined", "axiomatic:witness_bench", ("milestone", "proven"),
+     "Q.E.D.", "Prove a statement outright", "task"),
+    ("induction", "proven", "axiomatic:induction_engine", ("milestone", "induction"),
+     "Domino Effect", "Prove a statement for every n by induction", "goal"),
+    ("named", "induction", "axiomatic:library", ("milestone", "named"),
+     "A Library of One", "Name a theorem in the Drafting Chamber", "task"),
+    ("conjecture", "proven", "axiomatic:conjecture_bench", ("milestone", "conjecture"),
+     "A Calculated Risk", "Make a conjecture", "task"),
+    ("disaster", "conjecture", "axiomatic:paradox_junk", ("milestone", "disaster"),
+     "Counterexample", "Watch a conjecture fail", "challenge"),
+    ("prime_core", "circuit_board", "axiomatic:prime_core", ("item", "axiomatic:prime_core"),
+     "Prime Time", "Craft a Prime Core from certified primes", "goal"),
+    ("prime_forged", "prime_core", "axiomatic:prime_forge", ("milestone", "prime_forged"),
+     "Forging Primes", "Forge a prime with a method card", "task"),
+    ("structure", "named", "axiomatic:structure_bench", ("milestone", "structure"),
+     "Any Monoid Will Do", "Certify an operation as a monoid, equivalence or order", "goal"),
+    ("implemented", "named", "axiomatic:implementation_bench", ("milestone", "implemented"),
+     "Faster Machines", "Prove a faster function equal to a slower one", "goal"),
+    ("general_recursion", "named", "axiomatic:drafting_chamber", ("milestone", "general_recursion"),
+     "Euclid Would Be Proud", "Define a function by general recursion", "challenge"),
+]
+
+
+def write_advancements(lang):
+    adv_dir = os.path.join(DATA, "advancement")
+    write_json(os.path.join(adv_dir, "root.json"), {
+        "criteria": {"tick": {"trigger": "minecraft:tick"}},
+        "display": {
+            "icon": {"id": f"{NS}:numeral"},
+            "title": {"translate": "advancements.axiomatic.root.title"},
+            "description": {"translate": "advancements.axiomatic.root.description"},
+            "background": "minecraft:gui/advancements/backgrounds/stone",
+            "show_toast": False, "announce_to_chat": False},
+        "requirements": [["tick"]],
+    })
+    lang["advancements.axiomatic.root.title"] = "Axiomatic"
+    lang["advancements.axiomatic.root.description"] = "From Peano's axioms to ever larger primes"
+    for adv_id, parent, icon, (kind, value), title, description, frame in ADVANCEMENTS:
+        if kind == "item":
+            criterion = {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": value}]}}
+        else:
+            criterion = {"trigger": f"{NS}:milestone", "conditions": {"milestone": value}}
+        write_json(os.path.join(adv_dir, adv_id + ".json"), {
+            "parent": f"{NS}:{parent}",
+            "criteria": {adv_id: criterion},
+            "display": {
+                "icon": {"id": icon},
+                "title": {"translate": f"advancements.axiomatic.{adv_id}.title"},
+                "description": {"translate": f"advancements.axiomatic.{adv_id}.description"},
+                "frame": frame},
+            "requirements": [[adv_id]],
+        })
+        lang[f"advancements.axiomatic.{adv_id}.title"] = title
+        lang[f"advancements.axiomatic.{adv_id}.description"] = description
+
+
 def write_json(path, obj):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -583,6 +652,7 @@ def main():
                    {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
         lang.setdefault(f"item.{NS}.{name}", display)
 
+    write_advancements(lang)
     write_json(os.path.join(ASSETS, "lang", "en_us.json"), dict(sorted(lang.items())))
 
     for block in pickaxe:

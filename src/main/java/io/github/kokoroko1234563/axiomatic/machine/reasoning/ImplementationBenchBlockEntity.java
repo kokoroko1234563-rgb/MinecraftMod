@@ -54,6 +54,7 @@ public class ImplementationBenchBlockEntity extends ReasoningBlockEntity {
         String[] pair = ctx.state().kernel().implement(proof);
         data((ServerLevel) level).setDirty();
         playSound(ModRegistries.SOUND_PROVEN, 0.8f);
+        io.github.kokoroko1234563.axiomatic.progress.Milestones.award((ServerLevel) level, worldPosition, io.github.kokoroko1234563.axiomatic.progress.Milestones.IMPLEMENTED);
         setStatus(Component.translatable("status.axiomatic.implemented", pair[0], pair[1]));
         return List.of();
     }

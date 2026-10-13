@@ -1,0 +1,32 @@
+{
+  "parent": "axiomatic:root",
+  "criteria": {
+    "power": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "axiomatic:coal_dynamo"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:coal_dynamo"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.power.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.power.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "power"
+    ]
+  ]
+}

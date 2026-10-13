@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:named",
+  "criteria": {
+    "implemented": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "implemented"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:implementation_bench"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.implemented.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.implemented.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "implemented"
+    ]
+  ]
+}

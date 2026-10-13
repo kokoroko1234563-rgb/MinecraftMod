@@ -108,6 +108,17 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
     }
 
     @Override
+    protected List<String> milestones(List<ItemStack> out) {
+        return switch (mode) {
+            case DEFINE -> List.of(io.github.kokoroko1234563.axiomatic.progress.Milestones.DEFINED);
+            case RECURSE -> out.size() == 1 && MathItems.statement(out.get(0)).proven()
+                    ? List.of(io.github.kokoroko1234563.axiomatic.progress.Milestones.DEFINED, io.github.kokoroko1234563.axiomatic.progress.Milestones.GENERAL_RECURSION) : List.of();
+            case NAME -> List.of(io.github.kokoroko1234563.axiomatic.progress.Milestones.NAMED);
+            default -> List.of();
+        };
+    }
+
+    @Override
     protected boolean milestone() {
         return mode == Mode.NAME || mode == Mode.DEFINE || mode == Mode.RECURSE;
     }

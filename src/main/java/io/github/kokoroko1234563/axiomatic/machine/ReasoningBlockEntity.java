@@ -109,6 +109,16 @@ public abstract class ReasoningBlockEntity extends MachineBlockEntity {
      */
     protected abstract List<ItemStack> apply(Context ctx);
 
+    /**
+     * Advancement milestones this application reached. By default: a statement proven outright
+     * (no open assumptions, no conjectures).
+     */
+    protected List<String> milestones(List<ItemStack> out) {
+        boolean proven = out.stream().map(MathItems::statement).anyMatch(d -> d != null && d.proven()
+                && d.hypotheses().isEmpty() && !d.isConjectural());
+        return proven ? List.of(io.github.kokoroko1234563.axiomatic.progress.Milestones.PROVEN) : List.of();
+    }
+
     /** Whether this application deserves the "proven" chime (induction, naming a theorem). */
     protected boolean milestone() {
         return false;
@@ -153,6 +163,9 @@ public abstract class ReasoningBlockEntity extends MachineBlockEntity {
         setStatus(Component.translatable("status.axiomatic.applied"));
         playSound(milestone() ? io.github.kokoroko1234563.axiomatic.registry.ModRegistries.SOUND_PROVEN
                 : io.github.kokoroko1234563.axiomatic.registry.ModRegistries.SOUND_APPLIED, 0.6f);
+        for (String m : milestones(out)) {
+            io.github.kokoroko1234563.axiomatic.progress.Milestones.award(level, worldPosition, m);
+        }
         return new Job(cost(ctx), 10, out);
     }
 }

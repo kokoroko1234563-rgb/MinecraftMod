@@ -94,6 +94,7 @@ public class ConjectureBlockEntity extends MachineBlockEntity {
     private void disaster(ServerLevel level, Library.Conjecture c) {
         failed = true;
         BlockPos pos = worldPosition;
+        io.github.kokoroko1234563.axiomatic.progress.Milestones.award(level, pos, io.github.kokoroko1234563.axiomatic.progress.Milestones.DISASTER);
         boolean contained = io.github.kokoroko1234563.axiomatic.block.ContainmentControllerBlock.contains(level, pos);
         String counterexample = c.counterexample() == null ? "?" : c.counterexample().toString();
         level.players().stream().filter(p -> p.blockPosition().closerThan(pos, 64)).forEach(p -> p.sendSystemMessage(

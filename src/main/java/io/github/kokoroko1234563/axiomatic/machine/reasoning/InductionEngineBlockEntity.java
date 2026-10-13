@@ -30,6 +30,11 @@ public class InductionEngineBlockEntity extends ReasoningBlockEntity {
     }
 
     @Override
+    protected List<String> milestones(List<ItemStack> out) {
+        return List.of(io.github.kokoroko1234563.axiomatic.progress.Milestones.PROVEN, io.github.kokoroko1234563.axiomatic.progress.Milestones.INDUCTION);
+    }
+
+    @Override
     protected List<Integer> consumed() {
         return List.of(0, 1);
     }

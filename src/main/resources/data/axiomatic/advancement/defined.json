@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:zero",
+  "criteria": {
+    "defined": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "defined"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:drafting_chamber"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.defined.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.defined.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "defined"
+    ]
+  ]
+}

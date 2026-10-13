@@ -1,0 +1,32 @@
+{
+  "parent": "axiomatic:certified",
+  "criteria": {
+    "circuit_board": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "axiomatic:circuit_board"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:circuit_board"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.circuit_board.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.circuit_board.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "circuit_board"
+    ]
+  ]
+}

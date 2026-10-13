@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:proven",
+  "criteria": {
+    "induction": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "induction"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:induction_engine"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.induction.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.induction.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "induction"
+    ]
+  ]
+}

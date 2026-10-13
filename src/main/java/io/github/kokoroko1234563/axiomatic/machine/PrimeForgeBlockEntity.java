@@ -108,6 +108,7 @@ public class PrimeForgeBlockEntity extends MachineBlockEntity {
             }
             now.shrink(1);
             playSound(ModRegistries.SOUND_CERTIFIED, 0.7f);
+            io.github.kokoroko1234563.axiomatic.progress.Milestones.award(level, worldPosition, io.github.kokoroko1234563.axiomatic.progress.Milestones.PRIME_FORGED);
             setStatus(Component.translatable("status.axiomatic.forged", NumeralItem.display(prime), cost));
             return new Job(cost, (int) Math.clamp(cost / 200, 10, 600), out);
         });

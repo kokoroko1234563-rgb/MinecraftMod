@@ -27,6 +27,7 @@ public class Axiomatic {
     public Axiomatic(IEventBus modEventBus, ModContainer modContainer) {
         ModRegistries.register(modEventBus);
         AxiomaticGameTests.register(modEventBus);
+        io.github.kokoroko1234563.axiomatic.progress.Milestones.register(modEventBus);
         modContainer.registerConfig(ModConfig.Type.COMMON, AxiomaticConfig.SPEC);
         NeoForge.EVENT_BUS.addListener(Paradox::onCrafted);
         NeoForge.EVENT_BUS.addListener(Notebook::onLogin);

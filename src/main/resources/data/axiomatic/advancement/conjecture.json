@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:proven",
+  "criteria": {
+    "conjecture": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "conjecture"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:conjecture_bench"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.conjecture.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.conjecture.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "conjecture"
+    ]
+  ]
+}

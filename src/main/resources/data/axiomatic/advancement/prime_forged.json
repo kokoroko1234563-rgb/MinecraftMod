@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:prime_core",
+  "criteria": {
+    "prime_forged": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "prime_forged"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:prime_forge"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.prime_forged.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.prime_forged.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "prime_forged"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:named",
+  "criteria": {
+    "general_recursion": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "general_recursion"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:drafting_chamber"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.general_recursion.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.general_recursion.description"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "general_recursion"
+    ]
+  ]
+}

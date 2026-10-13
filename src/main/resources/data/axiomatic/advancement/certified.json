@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:zero",
+  "criteria": {
+    "certified": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "certified"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:test_bench"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.certified.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.certified.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "certified"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:defined",
+  "criteria": {
+    "proven": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "proven"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:witness_bench"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.proven.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.proven.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "proven"
+    ]
+  ]
+}

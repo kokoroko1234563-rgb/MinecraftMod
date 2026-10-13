@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:power",
+  "criteria": {
+    "zero": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "numeral"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:zero_source"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.zero.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.zero.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "zero"
+    ]
+  ]
+}

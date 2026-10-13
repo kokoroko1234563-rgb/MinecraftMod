@@ -1,0 +1,32 @@
+{
+  "parent": "axiomatic:circuit_board",
+  "criteria": {
+    "prime_core": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "axiomatic:prime_core"
+          }
+        ]
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:prime_core"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.prime_core.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.prime_core.description"
+    },
+    "frame": "goal"
+  },
+  "requirements": [
+    [
+      "prime_core"
+    ]
+  ]
+}

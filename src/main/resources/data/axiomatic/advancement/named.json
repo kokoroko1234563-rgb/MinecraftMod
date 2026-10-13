@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:induction",
+  "criteria": {
+    "named": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "named"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:library"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.named.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.named.description"
+    },
+    "frame": "task"
+  },
+  "requirements": [
+    [
+      "named"
+    ]
+  ]
+}

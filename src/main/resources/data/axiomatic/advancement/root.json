@@ -1,0 +1,26 @@
+{
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:numeral"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.root.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.root.description"
+    },
+    "background": "minecraft:gui/advancements/backgrounds/stone",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ]
+}

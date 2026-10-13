@@ -46,6 +46,11 @@ public class ConjectureBenchBlockEntity extends ReasoningBlockEntity {
     }
 
     @Override
+    protected List<String> milestones(List<ItemStack> out) {
+        return List.of(io.github.kokoroko1234563.axiomatic.progress.Milestones.CONJECTURE);
+    }
+
+    @Override
     protected long cost(Context ctx) {
         return FEE;
     }

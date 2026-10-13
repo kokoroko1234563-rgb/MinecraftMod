@@ -108,6 +108,7 @@ public class StructureBenchBlockEntity extends ReasoningBlockEntity {
                 }
                 Library.StructureCert cert = library.certifyStructure(kernel, structure, laws);
                 data((ServerLevel) level).setDirty();
+                io.github.kokoroko1234563.axiomatic.progress.Milestones.award((ServerLevel) level, worldPosition, io.github.kokoroko1234563.axiomatic.progress.Milestones.STRUCTURE);
                 setStatus(Component.translatable("status.axiomatic.certified_structure", structure, cert.mapping().toString()));
                 yield List.of();
             }

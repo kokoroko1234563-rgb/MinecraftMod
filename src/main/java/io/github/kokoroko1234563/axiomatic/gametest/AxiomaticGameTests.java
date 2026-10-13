@@ -55,6 +55,7 @@ public final class AxiomaticGameTests {
         test("structure_bench_certify_and_apply", StructureGameTests::certifyAndApply);
         test("statement_conveyor_moves_statements", AxiomaticGameTests::conveyorMovesStatements);
         test("even_add_by_machines", EvenAddGameTest::evenAdd);
+        test("milestones_award_advancements", AxiomaticGameTests::milestonesAwardAdvancements);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -185,6 +186,17 @@ public final class AxiomaticGameTests {
             h.assertTrue(target.getItem(0).is(ModRegistries.STATEMENT_ITEM.get()), "the statement should arrive");
             h.assertTrue(source.getItem(1).is(Items.DIRT), "other items stay");
         });
+    }
+
+    private static void milestonesAwardAdvancements(GameTestHelper h) {
+        var player = h.makeMockServerPlayerInLevel();
+        player.setPos(h.absoluteVec(new net.minecraft.world.phys.Vec3(3, 2, 3)));
+        powered(h, ModRegistries.ZERO_SOURCE.get(), MachineBlockEntity.class);
+        var server = h.getLevel().getServer();
+        var zero = server.getAdvancements().get(Identifier.fromNamespaceAndPath(Axiomatic.MODID, "zero"));
+        h.assertTrue(zero != null, "the zero advancement should load");
+        h.succeedWhen(() -> h.assertTrue(player.getAdvancements().getOrStartProgress(zero).isDone(),
+                "making a 0 near the player should award 'Zero'"));
     }
 
     private static void circuitBoardNeedsCertifiedEvens(GameTestHelper h) {

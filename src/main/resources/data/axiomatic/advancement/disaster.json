@@ -1,0 +1,28 @@
+{
+  "parent": "axiomatic:conjecture",
+  "criteria": {
+    "disaster": {
+      "trigger": "axiomatic:milestone",
+      "conditions": {
+        "milestone": "disaster"
+      }
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "axiomatic:paradox_junk"
+    },
+    "title": {
+      "translate": "advancements.axiomatic.disaster.title"
+    },
+    "description": {
+      "translate": "advancements.axiomatic.disaster.description"
+    },
+    "frame": "challenge"
+  },
+  "requirements": [
+    [
+      "disaster"
+    ]
+  ]
+}
