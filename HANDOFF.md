@@ -51,7 +51,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `machine/ConjectureBlockEntity`, `reasoning/ConjectureBenchBlockEntity` | Conjectures: bench makes the card + block; block pays upkeep, goes dormant, fails on refutation |
 | `risk/Paradox` | Cascade: items depending on a refuted conjecture turn to paradox junk; crafted parts record conjectures (`axiomatic:depends`) |
 | `AxiomaticConfig` | `disasterBlockDamage` (default false), `conjectureUpkeep`, `cableLossPerBlock` (0.02), `maxCableLoss` (0.5), `foreignEnergyPerUnit` (4 FE = 1 unit) |
-| `block/LibraryBlock` | Library: use it to list definitions, theorems, conjectures (with post-mortems) and statuses in chat |
+| `block/LibraryBlock`, `network/LibraryPayload`, `client/LibraryScreen` | Library: use it to open a tabbed screen of definitions, theorems, conjectures (with post-mortems), structure certificates and statuses |
 | `item/GraphLensItem` | Graph Lens: shows the pointed graph of the item in the other hand |
 | `book/Notebook` | The Notebook, given on first join: a vanilla written book whose pages are lang keys `notebook.axiomatic.page.N` (placeholder until Modonomicon is reachable) |
 | `reasoning/StructureBenchBlockEntity` | Structure Bench: Axioms / Certify (laws → Library certificate) / Apply (generic theorem + circuit naming a certified op) |
@@ -173,7 +173,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
       closure, or conjectural with background checks). Not yet: inspect, typed-port enforcement,
       cards slotted into other machines
 - [~] Knowledge record: core done (statuses, certificates, conjectures) and saved per world;
-      not yet surfaced in game (Library block)
+      shown in game by the Library block's screen (`client/LibraryScreen`, sent as `network/LibraryPayload`)
 - [x] Conjecture blocks with upkeep, background checks (on card use) and the 2n + 1 trap
       (game test `two_n_plus_one_trap`); disasters drop paradox junk; config for block damage
 - [x] Circuit Board and Prime Core recipes needing certified numerals (Prime Core matches the
@@ -199,6 +199,5 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 2. The Rewriter using a certified equivalence (≡ mod n) at prime path stage 5; monoids over a
    subset (closure + relativised laws).
-3. A real GUI for the Library (it prints to chat now).
 3. Notebook (Modonomicon) given on first join: needs `maven.blamejared.com`/`modmaven.dev` allowed.
 4. Theorem cards and compact blocks; Prime Core recipe; Graph Lens.

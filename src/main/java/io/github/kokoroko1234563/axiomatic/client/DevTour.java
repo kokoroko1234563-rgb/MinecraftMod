@@ -113,6 +113,11 @@ public final class DevTour {
             STEPS.add(new Step(30, mc -> shot(mc, name)));
         }
         STEPS.add(new Step(10, mc -> mc.setScreen(null)));
+        STEPS.add(new Step(10, mc -> mc.setScreen(new LibraryScreen(new io.github.kokoroko1234563.axiomatic.network.LibraryPayload(
+                io.github.kokoroko1234563.axiomatic.block.LibraryBlock.sections(
+                        io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(mc.getSingleplayerServer()).state()))))));
+        STEPS.add(new Step(30, mc -> shot(mc, "library")));
+        STEPS.add(new Step(10, mc -> mc.setScreen(null)));
         STEPS.add(new Step(20, mc -> {
             Axiomatic.LOGGER.info("Dev tour finished");
             mc.stop();

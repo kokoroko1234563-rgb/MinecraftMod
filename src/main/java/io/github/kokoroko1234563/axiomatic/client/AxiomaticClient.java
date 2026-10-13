@@ -20,4 +20,10 @@ public class AxiomaticClient {
     static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModRegistries.MACHINE_MENU.get(), MachineScreen::new);
     }
+
+    @SubscribeEvent
+    static void registerPayloads(net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent event) {
+        event.register(io.github.kokoroko1234563.axiomatic.network.LibraryPayload.TYPE,
+                (payload, context) -> net.minecraft.client.Minecraft.getInstance().setScreen(new LibraryScreen(payload)));
+    }
 }
