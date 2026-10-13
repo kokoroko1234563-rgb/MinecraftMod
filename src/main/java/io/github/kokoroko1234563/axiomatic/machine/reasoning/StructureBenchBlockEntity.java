@@ -23,7 +23,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 /**
- * Structure Bench, for monoids, equivalences and orders:
+ * Structure Bench, for monoids (over ℕ or over a set), equivalences and orders:
  * <ul>
  * <li><b>Axioms</b>: outputs the chosen axiom of the chosen structure, for proving generic
  * theorems ("for any monoid …").</li>
@@ -37,7 +37,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class StructureBenchBlockEntity extends ReasoningBlockEntity {
     public enum Mode { AXIOMS, CERTIFY, APPLY }
 
-    private static final List<String> STRUCTURES = List.of(Structures.MONOID, Structures.EQUIVALENCE, Structures.ORDER);
+    private static final List<String> STRUCTURES = List.of(Structures.MONOID, Structures.SET_MONOID,
+            Structures.EQUIVALENCE, Structures.ORDER);
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
             MachineLayout.input(26, 31, "slot.axiomatic.structure_1"), MachineLayout.input(44, 31, "slot.axiomatic.structure_2"),
             MachineLayout.input(62, 31, "slot.axiomatic.structure_3"), MachineLayout.output(116, 31, null)),

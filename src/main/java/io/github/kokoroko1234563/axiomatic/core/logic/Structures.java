@@ -18,8 +18,8 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Term.App;
  * on interpretation: pow over a monoid becomes repeated + for addition and repeated × for
  * multiplication.
  *
- * <p>Part of the trusted kernel. Only monoids over all of ℕ, equivalences and orders exist (the
- * scope rule: no algebra beyond monoids).
+ * <p>Part of the trusted kernel. Only monoids (over all of ℕ, or over a set A), equivalences and
+ * orders exist (the scope rule: no algebra beyond monoids).
  */
 public final class Structures {
     private Structures() {}
@@ -30,6 +30,8 @@ public final class Structures {
     public static final String MONOID = "Monoid";
     public static final String EQUIVALENCE = "Equivalence";
     public static final String ORDER = "Order";
+    /** A monoid over a set A (a property): e is in A, A is closed under the operation, and the laws hold in A. */
+    public static final String SET_MONOID = "SetMonoid";
 
     /** Declares the built-in structures if the signature lacks them. */
     static Map<String, Structure> standard(Signature signature) {
@@ -46,6 +48,7 @@ public final class Structures {
                 Formula.eq(Term.app("Monoid.op", ee, a), a),
                 Formula.eq(Term.app("Monoid.op", a, ee), a))));
 
+        out.put(SET_MONOID, setMonoid());
         out.put(EQUIVALENCE, relationStructure(EQUIVALENCE, "Equivalence.R", "≡", true));
         out.put(ORDER, relationStructure(ORDER, "Order.R", "⊑", false));
 
@@ -57,6 +60,34 @@ public final class Structures {
             }
         }
         return out;
+    }
+
+    /**
+     * Three laws, each relativised to A: A(e) ∧ (A(a) → A(b) → A(a ∘ b)); associativity for a, b, c
+     * in A; and e ∘ a = a ∧ a ∘ e = a for a in A. Multiplication mod n is one: 1 is its identity
+     * only on {a < n}.
+     */
+    private static Structure setMonoid() {
+        Term a = Term.var("a");
+        Term b = Term.var("b");
+        Term c = Term.var("c");
+        String opName = SET_MONOID + ".op";
+        String eName = SET_MONOID + ".e";
+        String setName = SET_MONOID + ".A";
+        Definition.Abstract op = new Definition.Abstract(opName, List.of("a", "b"), false, "∘");
+        Definition.Abstract e = new Definition.Abstract(eName, List.of(), false, "e");
+        Definition.Abstract set = new Definition.Abstract(setName, List.of("a"), true, null);
+        Term ee = new App(eName, List.of());
+        Formula inA = Formula.pred(setName, a);
+        Formula inB = Formula.pred(setName, b);
+        Formula inC = Formula.pred(setName, c);
+        Formula closure = Formula.and(Formula.pred(setName, ee),
+                Formula.implies(inA, Formula.implies(inB, Formula.pred(setName, Term.app(opName, a, b)))));
+        Formula assoc = Formula.implies(inA, Formula.implies(inB, Formula.implies(inC, Formula.eq(
+                Term.app(opName, Term.app(opName, a, b), c), Term.app(opName, a, Term.app(opName, b, c))))));
+        Formula identity = Formula.implies(inA, Formula.and(Formula.eq(Term.app(opName, ee, a), a),
+                Formula.eq(Term.app(opName, a, ee), a)));
+        return new Structure(SET_MONOID, List.of(op, e, set), List.of(closure, assoc, identity));
     }
 
     private static Structure relationStructure(String name, String symbol, String display, boolean symmetric) {

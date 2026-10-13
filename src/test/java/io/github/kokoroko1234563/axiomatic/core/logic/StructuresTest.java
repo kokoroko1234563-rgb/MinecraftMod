@@ -148,4 +148,76 @@ class StructuresTest {
         assertEquals("a ≡ a", new Printer(kernel.signature()).formula(refl.formula()));
         assertEquals(3, kernel.structure(Structures.ORDER).axioms().size());
     }
+
+    // ---- Monoids over a set ----------------------------------------------------------------
+
+    private static final String SM_OP = "SetMonoid.op";
+    private static final String SM_A = "SetMonoid.A";
+    private final Term se = new Term.App("SetMonoid.e", List.of());
+
+    /** For any monoid on a set: A(a) → (e ∘ a) ∘ e = a. */
+    private Theorem genericSetIdentity() {
+        Theorem idLaw = kernel.structureAxiom(Structures.SET_MONOID, 2);        // A(a) → (e∘a = a ∧ a∘e = a)
+        Theorem inA = kernel.assume(Formula.pred(SM_A, a));
+        Theorem both = kernel.modusPonens(idLaw, inA);
+        Theorem t = kernel.reflexivity(app(SM_OP, app(SM_OP, se, a), se));
+        t = kernel.rewrite(t, kernel.andLeft(both), false, 1);                  // = a ∘ e
+        t = kernel.rewrite(t, kernel.andRight(both), false, 0);                 // = a
+        return kernel.discharge(t, inA.hypotheses().get(0));
+    }
+
+    /** The three set-monoid laws for (add, zeroC) over Any(a) := a = a. */
+    private List<Theorem> anyLaws() {
+        kernel.define(new Definition.Predicate("Any", List.of("a"), eq(a, a), null));
+        Theorem intro = kernel.definingStatements("Any").get(1);                // a = a → Any(a)
+        Term zc = new Term.App("zeroC", List.of());
+        List<Theorem> monoid = addLaws();                                       // over ℕ, with zeroC
+        Theorem anyZ = kernel.modusPonens(kernel.instantiate(intro, "a", zc), kernel.reflexivity(zc));
+        Theorem anySum = kernel.modusPonens(kernel.instantiate(intro, "a", app("add", a, b)),
+                kernel.reflexivity(app("add", a, b)));
+        Theorem ha = kernel.assume(Formula.pred("Any", a));
+        Theorem hb = kernel.assume(Formula.pred("Any", b));
+        Theorem hc = kernel.assume(Formula.pred("Any", c));
+        Theorem closure = kernel.andIntro(anyZ,
+                kernel.discharge(kernel.discharge(anySum, hb.hypotheses().get(0)), ha.hypotheses().get(0)));
+        Theorem assoc = kernel.discharge(kernel.discharge(kernel.discharge(monoid.get(0), hc.hypotheses().get(0)),
+                hb.hypotheses().get(0)), ha.hypotheses().get(0));
+        Theorem identity = kernel.discharge(kernel.andIntro(monoid.get(1), monoid.get(2)), ha.hypotheses().get(0));
+        return List.of(closure, assoc, identity);
+    }
+
+    @Test
+    void setMonoidTheoremsApplyToCertifiedOperations() {
+        Theorem generic = genericSetIdentity();
+        assertTrue(generic.dependencies().contains("structure:" + Structures.SET_MONOID));
+        List<Theorem> laws = anyLaws();
+        Map<String, String> mapping = Structures.inferMapping(kernel.structure(Structures.SET_MONOID),
+                laws.stream().map(Theorem::formula).toList());
+        assertEquals(Map.of("SetMonoid.op", "add", "SetMonoid.e", "zeroC", "SetMonoid.A", "Any"), mapping);
+        Theorem applied = kernel.interpret(generic, Structures.SET_MONOID, mapping, laws);
+        Term zc = new Term.App("zeroC", List.of());
+        assertTrue(Syntax.alphaEquals(Formula.implies(Formula.pred("Any", a), eq(app("add", app("add", zc, a), zc), a)),
+                applied.formula()), applied.formula().toString());
+        assertFalse(applied.dependencies().contains("structure:" + Structures.SET_MONOID));
+    }
+
+    @Test
+    void setMonoidRefusesLawsWithoutTheSet() {
+        Theorem generic = genericSetIdentity();
+        List<Theorem> laws = anyLaws();
+        // The ℕ-monoid laws are not the set laws: the premises about A are part of each law.
+        List<Theorem> plain = addLaws();
+        assertEquals(null, Structures.inferMapping(kernel.structure(Structures.SET_MONOID),
+                plain.stream().map(Theorem::formula).toList()));
+        Map<String, String> mapping = Map.of("SetMonoid.op", "add", "SetMonoid.e", "zeroC", "SetMonoid.A", "Any");
+        assertThrows(ProofException.class, () -> kernel.interpret(generic, Structures.SET_MONOID, mapping, plain));
+        // A carrier that is not a property, or laws in the wrong order, are refused.
+        Map<String, String> notAProperty = Map.of("SetMonoid.op", "add", "SetMonoid.e", "zeroC", "SetMonoid.A", "add");
+        assertThrows(ProofException.class, () -> kernel.interpret(generic, Structures.SET_MONOID, notAProperty, laws));
+        assertThrows(ProofException.class, () -> kernel.interpret(generic, Structures.SET_MONOID, mapping,
+                List.of(laws.get(1), laws.get(0), laws.get(2))));
+        // Assumed laws are not laws.
+        List<Theorem> assumed = laws.stream().map(l -> kernel.assume(l.formula())).toList();
+        assertThrows(ProofException.class, () -> kernel.interpret(generic, Structures.SET_MONOID, mapping, assumed));
+    }
 }

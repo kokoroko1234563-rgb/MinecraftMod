@@ -162,7 +162,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
       generic theorems, `Kernel.interpret` (applies a generic theorem to concrete definitions
       whose laws are proven; templates such as a generic `pow` are instantiated — pow over
       addition computes multiplication), Library structure certificates (mapping read off the
-      laws). Monoids are over all of ℕ only (no subsets yet)
+      laws). `SetMonoid` is a monoid over a set A (a property): three laws, each relativised to A
+      (A(e) ∧ closure; associativity in A; identities in A)
 - [x] Energy: Coal Dynamo, copper cables, energy per step
 - [~] Vanilla crafting recipes: done for the machines that exist (dynamo, cable, Zero Source,
       Successor, Duplicator, Test Bench, Circuit Board)
@@ -208,8 +209,8 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 1. Compact blocks: inspecting a Compiled Machine's ports, theorem cards slotted into other
    machines (speed cards exist for the Compiled Machine).
-2. Monoids over a subset (closure + relativised laws). A worked ≡ mod n example (laws proven in
-   game) would make a good game test.
+2. A worked mod-n example (multiplication mod n as a SetMonoid, ≡ mod n as an equivalence, laws
+   proven) would make a good game test and Notebook chapter.
 3. More network physics from the design: Euler courier drone (all degrees even), max-flow /
    min-cut throughput certificates, machine safety certificates (state graphs).
 4. Lock hypothesis items inside the Assumption Chamber physically.
