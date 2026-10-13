@@ -99,8 +99,11 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   proof of ∀x̄. fast(x̄) = slow(x̄) makes the Evaluator compute slow with fast (`Signature
   .implementation`). Refused if fast itself computes slow. Saved (format version 3). This is the
   doc's unary-to-binary upgrade in general form; the Duplicator's cost is still the value.
-- **Starter definitions**: new worlds come with `add` and `Even` defined (not proven anything),
-  because the opening hour certifies evens on the Test Bench before the Drafting Chamber exists.
+- **Starter definitions**: new worlds come with `add`, `mul`, `Even`, `le` (≤), `Divides` (|) and
+  `Prime` defined exactly as in the design doc (definitions only, nothing proven), because the
+  opening hour certifies evens before the Drafting Chamber exists, and because recipes ask for
+  numerals certified "Even"/"Prime": fixing these names stops players defining a trivial
+  "Prime" to get Prime Cores. Players still define deciders (isPrime …) themselves.
 - **Energy is the mod's own** system (dynamo → cables → machines), not the NeoForge
   transaction-based EnergyHandler API. 1 energy = 1 axiom use or computation step; coal = 16,000.
   Cables lose 2% per cable on the way to each machine (at most 50%) unless the network is

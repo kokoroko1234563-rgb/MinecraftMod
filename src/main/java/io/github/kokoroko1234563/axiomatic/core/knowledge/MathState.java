@@ -43,8 +43,10 @@ public final class MathState {
 
     /**
      * A new world's mathematics. The opening hour certifies evens on the Test Bench before the
-     * player has a Drafting Chamber, so addition and Even come predefined as starter definitions
-     * (definitions only: every theorem about them is still the player's to prove).
+     * player has a Drafting Chamber, and recipes ask for numerals certified Even or Prime, so these
+     * come predefined as starter definitions, exactly as the design doc defines them. They are
+     * definitions only: every theorem about them is still the player's to prove. Fixing them also
+     * keeps the names honest: nobody can define their own "Prime" as something trivially true.
      */
     public static MathState newWorld() {
         MathState state = new MathState();
@@ -52,10 +54,26 @@ public final class MathState {
         Term b = Term.var("b");
         Term n = Term.var("n");
         Term k = Term.var("k");
+        Term d = Term.var("d");
+        Term q = Term.var("q");
         state.kernel.define(new Definition.PrimitiveRecursive("add", List.of("a", "b"), a,
                 Term.succ(new Term.App("add", List.of(a, b))), "+"));
+        state.kernel.define(new Definition.PrimitiveRecursive("mul", List.of("a", "b"), Term.zero(),
+                new Term.App("add", List.of(new Term.App("mul", List.of(a, b)), a)), "×"));
         state.kernel.define(new Definition.Predicate("Even", List.of("n"),
                 Formula.exists("k", Formula.eq(n, new Term.App("add", List.of(k, k)))), null));
+        // a ≤ b :⇔ ∃k. a + k = b
+        state.kernel.define(new Definition.Predicate("le", List.of("a", "b"),
+                Formula.exists("k", Formula.eq(new Term.App("add", List.of(a, k)), b)), "≤"));
+        // d | n :⇔ ∃q. d × q = n
+        state.kernel.define(new Definition.Predicate("Divides", List.of("d", "n"),
+                Formula.exists("q", Formula.eq(new Term.App("mul", List.of(d, q)), n)), "|"));
+        // Prime(n) :⇔ 2 ≤ n ∧ ¬∃d. (2 ≤ d ∧ d < n ∧ d | n), with d < n written S(d) ≤ n
+        Term two = Term.numeral(2);
+        state.kernel.define(new Definition.Predicate("Prime", List.of("n"), Formula.and(
+                Formula.pred("le", two, n),
+                Formula.not(Formula.exists("d", Formula.and(Formula.pred("le", two, d),
+                        Formula.and(Formula.pred("le", Term.succ(d), n), Formula.pred("Divides", d, n)))))), null));
         return state;
     }
 
