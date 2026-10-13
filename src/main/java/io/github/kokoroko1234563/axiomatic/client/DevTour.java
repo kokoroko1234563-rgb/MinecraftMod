@@ -54,10 +54,19 @@ public final class DevTour {
 
     private record Step(int delay, Consumer<Minecraft> action) {}
 
+    /** Screenshot names to take, or null for all. */
+    private static java.util.Set<String> only;
+
+    private static boolean wanted(String name) {
+        return only == null || only.contains(name);
+    }
+
     public static void registerIfEnabled() {
-        if (!Boolean.getBoolean("axiomatic.devtour")) {
+        String setting = System.getProperty("axiomatic.devtour");
+        if (setting == null || setting.isEmpty() || setting.equals("false")) {
             return;
         }
+        only = setting.equals("true") ? null : java.util.Set.of(setting.split(","));
         Axiomatic.LOGGER.info("Axiomatic dev tour enabled");
         buildSteps();
         NeoForge.EVENT_BUS.addListener(DevTour::onTick);
@@ -104,12 +113,18 @@ public final class DevTour {
         STEPS.add(new Step(10, mc -> shot(mc, "inventory")));
         String[] machines = {"test_bench", "drafting_chamber", "assumption_chamber", "rewriter", "compiled_machine",
                 "coal_dynamo", "structure_bench", "conjecture_bench", "zero_source", "successor", "duplicator",
-                "factorization_vault", "infinite_prime_well", "network_surveyor", "equivalence_bench", "prime_forge"};
+                "factorization_vault", "infinite_prime_well", "network_surveyor", "equivalence_bench", "prime_forge", "certificate_sorter"};
         for (int i = 0; i < machines.length; i++) {
             int index = i;
             String name = machines[i];
+            if (!wanted(name)) {
+                continue;
+            }
             STEPS.add(new Step(10, mc -> mc.setScreen(null)));
-            STEPS.add(new Step(10, mc -> server(mc, server -> open(server, index))));
+            STEPS.add(new Step(10, mc -> {
+                mc.getToastManager().clear();
+                server(mc, server -> open(server, index));
+            }));
             STEPS.add(new Step(30, mc -> shot(mc, name)));
         }
         STEPS.add(new Step(10, mc -> mc.setScreen(null)));
@@ -166,7 +181,8 @@ public final class DevTour {
                 ModRegistries.COAL_DYNAMO.get(), ModRegistries.STRUCTURE_BENCH.get(), ModRegistries.CONJECTURE_BENCH.get(),
                 ModRegistries.ZERO_SOURCE.get(), ModRegistries.SUCCESSOR.get(), ModRegistries.DUPLICATOR.get(),
                 ModRegistries.FACTORIZATION_VAULT.get(), ModRegistries.PRIME_WELL.get(), ModRegistries.NETWORK_SURVEYOR.get(),
-                ModRegistries.EQUIVALENCE_BENCH.get(), ModRegistries.PRIME_FORGE.get()));
+                ModRegistries.EQUIVALENCE_BENCH.get(), ModRegistries.PRIME_FORGE.get(),
+                ModRegistries.CERTIFICATE_SORTER.get()));
         for (int i = 0; i < ROW.size(); i++) {
             level.setBlockAndUpdate(position(i), ROW.get(i).defaultBlockState());
         }
@@ -254,6 +270,9 @@ public final class DevTour {
     }
 
     private static void shot(Minecraft mc, String name) {
+        if (!wanted(name)) {
+            return;
+        }
         Screenshot.grab(mc.gameDirectory, "tour_" + name + ".png", mc.getMainRenderTarget(), 1,
                 message -> Axiomatic.LOGGER.info("Dev tour screenshot {}: {}", name, message.getString()));
     }
