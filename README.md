@@ -10,7 +10,8 @@ factory cheaper. The long-term goal is computing and proving ever larger primes.
   counterexample turns up.
 
 The design is in [docs/design.md](docs/design.md). The state of the code, build commands and
-what to do next are in [HANDOFF.md](HANDOFF.md).
+what to do next are in [HANDOFF.md](HANDOFF.md); planned balance changes are in
+[docs/balance-plan.md](docs/balance-plan.md).
 
 ## Playing
 

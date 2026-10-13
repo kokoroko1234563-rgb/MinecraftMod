@@ -280,6 +280,15 @@ without re-checking (`Kernel.restoreSaved`), so someone who edits item component
 
 ## Suggested next steps
 
+**Next up: the balance and scaling plan in `docs/balance-plan.md`, after the first human
+playtest (`PLAYTEST.md`).** It covers spend-once numerals for Prime/Perfect Cores, a reachable
+Perfect Core minimum, machine speed as steps ÷ steps-per-tick, parallel range jobs, a cap on
+concurrent async jobs, and the tests for each. Known balance hole until then: recipes accept the
+smallest certified numeral (2 for a Prime Core, 3 for a Perfect Core) and the Duplicator copies
+certificates.
+
+Other work, lower priority:
+
 1. Compact blocks: inspecting a Compiled Machine's ports, theorem cards slotted into other
    machines (speed cards exist for the Compiled Machine).
 2. Multiplication mod n as a SetMonoid, and a Notebook chapter walking through mod-n arithmetic
