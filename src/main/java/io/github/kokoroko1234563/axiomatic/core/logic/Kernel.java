@@ -285,10 +285,21 @@ public final class Kernel {
 
     /** Assumption Chamber: opens ∃k. φ(k) into a fresh variable and the hypothesis φ of it. */
     public Opening openExists(Exists ex) {
+        return openExists(ex, ex.var() + "#" + nextId++);
+    }
+
+    /**
+     * Opens ∃k. φ(k) as the variable {@code name} chosen by the player, so circuits can refer to
+     * it. It must not occur in the ∃ statement; that it is new everywhere else that matters (the
+     * conclusion, the other assumptions) is checked when the ∃ is closed.
+     */
+    public Opening openExists(Exists ex, String name) {
         signature.checkFormula(ex);
-        String fresh = ex.var() + "#" + nextId++;
-        Theorem hyp = assume(Syntax.substitute(ex.body(), ex.var(), new Var(fresh)));
-        return new Opening(hyp, fresh);
+        if (name.isEmpty() || name.startsWith("#") || Syntax.freeVars(ex).contains(name)) {
+            throw new ProofException("Cannot open as " + name + ": " + ex + " already mentions it");
+        }
+        Theorem hyp = assume(Syntax.substitute(ex.body(), ex.var(), new Var(name)));
+        return new Opening(hyp, name);
     }
 
     /**

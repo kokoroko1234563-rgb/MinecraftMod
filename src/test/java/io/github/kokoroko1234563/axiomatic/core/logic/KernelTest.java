@@ -147,6 +147,33 @@ class KernelTest {
     }
 
     @Test
+    void stampedExistsOpensAsANamedVariable() {
+        Term k = var("k");
+        Term j = var("j");
+        List<Theorem> even = kernel.define(new Definition.Predicate("Even", List.of("n"),
+                Formula.exists("k", eq(n, add(k, k))), null));
+        // Chamber 1 assumes Even(a); unfolding gives ∃k. a = k + k, stamped with that assumption.
+        Theorem hA = kernel.assume(Formula.pred("Even", a));
+        Theorem ex = kernel.modusPonens(kernel.instantiate(even.get(0), "n", a), hA);
+        assertFalse(ex.isClosed());
+        // Chamber 2 opens it as j, a name the player can use in circuits.
+        Kernel.Opening opening = kernel.openExists((Formula.Exists) ex.formula(), "j");
+        assertProvesLoosely(eq(a, add(j, j)), opening.hypothesis());
+        Formula.Exists target = new Formula.Exists("m", eq(a, add(var("m"), var("m"))));
+        Theorem q = kernel.existsIntro(target, j, opening.hypothesis());
+        Theorem closed = kernel.closeExists(ex, opening, q);
+        assertEquals(hA.hypotheses(), closed.hypotheses(), "still depends on Even(a), not on the opened j");
+        Theorem result = kernel.discharge(closed, hA.hypotheses().get(0));
+        assertProves(Formula.implies(Formula.pred("Even", a), target), result);
+        // Opening as a variable the ∃ statement mentions is refused.
+        assertThrows(ProofException.class, () -> kernel.openExists((Formula.Exists) ex.formula(), "a"));
+    }
+
+    private void assertProvesLoosely(Formula expected, Theorem thm) {
+        assertTrue(Syntax.alphaEquals(expected, thm.formula()), () -> "expected " + expected + " but got " + thm);
+    }
+
+    @Test
     void openingWithAVariableTheStatementMentionsIsRefused() {
         // ∃k. k = S(x) is true, but opening it as "x = S(x)" would let us derive nonsense.
         Term x = var("x");

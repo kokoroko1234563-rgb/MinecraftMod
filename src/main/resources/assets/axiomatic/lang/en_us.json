@@ -124,6 +124,7 @@
   "slot.axiomatic.implication": "P → Q",
   "slot.axiomatic.instance": "Proof of the instance",
   "slot.axiomatic.left": "Left",
+  "slot.axiomatic.open_as": "Variable to open an ∃ as (optional)",
   "slot.axiomatic.port_1": "Input 1",
   "slot.axiomatic.port_2": "Input 2",
   "slot.axiomatic.port_3": "Input 3",

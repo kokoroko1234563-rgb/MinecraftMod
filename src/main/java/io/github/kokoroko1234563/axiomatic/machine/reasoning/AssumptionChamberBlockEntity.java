@@ -31,7 +31,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class AssumptionChamberBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
             MachineLayout.input(26, 31, "slot.axiomatic.assumption"), MachineLayout.input(44, 31, "slot.axiomatic.discharge"),
-            MachineLayout.output(116, 31, null), MachineLayout.output(134, 31, null)),
+            MachineLayout.output(116, 31, null), MachineLayout.output(134, 31, null),
+            MachineLayout.input(26, 51, "slot.axiomatic.open_as")),
             List.of("button.axiomatic.release", "button.axiomatic.copy"));
 
     /** The hypothesis theorem this chamber holds, or null when empty. */
@@ -118,8 +119,10 @@ public class AssumptionChamberBlockEntity extends ReasoningBlockEntity {
                 return List.of();
             }
             Theorem hyp;
-            if (in.proven() && in.hypotheses().isEmpty() && in.formula() instanceof Formula.Exists ex) {
-                Kernel.Opening opening = kernel.openExists(ex);
+            if (in.proven() && in.formula() instanceof Formula.Exists ex) {
+                // A proven ∃ (possibly stamped by another chamber) is opened, not assumed.
+                Kernel.Opening opening = items.get(4).isEmpty() ? kernel.openExists(ex)
+                        : kernel.openExists(ex, ctx.variable(4));
                 hyp = opening.hypothesis();
                 openedVariable = opening.variable();
                 existence = in;

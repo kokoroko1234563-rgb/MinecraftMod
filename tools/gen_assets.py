@@ -458,6 +458,7 @@ LANG = {
     "library.axiomatic.certificates": "Structure certificates",
     "block.axiomatic.statement_conveyor": "Statement Conveyor",
     "block.axiomatic.containment_controller": "Containment Controller",
+    "slot.axiomatic.open_as": "Variable to open an ∃ as (optional)",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 

@@ -70,8 +70,10 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   positions where an ∃ binds one of the equation's variables.
 - **Instantiator** substitutes several variables simultaneously (so a := b, b := a swaps).
 - **Discharge** may discharge an assumption the conclusion never used (still valid).
-- **∃ elimination**: `openExists` makes a fresh kernel variable (`k#7`, names with `#` cannot be
-  typed by players); `closeExists` checks it does not escape.
+- **∃ elimination**: the Assumption Chamber opens a proven (possibly stamped) ∃ as the variable
+  in its "open as" slot, or as a fresh kernel variable (`k#7`, untypeable) if that slot is
+  empty; `closeExists` checks it does not escape. Naming it lets players build witness
+  circuits with it (needed for even + even = even).
 - **No ex falso** (⊥ does not prove everything) for now; add it if a proof needs it.
 - **Symmetry/transitivity of =** are derived from reflexivity + Rewriter, not separate rules.
 - Theorems record `dependencies` ("axiom:…", "def:…", "conjecture:…"); `isConjectural()` is how
