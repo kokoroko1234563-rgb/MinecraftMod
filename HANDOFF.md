@@ -283,8 +283,10 @@ without re-checking (`Kernel.restoreSaved`), so someone who edits item component
 
 ## Suggested next steps
 
-**Next up: the balance and scaling plan in `docs/balance-plan.md`, after the first human
-playtest (`PLAYTEST.md`).** It covers spend-once numerals for Prime/Perfect Cores, a reachable
+**Current milestone: ready for the first human playtest** (`PLAYTEST.md`, with a timing log to
+fill in). The Notebook is a Modonomicon book with recipe pages; JEI runs in the dev client.
+
+**Next up after the playtest: the balance and scaling plan in `docs/balance-plan.md`.** It covers spend-once numerals for Prime/Perfect Cores, a reachable
 Perfect Core minimum, machine speed as steps ÷ steps-per-tick, parallel range jobs, a cap on
 concurrent async jobs, and the tests for each. Known balance hole until then: recipes accept the
 smallest certified numeral (2 for a Prime Core, 3 for a Perfect Core) and the Duplicator copies

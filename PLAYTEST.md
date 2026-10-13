@@ -83,3 +83,29 @@ Tips:
   and the FE rate; machine costs are in the machine classes.
 - How long proofs take by hand, and whether the Drafting Chamber size feels limiting (an open
   question in the design doc).
+
+## Known before this playtest (don't spend time reporting these)
+
+- **Balance hole:** recipes accept the smallest certified numeral (2 for a Prime Core, 3 for a
+  Perfect Core), and the Duplicator copies certificates, so the prime path can be rushed. The fix
+  is planned in `docs/balance-plan.md`, after this playtest. Judge pacing on the intended route,
+  not the shortcut.
+- Proven statements on items are rebuilt from item data, so editing item components (creative
+  inventory, `/give`) can forge a proof. Single-player only, so accepted for now.
+- Art and sounds are generated placeholders.
+
+## Timing log (please fill in)
+
+The progression estimate in the session notes is a guess; these numbers replace it.
+
+| Stage | Done? | Real time | Notes |
+| --- | --- | --- | --- |
+| Opening hour: power, first numerals, a certified even | | | |
+| Circuit Board | | | |
+| First proof: Even(Double(n)) | | | |
+| zero\_add by induction (6 machine operations) | | | |
+| even + even = even (four Assumption Chambers) | | | |
+| A conjecture, and the 2n + 1 trap | | | |
+| Prime Core and Prime Forge | | | |
+| Anything later (structures, binary, networks) | | | |
+

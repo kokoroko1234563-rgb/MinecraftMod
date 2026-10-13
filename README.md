@@ -15,13 +15,15 @@ what to do next are in [HANDOFF.md](HANDOFF.md); planned balance changes are in
 
 ## Playing
 
-New players get **The Mathematician's Notebook**, which walks through the opening hour: power,
+New players get **The Mathematician's Notebook** (a Modonomicon book with recipe pages, whose
+chapters open as you progress), which walks through the opening hour: power,
 numerals, certified evens, Circuit Boards, the first definition and proof, induction (0 + n = n),
 closure theorems (even + even = even), and the first trap (2n + 1 is always prime).
 
 ## Building
 
-Needs JDK 25.
+Needs JDK 25. Players need [Modonomicon](https://modrinth.com/mod/modonomicon) installed (the
+Notebook is a Modonomicon book); the build pulls it, and JEI for development, from Modrinth.
 
 ```
 ./gradlew build              # jar in build/libs, runs the unit tests
