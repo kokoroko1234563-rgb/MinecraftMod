@@ -454,6 +454,10 @@ LANG = {
     "status.axiomatic.certified_structure": "%s certified: %s",
     "status.axiomatic.needs_design": "Needs a circuit such as add(a, b)",
     "status.axiomatic.not_certified_structure": "%s is not certified as a %s",
+    "message.axiomatic.lens_inside": "Inside %s:",
+    "library.axiomatic.certificates": "Structure certificates",
+    "block.axiomatic.statement_conveyor": "Statement Conveyor",
+    "block.axiomatic.containment_controller": "Containment Controller",
     "message.axiomatic.junk": "%s was built on a refuted conjecture and turned to paradox junk",
 }
 
@@ -488,6 +492,39 @@ def main():
         "random_sequence": f"{NS}:blocks/library"})
     write_json(os.path.join(ROOT, "data", "minecraft", "tags", "block", "mineable", "axe.json"),
                {"replace": False, "values": [f"{NS}:library"]})
+
+    # Statement Conveyor: directional; the front face shows an arrow.
+    save(casing("blue", ">"), os.path.join(ASSETS, "textures", "block", "statement_conveyor_front.png"))
+    save(casing("blue"), os.path.join(ASSETS, "textures", "block", "statement_conveyor_side.png"))
+    front, side = f"{NS}:block/statement_conveyor_front", f"{NS}:block/statement_conveyor_side"
+    write_json(os.path.join(ASSETS, "models", "block", "statement_conveyor.json"), {
+        "parent": "minecraft:block/orientable", "textures": {"front": front, "side": side, "top": side}})
+    write_json(os.path.join(ASSETS, "models", "block", "statement_conveyor_vertical.json"), {
+        "parent": "minecraft:block/orientable_vertical", "textures": {"front": front, "side": side}})
+    conveyor, vertical = f"{NS}:block/statement_conveyor", f"{NS}:block/statement_conveyor_vertical"
+    write_json(os.path.join(ASSETS, "blockstates", "statement_conveyor.json"), {"variants": {
+        "facing=north": {"model": conveyor}, "facing=east": {"model": conveyor, "y": 90},
+        "facing=south": {"model": conveyor, "y": 180}, "facing=west": {"model": conveyor, "y": 270},
+        "facing=up": {"model": vertical}, "facing=down": {"model": vertical, "x": 180}}})
+    write_json(os.path.join(ASSETS, "items", "statement_conveyor.json"),
+               {"model": {"type": "minecraft:model", "model": f"{NS}:block/statement_conveyor"}})
+    pickaxe.append(f"{NS}:statement_conveyor")
+
+    # Containment Controller: obsidian-dark casing.
+    img = casing("purple", "!")
+    px = img.load()
+    for x in range(16):
+        for y in range(16):
+            r, g, b, a = px[x, y]
+            px[x, y] = (r // 3, g // 3, b // 2, a)
+    save(img, os.path.join(ASSETS, "textures", "block", "containment_controller.png"))
+    write_json(os.path.join(ASSETS, "models", "block", "containment_controller.json"),
+               {"parent": "minecraft:block/cube_all", "textures": {"all": f"{NS}:block/containment_controller"}})
+    write_json(os.path.join(ASSETS, "blockstates", "containment_controller.json"),
+               {"variants": {"": {"model": f"{NS}:block/containment_controller"}}})
+    write_json(os.path.join(ASSETS, "items", "containment_controller.json"),
+               {"model": {"type": "minecraft:model", "model": f"{NS}:block/containment_controller"}})
+    pickaxe.append(f"{NS}:containment_controller")
 
     # Cable: a thin cube in the middle of the block.
     save(cable(), os.path.join(ASSETS, "textures", "block", "copper_cable.png"))
@@ -581,6 +618,12 @@ def main():
     shaped("graph_lens", ["S", "C"], {"S": "minecraft:spyglass", "C": "minecraft:copper_ingot"}, category="misc")
     shaped("conjecture_bench", ["AAA", "LBL", "AAA"],
            {"A": "minecraft:amethyst_shard", "L": "minecraft:lapis_lazuli", "B": board})
+    shaped("statement_conveyor", ["IZI", "LBL", "III"], {
+        "I": "minecraft:iron_ingot", "L": "minecraft:lapis_lazuli", "B": board,
+        "Z": {"neoforge:ingredient_type": f"{NS}:proven_statement", "statement": "∀n. 0 + n = n"},
+    })
+    shaped("containment_controller", ["OTO", "TBT", "OTO"],
+           {"O": "minecraft:obsidian", "T": "minecraft:tinted_glass", "B": board})
     shaped("structure_bench", ["QBQ", "BKB", "QBQ"],
            {"Q": "minecraft:quartz", "B": board, "K": "minecraft:lapis_block"})
     shaped("compiled_machine", ["CBC", "BRB", "CBC"],

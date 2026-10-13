@@ -51,6 +51,7 @@ public final class AxiomaticGameTests {
         test("theorem_card_certifies_outputs", TrapGameTests::theoremCardCertifiesOutputs);
         test("test_bench_range_mode", AxiomaticGameTests::testBenchRangeMode);
         test("structure_bench_certify_and_apply", StructureGameTests::certifyAndApply);
+        test("statement_conveyor_moves_statements", AxiomaticGameTests::conveyorMovesStatements);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -156,6 +157,31 @@ public final class AxiomaticGameTests {
         h.succeedWhen(() -> h.assertTrue(state.library().status(comm)
                 instanceof io.github.kokoroko1234563.axiomatic.core.knowledge.Library.Tested t
                 && t.upTo().intValue() == 6, "a + b = b + a should be Tested up to 6; status: " + bench.status().getString()));
+    }
+
+    private static void conveyorMovesStatements(GameTestHelper h) {
+        BlockPos from = new BlockPos(1, 1, 5);
+        BlockPos conveyor = new BlockPos(2, 1, 5);
+        BlockPos to = new BlockPos(3, 1, 5);
+        h.setBlock(from, net.minecraft.world.level.block.Blocks.CHEST);
+        h.setBlock(to, net.minecraft.world.level.block.Blocks.CHEST);
+        h.setBlock(conveyor, ModRegistries.STATEMENT_CONVEYOR.get().defaultBlockState()
+                .setValue(io.github.kokoroko1234563.axiomatic.block.StatementConveyorBlock.FACING,
+                        h.getTestRotation().rotate(net.minecraft.core.Direction.EAST)));
+        var source = h.getBlockEntity(from, net.minecraft.world.level.block.entity.ChestBlockEntity.class);
+        var target = h.getBlockEntity(to, net.minecraft.world.level.block.entity.ChestBlockEntity.class);
+        var state = io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(h.getLevel().getServer()).state();
+        var printer = new io.github.kokoroko1234563.axiomatic.core.logic.Printer(state.signature());
+        source.setItem(0, io.github.kokoroko1234563.axiomatic.item.MathItems.statementStack(
+                io.github.kokoroko1234563.axiomatic.item.StatementData.unproven(
+                        io.github.kokoroko1234563.axiomatic.core.logic.Formula.eq(
+                                io.github.kokoroko1234563.axiomatic.core.logic.Term.zero(),
+                                io.github.kokoroko1234563.axiomatic.core.logic.Term.zero()), printer)));
+        source.setItem(1, new ItemStack(Items.DIRT));
+        h.succeedWhen(() -> {
+            h.assertTrue(target.getItem(0).is(ModRegistries.STATEMENT_ITEM.get()), "the statement should arrive");
+            h.assertTrue(source.getItem(1).is(Items.DIRT), "other items stay");
+        });
     }
 
     private static void circuitBoardNeedsCertifiedEvens(GameTestHelper h) {

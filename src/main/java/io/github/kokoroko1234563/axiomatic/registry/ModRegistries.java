@@ -19,6 +19,9 @@ import io.github.kokoroko1234563.axiomatic.machine.reasoning.ConjectureBenchBloc
 import io.github.kokoroko1234563.axiomatic.item.RiskyItem;
 import io.github.kokoroko1234563.axiomatic.item.GraphLensItem;
 import io.github.kokoroko1234563.axiomatic.block.LibraryBlock;
+import io.github.kokoroko1234563.axiomatic.block.StatementConveyorBlock;
+import io.github.kokoroko1234563.axiomatic.block.ContainmentControllerBlock;
+import io.github.kokoroko1234563.axiomatic.crafting.ProvenStatementIngredient;
 import io.github.kokoroko1234563.axiomatic.machine.DuplicatorBlockEntity;
 import io.github.kokoroko1234563.axiomatic.machine.MachineBlock;
 import io.github.kokoroko1234563.axiomatic.machine.MachineBlockEntity;
@@ -139,9 +142,18 @@ public final class ModRegistries {
     public static final DeferredBlock<LibraryBlock> LIBRARY = BLOCKS.registerBlock("library", LibraryBlock::new,
             p -> p.mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD));
 
+    public static final DeferredBlock<StatementConveyorBlock> STATEMENT_CONVEYOR = BLOCKS.registerBlock(
+            "statement_conveyor", StatementConveyorBlock::new,
+            p -> p.mapColor(MapColor.COLOR_BLUE).strength(2.0f).sound(SoundType.METAL).requiresCorrectToolForDrops());
+    public static final DeferredBlock<ContainmentControllerBlock> CONTAINMENT_CONTROLLER = BLOCKS.registerBlock(
+            "containment_controller", ContainmentControllerBlock::new,
+            p -> p.mapColor(MapColor.COLOR_BLACK).strength(25f, 1200f).sound(SoundType.STONE).requiresCorrectToolForDrops());
+
     static {
         tab(ITEMS.registerSimpleBlockItem(COPPER_CABLE));
         tab(ITEMS.registerSimpleBlockItem(LIBRARY));
+        tab(ITEMS.registerSimpleBlockItem(STATEMENT_CONVEYOR));
+        tab(ITEMS.registerSimpleBlockItem(CONTAINMENT_CONTROLLER));
     }
 
     // Computation (copper).
@@ -193,6 +205,8 @@ public final class ModRegistries {
 
     public static final Supplier<IngredientType<CertifiedNumeralIngredient>> CERTIFIED_NUMERAL_INGREDIENT =
             INGREDIENT_TYPES.register("certified_numeral", () -> CertifiedNumeralIngredient.TYPE);
+    public static final Supplier<IngredientType<ProvenStatementIngredient>> PROVEN_STATEMENT_INGREDIENT =
+            INGREDIENT_TYPES.register("proven_statement", () -> ProvenStatementIngredient.TYPE);
 
     public static final Supplier<CreativeModeTab> TAB = TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.axiomatic"))

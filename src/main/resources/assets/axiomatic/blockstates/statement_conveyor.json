@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "axiomatic:block/statement_conveyor"
+    },
+    "facing=east": {
+      "model": "axiomatic:block/statement_conveyor",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "axiomatic:block/statement_conveyor",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "axiomatic:block/statement_conveyor",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "axiomatic:block/statement_conveyor_vertical"
+    },
+    "facing=down": {
+      "model": "axiomatic:block/statement_conveyor_vertical",
+      "x": 180
+    }
+  }
+}

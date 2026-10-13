@@ -81,6 +81,10 @@ public class LibraryBlock extends Block {
             }
             line(player, text);
         }
+        header(player, "library.axiomatic.certificates");
+        for (Library.StructureCert cert : library.certificates()) {
+            line(player, Component.literal(" " + cert.structure() + ": " + cert.mapping()).withStyle(ChatFormatting.AQUA));
+        }
         header(player, "library.axiomatic.statuses");
         for (Map.Entry<Formula, Library.Status> e : library.allStatuses().entrySet()) {
             Component status = switch (e.getValue()) {

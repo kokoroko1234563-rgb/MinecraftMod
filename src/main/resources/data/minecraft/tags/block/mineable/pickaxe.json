@@ -20,6 +20,8 @@
     "axiomatic:structure_bench",
     "axiomatic:conjecture_bench",
     "axiomatic:conjecture_block",
+    "axiomatic:statement_conveyor",
+    "axiomatic:containment_controller",
     "axiomatic:copper_cable"
   ]
 }

@@ -95,6 +95,7 @@ public class ConjectureBlockEntity extends MachineBlockEntity {
     private void disaster(ServerLevel level, Library.Conjecture c) {
         failed = true;
         BlockPos pos = worldPosition;
+        boolean contained = io.github.kokoroko1234563.axiomatic.block.ContainmentControllerBlock.contains(level, pos);
         String counterexample = c.counterexample() == null ? "?" : c.counterexample().toString();
         level.players().stream().filter(p -> p.blockPosition().closerThan(pos, 64)).forEach(p -> p.sendSystemMessage(
                 Component.translatable("message.axiomatic.disaster", c.name(), counterexample)));
@@ -102,8 +103,13 @@ public class ConjectureBlockEntity extends MachineBlockEntity {
         level.removeBlock(pos, false);
         Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                 new ItemStack(ModRegistries.PARADOX_JUNK.get()));
-        level.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2.0f,
-                AxiomaticConfig.DISASTER_BLOCK_DAMAGE.get() ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE);
+        if (contained) {
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE, pos.getX() + 0.5, pos.getY() + 0.5,
+                    pos.getZ() + 0.5, 30, 0.3, 0.3, 0.3, 0.02);
+        } else {
+            level.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2.0f,
+                    AxiomaticConfig.DISASTER_BLOCK_DAMAGE.get() ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE);
+        }
         if (level.getBlockState(pos).isAir()) {
             level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
         }

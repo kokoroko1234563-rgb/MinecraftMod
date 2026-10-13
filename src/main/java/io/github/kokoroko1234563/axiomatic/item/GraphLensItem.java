@@ -23,6 +23,31 @@ public class GraphLensItem extends Item {
         super(properties);
     }
 
+    /** Used on a Compiled Machine: opens it to show its insides, the definition it runs. */
+    @Override
+    public InteractionResult useOn(net.minecraft.world.item.context.UseOnContext context) {
+        Level level = context.getLevel();
+        Player player = context.getPlayer();
+        if (player == null || !(level.getBlockEntity(context.getClickedPos())
+                instanceof io.github.kokoroko1234563.axiomatic.machine.CompiledMachineBlockEntity machine)) {
+            return InteractionResult.PASS;
+        }
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            var state = io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(server.getServer()).state();
+            String f = machine.function();
+            if (f == null || state.signature().get(f) == null) {
+                player.sendSystemMessage(Component.translatable("label.axiomatic.no_design"));
+            } else {
+                var printer = new io.github.kokoroko1234563.axiomatic.core.logic.Printer(state.signature());
+                player.sendSystemMessage(Component.translatable("message.axiomatic.lens_inside", f).withStyle(ChatFormatting.BLUE));
+                for (var thm : state.kernel().definingStatements(f)) {
+                    player.sendSystemMessage(Component.literal("  " + printer.statement(thm.formula())));
+                }
+            }
+        }
+        return InteractionResult.SUCCESS;
+    }
+
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (level.isClientSide()) {

@@ -114,9 +114,10 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
       blocks, Equation/Property/Witness Bench, Axiom Tablets, Instantiator, Rewriter, Assumption
       Chamber (assume, ∃-open, discharge), Induction Engine, Conjunction/Modus Ponens Press.
       Game tests prove zero_add and "Double outputs evens" with the real machines.
-      Also done: Conjecture Bench, Graph Lens, Library block, Test Bench range mode (Tested
-      statements work as cards inside their range). Not yet: Statement Conveyor (hoppers already
-      move statement items), Containment Chamber
+      Also done: Conjecture Bench, Graph Lens (also inspects a Compiled Machine), Library block,
+      Test Bench range mode (Tested statements work as cards inside their range), Statement
+      Conveyor (recipe needs a proven "∀n. 0 + n = n"), Containment Controller (a conjecture
+      block sealed in obsidian/tinted glass with a controller within 4 blocks fails harmlessly)
 - [~] Compact blocks: Compiled Machine runs any defined function with theorem cards (proven,
       closure, or conjectural with background checks). Not yet: inspect, typed-port enforcement,
       cards slotted into other machines
@@ -145,7 +146,6 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 ## Suggested next steps
 
-1. Statement Conveyor (unlocks after zero_add), Containment Chamber multiblock.
 2. The Rewriter using a certified equivalence (≡ mod n) at prime path stage 5; monoids over a
    subset (closure + relativised laws).
 3. A real GUI for the Library (it prints to chat now).
