@@ -117,6 +117,8 @@ public final class DevTour {
                 io.github.kokoroko1234563.axiomatic.block.LibraryBlock.sections(
                         io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(mc.getSingleplayerServer()).state()))))));
         STEPS.add(new Step(30, mc -> shot(mc, "library")));
+        STEPS.add(new Step(10, mc -> ((LibraryScreen) mc.screen).select(1)));
+        STEPS.add(new Step(20, mc -> shot(mc, "library_theorems")));
         STEPS.add(new Step(10, mc -> mc.setScreen(null)));
         STEPS.add(new Step(20, mc -> {
             Axiomatic.LOGGER.info("Dev tour finished");
@@ -136,6 +138,16 @@ public final class DevTour {
     /** Builds a platform with every machine in a row and fills the player's inventory. */
     private static void stage(MinecraftServer server) {
         ServerLevel level = server.overworld();
+        // A couple of named theorems for the Library shot: one from a definition, one conjectural.
+        var math = io.github.kokoroko1234563.axiomatic.world.AxiomaticData.get(server).state();
+        var kernel = math.kernel();
+        if (math.library().theorem("add_zero") == null) {
+            math.library().name("add_zero", kernel.definingStatements("add").get(0));
+            var n = io.github.kokoroko1234563.axiomatic.core.logic.Term.var("n");
+            math.library().name("twin_hope", kernel.conjecture("twin_hope",
+                    io.github.kokoroko1234563.axiomatic.core.logic.Formula.pred("Prime",
+                            io.github.kokoroko1234563.axiomatic.core.logic.Term.app("add", n, n))));
+        }
         command(server, "time set day");
         command(server, "gamerule doDaylightCycle false");
         command(server, "fill -6 149 -4 6 149 4 minecraft:smooth_stone");

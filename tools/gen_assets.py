@@ -559,6 +559,7 @@ LANG = {
     "library.axiomatic.scroll": "Scroll for more",
     "library.axiomatic.theorems": "Named theorems",
     "library.axiomatic.uses": "  (%s dependencies, %s steps)",
+    "library.axiomatic.rests_on": "    rests on:",
     "library.axiomatic.conjectures": "Conjectures",
     "library.axiomatic.state.active": "[active]",
     "library.axiomatic.state.dormant": "[dormant]",

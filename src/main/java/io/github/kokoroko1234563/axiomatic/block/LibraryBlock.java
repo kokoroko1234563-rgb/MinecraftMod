@@ -72,6 +72,22 @@ public class LibraryBlock extends Block {
                     .append(Component.literal(printer.statement(t.formula())).withStyle(ChatFormatting.WHITE))
                     .append(Component.translatable("library.axiomatic.uses", t.dependencies().size(), t.steps())
                             .withStyle(ChatFormatting.GRAY)));
+            // The dependency map: conjectures first (they are the risk), then structures and definitions.
+            List<String> deps = t.dependencies().stream()
+                    .filter(d -> !d.startsWith("axiom:"))
+                    .sorted(java.util.Comparator.comparing((String d) -> !d.startsWith("conjecture:")).thenComparing(d -> d))
+                    .toList();
+            if (!deps.isEmpty()) {
+                MutableComponent line = Component.translatable("library.axiomatic.rests_on").withStyle(ChatFormatting.GRAY);
+                for (int i = 0; i < deps.size(); i++) {
+                    String d = deps.get(i);
+                    String shown = d.substring(d.indexOf(':') + 1);
+                    line.append(Component.literal((i == 0 ? " " : ", ") + shown).withStyle(
+                            d.startsWith("conjecture:") ? ChatFormatting.LIGHT_PURPLE
+                                    : d.startsWith("structure:") ? ChatFormatting.AQUA : ChatFormatting.DARK_GRAY));
+                }
+                theorems.add(line);
+            }
         }
         sections.add(section("library.axiomatic.theorems", theorems));
 

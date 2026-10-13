@@ -132,6 +132,7 @@
   "library.axiomatic.postmortem": " counterexample: %s",
   "library.axiomatic.proven": "Proven",
   "library.axiomatic.refuted": "Refuted at %s",
+  "library.axiomatic.rests_on": "    rests on:",
   "library.axiomatic.scroll": "Scroll for more",
   "library.axiomatic.state.active": "[active]",
   "library.axiomatic.state.dormant": "[dormant]",

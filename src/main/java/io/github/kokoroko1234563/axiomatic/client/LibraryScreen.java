@@ -63,7 +63,8 @@ public class LibraryScreen extends Screen {
         return Math.max(1, (top + panelHeight - 6 - contentTop()) / LINE);
     }
 
-    private void select(int index) {
+    /** Shows tab {@code index}. */
+    public void select(int index) {
         if (index != tab) {
             scroll = 0;
         }
