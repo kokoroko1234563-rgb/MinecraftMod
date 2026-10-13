@@ -132,12 +132,28 @@ public class LibraryBlock extends Block {
         return sections;
     }
 
+    /** Longest line sent (in characters), and most text per tab, to keep the packet small. */
+    private static final int MAX_LINE_CHARS = 600;
+    private static final int MAX_SECTION_CHARS = 200_000;
+
     private static LibraryPayload.Section section(String key, List<Component> lines) {
-        if (lines.size() > LibraryPayload.MAX_LINES) {
-            int more = lines.size() - LibraryPayload.MAX_LINES;
-            lines = new ArrayList<>(lines.subList(0, LibraryPayload.MAX_LINES));
-            lines.add(Component.translatable("library.axiomatic.truncated", more).withStyle(ChatFormatting.GRAY));
+        List<Component> out = new ArrayList<>();
+        int chars = 0;
+        for (Component line : lines) {
+            if (out.size() >= LibraryPayload.MAX_LINES || chars > MAX_SECTION_CHARS) {
+                out.add(Component.translatable("library.axiomatic.truncated", lines.size() - out.size())
+                        .withStyle(ChatFormatting.GRAY));
+                break;
+            }
+            String text = line.getString();
+            if (text.length() > MAX_LINE_CHARS) {
+                // A huge statement or counterexample: keep its start, plainly.
+                line = Component.literal(text.substring(0, MAX_LINE_CHARS) + "…").withStyle(ChatFormatting.GRAY);
+                text = line.getString();
+            }
+            chars += text.length();
+            out.add(line);
         }
-        return new LibraryPayload.Section(Component.translatable(key), lines);
+        return new LibraryPayload.Section(Component.translatable(key), out);
     }
 }
