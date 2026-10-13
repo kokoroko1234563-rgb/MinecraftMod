@@ -163,11 +163,18 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
      */
     protected void rememberFailure(Object key) {
         failedKey = key;
+        failedAt = level == null ? 0 : level.getGameTime();
     }
 
+    /**
+     * Whether the same inputs failed within the last five seconds. The memo expires so that what
+     * changed elsewhere (a conjecture woken up, a new decider) gets a fresh try.
+     */
     protected boolean failedBefore(Object key) {
-        return key.equals(failedKey);
+        return key.equals(failedKey) && level != null && level.getGameTime() - failedAt < 100;
     }
+
+    private long failedAt;
 
     /** Whether a computation started by {@link #runAsync} is still running. */
     protected boolean computing() {
@@ -300,13 +307,15 @@ public abstract class MachineBlockEntity extends BaseContainerBlockEntity implem
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
-        if (job != null && level != null) {
+        // A finished, fully paid job still drops its outputs; an unpaid one is lost with the
+        // machine (otherwise breaking a machine right after it starts would skip the energy cost).
+        if (job != null && level != null && paid >= job.cost()) {
             for (ItemStack out : job.outputs()) {
                 net.minecraft.world.Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                         out.copy());
             }
-            job = null;
         }
+        job = null;
     }
 
     // ---- Saving and syncing ---------------------------------------------------------------

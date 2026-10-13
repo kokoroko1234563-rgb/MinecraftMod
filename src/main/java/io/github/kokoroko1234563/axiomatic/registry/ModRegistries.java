@@ -127,6 +127,12 @@ public final class ModRegistries {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CircuitData>> CIRCUIT =
             COMPONENTS.registerComponentType("circuit",
                     b -> b.persistent(CircuitData.CODEC).networkSynchronized(CircuitData.STREAM_CODEC));
+    /** What a broken Factorization Vault holds, kept on its item (like a shulker box). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<
+            io.github.kokoroko1234563.axiomatic.machine.FactorizationVaultBlockEntity.Contents>> VAULT_CONTENTS =
+            COMPONENTS.registerComponentType("vault_contents", b -> b
+                    .persistent(io.github.kokoroko1234563.axiomatic.machine.FactorizationVaultBlockEntity.Contents.CODEC)
+                    .networkSynchronized(io.github.kokoroko1234563.axiomatic.machine.FactorizationVaultBlockEntity.Contents.STREAM_CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> CONJECTURE =
             COMPONENTS.registerComponentType("conjecture",
                     b -> b.persistent(com.mojang.serialization.Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));

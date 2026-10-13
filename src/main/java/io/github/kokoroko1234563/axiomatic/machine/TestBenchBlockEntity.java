@@ -133,7 +133,7 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
             }
         }, search -> {
             ItemStack now = items.get(0);
-            if (now.isEmpty() || !NumeralItem.data(now).equals(n)) {
+            if (!now.is(ModRegistries.NUMERAL_ITEM.get()) || !NumeralItem.data(now).equals(n)) {
                 return null;
             }
             NumeralData result = search.fact() == null ? n : n.withFact(search.fact());

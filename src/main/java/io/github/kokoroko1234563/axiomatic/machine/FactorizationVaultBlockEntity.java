@@ -19,6 +19,20 @@ import net.minecraft.world.level.storage.ValueOutput;
  * in the top-left slot; the output slots offer up to a stack of each of the first six kinds.
  */
 public class FactorizationVaultBlockEntity extends MachineBlockEntity {
+    /** The stored kinds and counts, as kept on the vault's item when it is broken. */
+    public record Contents(List<ItemStack> kinds, List<String> counts) {
+        public static final com.mojang.serialization.Codec<Contents> CODEC =
+                com.mojang.serialization.codecs.RecordCodecBuilder.create(i -> i.group(
+                        ItemStack.CODEC.listOf().fieldOf("kinds").forGetter(Contents::kinds),
+                        com.mojang.serialization.Codec.STRING.listOf().fieldOf("counts").forGetter(Contents::counts))
+                        .apply(i, Contents::new));
+        public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, Contents>
+                STREAM_CODEC = net.minecraft.network.codec.StreamCodec.composite(
+                        ItemStack.STREAM_CODEC.apply(net.minecraft.network.codec.ByteBufCodecs.list()), Contents::kinds,
+                        net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8.apply(net.minecraft.network.codec.ByteBufCodecs.list()),
+                        Contents::counts, Contents::new);
+    }
+
     private static final int KINDS_SHOWN = 6;
     private static final List<MachineLayout.SlotSpec> SLOTS = new ArrayList<>();
 
@@ -36,6 +50,8 @@ public class FactorizationVaultBlockEntity extends MachineBlockEntity {
     private final List<BigInteger> counts = new ArrayList<>();
     /** What each output slot showed last tick, to notice what was taken. */
     private final int[] shown = new int[KINDS_SHOWN];
+    /** Which kind each output slot shows (-1 for none): the first six kinds with anything left. */
+    private final int[] slotKind = {-1, -1, -1, -1, -1, -1};
 
     public FactorizationVaultBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.FACTORIZATION_VAULT.type(), pos, state, 0);
@@ -81,11 +97,15 @@ public class FactorizationVaultBlockEntity extends MachineBlockEntity {
     @Override
     protected void tick(ServerLevel level) {
         // Notice what was taken from the output slots since last tick.
-        for (int i = 0; i < KINDS_SHOWN && i < kinds.size(); i++) {
+        for (int i = 0; i < KINDS_SHOWN; i++) {
+            int k = slotKind[i];
+            if (k < 0 || k >= kinds.size()) {
+                continue;
+            }
             ItemStack slot = items.get(1 + i);
-            int now = ItemStack.isSameItemSameComponents(slot, kinds.get(i)) ? slot.getCount() : 0;
+            int now = ItemStack.isSameItemSameComponents(slot, kinds.get(k)) ? slot.getCount() : 0;
             if (now < shown[i]) {
-                counts.set(i, counts.get(i).subtract(BigInteger.valueOf(shown[i] - now)));
+                counts.set(k, counts.get(k).subtract(BigInteger.valueOf(shown[i] - now)).max(BigInteger.ZERO));
                 markChanged();
             }
         }
@@ -114,20 +134,35 @@ public class FactorizationVaultBlockEntity extends MachineBlockEntity {
             kinds.remove(kinds.size() - 1);
             counts.remove(counts.size() - 1);
         }
-        // Offer up to a stack of each shown kind.
+        // Offer up to a stack of each of the first six kinds that have anything left.
+        int next = 0;
         for (int i = 0; i < KINDS_SHOWN; i++) {
-            if (i < kinds.size()) {
-                ItemStack kind = kinds.get(i);
-                int offer = counts.get(i).min(BigInteger.valueOf(kind.getMaxStackSize())).intValue();
-                items.set(1 + i, offer > 0 ? kind.copyWithCount(offer) : ItemStack.EMPTY);
+            while (next < kinds.size() && counts.get(next).signum() == 0) {
+                next++;
+            }
+            if (next < kinds.size()) {
+                ItemStack kind = kinds.get(next);
+                int offer = counts.get(next).min(BigInteger.valueOf(kind.getMaxStackSize())).intValue();
+                items.set(1 + i, kind.copyWithCount(offer));
                 shown[i] = offer;
+                slotKind[i] = next++;
             } else {
                 items.set(1 + i, ItemStack.EMPTY);
                 shown[i] = 0;
+                slotKind[i] = -1;
             }
         }
-        setStatus(Component.translatable("status.axiomatic.vault_number", number().toString().length()));
+        setStatus(Component.translatable("status.axiomatic.vault_number", digits()));
         super.tick(level);
+    }
+
+    /** How many decimal digits {@link #number()} has, from logarithms (no need to build it). */
+    public long digits() {
+        double log = 0;
+        for (int i = 0; i < kinds.size(); i++) {
+            log += counts.get(i).doubleValue() * Math.log10(nthPrime(i));
+        }
+        return (long) Math.floor(log + 1e-9) + 1;
     }
 
     /** The i-th prime (0-based): 2, 3, 5, 7, … */
@@ -147,28 +182,37 @@ public class FactorizationVaultBlockEntity extends MachineBlockEntity {
         }
     }
 
-    /** Breaking the vault spills what it stores (at most 64 stacks of each kind), not the offered copies. */
+    /** Breaking the vault keeps what it stores on its item (see {@link Contents}), not the offered copies. */
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         for (int i = 1; i < items.size(); i++) {
             items.set(i, ItemStack.EMPTY);
         }
         super.preRemoveSideEffects(pos, state);
-        if (level == null) {
-            return;
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        if (!kinds.isEmpty()) {
+            components.set(ModRegistries.VAULT_CONTENTS.get(),
+                    new Contents(List.copyOf(kinds), counts.stream().map(BigInteger::toString).toList()));
         }
-        for (int i = 0; i < kinds.size(); i++) {
-            ItemStack kind = kinds.get(i);
-            BigInteger left = counts.get(i).min(BigInteger.valueOf(64L * kind.getMaxStackSize()));
-            while (left.signum() > 0) {
-                int n = left.min(BigInteger.valueOf(kind.getMaxStackSize())).intValue();
-                net.minecraft.world.Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                        kind.copyWithCount(n));
-                left = left.subtract(BigInteger.valueOf(n));
+    }
+
+    @Override
+    protected void applyImplicitComponents(net.minecraft.core.component.DataComponentGetter components) {
+        super.applyImplicitComponents(components);
+        Contents contents = components.get(ModRegistries.VAULT_CONTENTS.get());
+        if (contents != null) {
+            kinds.clear();
+            counts.clear();
+            kinds.addAll(contents.kinds());
+            contents.counts().forEach(c -> counts.add(new BigInteger(c)));
+            while (counts.size() < kinds.size()) {
+                counts.add(BigInteger.ZERO);
             }
         }
-        kinds.clear();
-        counts.clear();
     }
 
     @Override
@@ -199,6 +243,7 @@ public class FactorizationVaultBlockEntity extends MachineBlockEntity {
         for (int i = 0; i < KINDS_SHOWN; i++) {
             items.set(1 + i, ItemStack.EMPTY);
             shown[i] = 0;
+            slotKind[i] = -1;
         }
     }
 }

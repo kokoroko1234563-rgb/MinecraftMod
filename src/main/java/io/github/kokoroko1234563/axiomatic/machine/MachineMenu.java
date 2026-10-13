@@ -71,8 +71,17 @@ public class MachineMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(stack, machineSlots, slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
-        } else if (!moveItemStackTo(stack, 0, machineSlots, false)) {
-            return ItemStack.EMPTY;
+        } else {
+            // Only into slots a player may fill (inputs, fuel): never merge into an output.
+            boolean moved = false;
+            for (int i = 0; i < machineSlots && !stack.isEmpty(); i++) {
+                if (machine.layout().slots().get(i).role() != MachineLayout.Role.OUTPUT) {
+                    moved |= moveItemStackTo(stack, i, i + 1, false);
+                }
+            }
+            if (!moved) {
+                return ItemStack.EMPTY;
+            }
         }
         if (stack.isEmpty()) {
             slot.setByPlayer(ItemStack.EMPTY);

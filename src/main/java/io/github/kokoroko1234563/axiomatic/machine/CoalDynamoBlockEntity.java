@@ -48,6 +48,12 @@ public class CoalDynamoBlockEntity extends MachineBlockEntity {
         return level != null && level.fuelValues().isFuel(stack);
     }
 
+    /** What burnt fuel leaves behind (an empty bucket) can be taken out by hoppers and pipes. */
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, net.minecraft.core.Direction side) {
+        return level != null && !level.fuelValues().isFuel(stack);
+    }
+
     @Override
     protected Job tryStartJob(ServerLevel level) {
         return null;

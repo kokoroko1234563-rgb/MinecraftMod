@@ -767,6 +767,9 @@ def main():
         if name == "conjecture_block":
             entry["functions"] = [{"function": "minecraft:copy_components", "source": "block_entity",
                                    "include": [f"{NS}:conjecture", "minecraft:custom_name"]}]
+        if name == "factorization_vault":
+            entry["functions"] = [{"function": "minecraft:copy_components", "source": "block_entity",
+                                   "include": [f"{NS}:vault_contents"]}]
         write_json(os.path.join(DATA, "loot_table", "blocks", name + ".json"), {
             "type": "minecraft:block",
             "pools": [{"rolls": 1, "bonus_rolls": 0,

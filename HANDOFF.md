@@ -71,6 +71,19 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `gametest/AxiomaticGameTests` | In-world tests on an empty stage structure |
 | `src/test/java/...` | JUnit tests. `KernelTest` proves zero_add (exactly the doc's 6 steps), succ_add, add_comm and "Double outputs evens", and checks that cheats are refused |
 
+## Rules worth knowing (from bug hunts)
+
+- Breaking a machine mid-job drops the job's outputs only if it was fully paid; otherwise the job
+  (and its already-spent inputs) is lost. Before, mining a Duplicator right after it started a
+  million-unit copy handed out the copies for free.
+- Shift-click only moves into input/fuel slots (never merges into outputs).
+- Conjectures start dormant and are active only while their block is placed and powered; a
+  broken or unloaded block makes them dormant. A machine's failure memo expires after 5 s so it
+  retries once a conjecture wakes.
+- The Factorization Vault keeps its contents on its item when broken (`vault_contents` component,
+  copied by the loot table), offers the first six kinds that still have items, and computes its
+  digit count from logarithms instead of building the number each tick.
+
 ## Fuzz tests (unit tests, fixed seeds)
 
 - `KernelFuzzTest`: random kernel derivations (instantiate, rewrite, ∧, assume, discharge, modus
@@ -231,6 +244,9 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   enforces their stamps and locked variables).
 
 ## Known minor issues (from a code review, not fixed)
+
+- The Implementation Bench, Structure Bench "Certify" and Drafting Chamber "Link" change the
+  Library without a Job, so they cost no energy (one-off actions, so left as is).
 
 - A hopper that feeds a Certificate Sorter's rejects back into it loops them (1 unit per pass).
 

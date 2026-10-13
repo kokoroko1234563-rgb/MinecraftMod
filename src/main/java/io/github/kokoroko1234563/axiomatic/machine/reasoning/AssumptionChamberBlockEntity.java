@@ -115,24 +115,31 @@ public class AssumptionChamberBlockEntity extends ReasoningBlockEntity {
             if (in == null) {
                 throw new ProofException(Component.translatable("status.axiomatic.needs_statement", 1).getString());
             }
-            if (!outputsFit(List.of(items.get(0).copyWithCount(1)))) {
-                return List.of();
-            }
             Theorem hyp;
+            String opened = null;
             if (in.proven() && in.formula() instanceof Formula.Exists ex) {
                 // A proven ∃ (possibly stamped by another chamber) is opened, not assumed.
                 Kernel.Opening opening = items.get(4).isEmpty() ? kernel.openExists(ex)
                         : kernel.openExists(ex, ctx.variable(4));
                 hyp = opening.hypothesis();
-                openedVariable = opening.variable();
-                existence = in;
+                opened = opening.variable();
             } else {
                 hyp = kernel.assume(in.formula());
             }
-            hypothesis = StatementData.of(hyp, ctx.printer());
+            StatementData made = StatementData.of(hyp, ctx.printer());
+            ItemStack out = MathItems.statementStack(made);
+            // Only take on the hypothesis once its item is sure to come out.
+            if (!outputsFit(List.of(out))) {
+                return List.of();
+            }
+            hypothesis = made;
+            if (opened != null) {
+                openedVariable = opened;
+                existence = in;
+            }
             lastBranch = 1;
             markChanged();
-            return List.of(MathItems.statementStack(hypothesis));
+            return List.of(out);
         }
         return List.of();
     }

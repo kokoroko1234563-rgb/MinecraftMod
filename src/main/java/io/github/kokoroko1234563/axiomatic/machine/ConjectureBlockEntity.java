@@ -62,13 +62,18 @@ public class ConjectureBlockEntity extends MachineBlockEntity {
     @Override
     protected void tick(ServerLevel level) {
         super.tick(level);
-        if (failed || conjecture.isEmpty() || level.getGameTime() % 20 != 0) {
+        if (failed || conjecture.isEmpty()) {
             return;
         }
         var data = data(level);
         Library library = data.state().library();
         Library.Conjecture c = library.conjectureNamed(conjecture);
         if (c == null) {
+            return;
+        }
+        // Wake a dormant conjecture at once when there is energy; otherwise check every second.
+        boolean wake = c.state() == Library.ConjectureState.DORMANT && energy >= AxiomaticConfig.CONJECTURE_UPKEEP.get();
+        if (!wake && level.getGameTime() % 20 != 0) {
             return;
         }
         switch (c.state()) {
@@ -112,6 +117,20 @@ public class ConjectureBlockEntity extends MachineBlockEntity {
         }
         if (level.getBlockState(pos).isAir()) {
             level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        }
+    }
+
+    /** A conjecture whose block is broken or unloaded goes dormant: no block, no upkeep, no use. */
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level instanceof ServerLevel server && !failed && !conjecture.isEmpty()) {
+            var data = data(server);
+            Library.Conjecture c = data.state().library().conjectureNamed(conjecture);
+            if (c != null && c.state() == Library.ConjectureState.ACTIVE) {
+                data.state().library().setDormant(conjecture, true);
+                data.setDirty();
+            }
         }
     }
 

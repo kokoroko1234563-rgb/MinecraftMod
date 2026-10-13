@@ -12,7 +12,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "axiomatic:factorization_vault"
+          "name": "axiomatic:factorization_vault",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "axiomatic:vault_contents"
+              ]
+            }
+          ]
         }
       ]
     }

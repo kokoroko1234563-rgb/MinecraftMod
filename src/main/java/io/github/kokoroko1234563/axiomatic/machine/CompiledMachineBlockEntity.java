@@ -191,6 +191,11 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
 
     /** Server thread: turns the result into a job if the inputs are still the same. */
     private Job commit(ServerLevel level, MathState state, Key key, int arity, Result r) {
+        // The design and card must be the ones the computation was started with.
+        if (!key.function().equals(function())
+                || !java.util.Objects.equals(key.card(), MathItems.statement(items.get(CARD)))) {
+            return null;
+        }
         for (int i = 0; i < arity; i++) {
             ItemStack in = items.get(1 + i);
             if (in.isEmpty() || !NumeralItem.data(in).equals(key.inputs().get(i))) {

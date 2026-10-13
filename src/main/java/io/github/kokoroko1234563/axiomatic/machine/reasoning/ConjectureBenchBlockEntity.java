@@ -72,6 +72,8 @@ public class ConjectureBenchBlockEntity extends ReasoningBlockEntity {
             return List.of();
         }
         Theorem thm = ctx.state().library().conjecture(ctx.state().kernel(), ctx.state().deciders(), name, st.formula());
+        // Dormant until its block is placed and powered: no upkeep, no use.
+        ctx.state().library().setDormant(name, true);
         ItemStack card = ctx.proven(thm);
         ItemStack block = new ItemStack(ModRegistries.CONJECTURE_BLOCK.get());
         block.set(ModRegistries.CONJECTURE.get(), name);

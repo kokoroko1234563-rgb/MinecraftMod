@@ -73,6 +73,8 @@ public final class AxiomaticGameTests {
         test("pipes_see_machine_inventories", AxiomaticGameTests::pipesSeeMachineInventories);
         test("notebook_pages_unlock", AxiomaticGameTests::notebookPagesUnlock);
         test("dynamo_judges_each_network", AxiomaticGameTests::dynamoJudgesEachNetwork);
+        test("breaking_an_unpaid_job_drops_nothing", AxiomaticGameTests::breakingAnUnpaidJobDropsNothing);
+        test("vault_keeps_contents_when_broken", AxiomaticGameTests::vaultKeepsContentsWhenBroken);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
@@ -318,6 +320,45 @@ public final class AxiomaticGameTests {
             h.assertTrue(dynamo.alternating() && !dynamo.shorted(), "the dynamo runs alternating power");
             h.assertTrue(numeralIn(successor, 1) != null, "the successor ran on it");
         });
+    }
+
+    /** Copying a million costs a million units: mining the Duplicator mid-job must not hand out the copies. */
+    private static void breakingAnUnpaidJobDropsNothing(GameTestHelper h) {
+        h.setBlock(MACHINE, ModRegistries.DUPLICATOR.get());
+        MachineBlockEntity dup = h.getBlockEntity(MACHINE, MachineBlockEntity.class);
+        dup.receiveEnergy(1_000);
+        dup.setItem(0, NumeralItem.stack(NumeralData.of(1_000_000), 1));
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(dup.getItem(0).isEmpty(), "the job started"))
+                .thenExecute(() -> h.getLevel().destroyBlock(h.absolutePos(MACHINE), true))
+                .thenExecuteAfter(5, () -> {
+                    boolean copies = h.getEntities(net.minecraft.world.entity.EntityType.ITEM, MACHINE, 3).stream()
+                            .anyMatch(e -> e.getItem().is(ModRegistries.NUMERAL_ITEM.get()));
+                    h.assertFalse(copies, "an unpaid copy must not drop");
+                })
+                .thenSucceed();
+    }
+
+    /** Broken, the vault drops itself with what it stores, like a shulker box. */
+    private static void vaultKeepsContentsWhenBroken(GameTestHelper h) {
+        h.setBlock(MACHINE, ModRegistries.FACTORIZATION_VAULT.get());
+        MachineBlockEntity vault = h.getBlockEntity(MACHINE, MachineBlockEntity.class);
+        vault.setItem(0, new ItemStack(Items.COBBLESTONE, 64));
+        h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(vault.getItem(0).isEmpty(), "deposited"))
+                .thenExecute(() -> vault.setItem(0, new ItemStack(Items.COBBLESTONE, 36)))
+                .thenWaitUntil(() -> h.assertTrue(vault.getItem(0).isEmpty(), "deposited again"))
+                .thenExecute(() -> h.getLevel().destroyBlock(h.absolutePos(MACHINE), true))
+                .thenExecuteAfter(5, () -> {
+                    var drops = h.getEntities(net.minecraft.world.entity.EntityType.ITEM, MACHINE, 3);
+                    var vaultItem = drops.stream().map(e -> e.getItem())
+                            .filter(st -> st.is(ModRegistries.FACTORIZATION_VAULT.get().asItem())).findFirst();
+                    h.assertTrue(vaultItem.isPresent(), "the vault drops itself");
+                    var contents = vaultItem.get().get(ModRegistries.VAULT_CONTENTS.get());
+                    h.assertTrue(contents != null && contents.counts().equals(List.of("100")), "keeps 100 cobblestone: " + contents);
+                    h.assertFalse(drops.stream().anyMatch(e -> e.getItem().is(Items.COBBLESTONE)), "nothing spills");
+                })
+                .thenSucceed();
     }
 
     /** A second, plain network on the dynamo's other side does not spoil the first one's certificate. */
