@@ -31,6 +31,9 @@ import net.minecraft.world.level.block.state.BlockState;
  * about f, such as "Even(Double(n))" or "Even(a) → Even(b) → Even(a + b)") in the card slot
  * certifies each output for 1 unit, passing certificates through the factory. A conjectural card
  * works too, but every use is checked in the background: a counterexample is a disaster.
+ *
+ * <p>A speed card instead makes the machine faster: a fully proven f(x, y) = f(y, x) (like
+ * add_comm) lets it swap its inputs so a recursive f recurses on the smaller one.
  */
 public class CompiledMachineBlockEntity extends MachineBlockEntity {
     public static final int DESIGN = 0;
@@ -105,7 +108,16 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
             return null;
         }
         Cards.Use use = null;
-        if (card != null) {
+        boolean swap = card != null && isSymmetry(card.formula(), f);
+        if (swap) {
+            // Swapping changes what is computed unless the symmetry really holds: no conjectures.
+            if (!card.proven() || !card.hypotheses().isEmpty()
+                    || card.dependencies().stream().anyMatch(d -> d.startsWith("conjecture:"))) {
+                setStatus(Component.translatable("status.axiomatic.speed_card_unproven"));
+                rememberFailure(key);
+                return null;
+            }
+        } else if (card != null) {
             try {
                 use = Cards.prepare(state.library(), card);
             } catch (ProofException e) {
@@ -118,21 +130,36 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
         var sig = state.signature().copy();
         var deciders = state.deciders().copy(sig);
         Cards.Use cardUse = use;
-        return runAsync(() -> run(sig, deciders, f, inputs, cardUse), r -> commit(level, state, key, arity, r));
+        return runAsync(() -> run(sig, deciders, f, inputs, cardUse, swap), r -> commit(level, state, key, arity, r));
+    }
+
+    /** Whether {@code card} says f(x, y) = f(y, x) for two different variables. */
+    static boolean isSymmetry(Formula card, String f) {
+        return card instanceof Formula.Eq eq && eq.left() instanceof Term.App l && eq.right() instanceof Term.App r
+                && l.function().equals(f) && r.function().equals(f) && l.args().size() == 2 && r.args().size() == 2
+                && l.args().get(0) instanceof Term.Var x && l.args().get(1) instanceof Term.Var y && !x.equals(y)
+                && r.args().get(0).equals(y) && r.args().get(1).equals(x);
     }
 
     /** What the inputs that started a computation were, to check they are still there at commit. */
     private record Key(String function, List<NumeralData> inputs, StatementData card) {}
 
-    private record Result(BigInteger value, long steps, Cards.Outcome card, boolean tooBig) {}
+    private record Result(BigInteger value, long steps, Cards.Outcome card, boolean tooBig, boolean swapped) {}
 
     /** Worker thread: computes f and applies the card. */
     private static Result run(io.github.kokoroko1234563.axiomatic.core.logic.Signature sig,
             io.github.kokoroko1234563.axiomatic.core.knowledge.Deciders deciders, String f, List<NumeralData> inputs,
-            Cards.Use use) {
+            Cards.Use use, boolean swap) {
         Evaluator evaluator = new Evaluator(sig, MAX_STEPS);
         try {
-            BigInteger value = evaluator.apply(f, inputs.stream().map(NumeralData::value).toList());
+            List<BigInteger> args = new ArrayList<>(inputs.stream().map(NumeralData::value).toList());
+            // Primitive recursion runs on the last input: with a symmetry card, make it the smaller.
+            boolean swapped = swap && sig.get(f) instanceof Definition.PrimitiveRecursive
+                    && args.get(1).compareTo(args.get(0)) > 0;
+            if (swapped) {
+                java.util.Collections.swap(args, 0, 1);
+            }
+            BigInteger value = evaluator.apply(f, args);
             Cards.Outcome outcome = null;
             if (use != null) {
                 Formula conclusion = use.card().formula();
@@ -156,9 +183,9 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
                     outcome = use.evaluate(assignment, premises, false, new Truth(sig, deciders, evaluator, cap));
                 }
             }
-            return new Result(value, evaluator.steps(), outcome, false);
+            return new Result(value, evaluator.steps(), outcome, false, swapped);
         } catch (Evaluator.OutOfBudget e) {
-            return new Result(null, evaluator.steps(), null, true);
+            return new Result(null, evaluator.steps(), null, true, false);
         }
     }
 
@@ -200,7 +227,8 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
         for (int i = 0; i < arity; i++) {
             items.get(1 + i).shrink(1);
         }
-        setStatus(Component.translatable("status.axiomatic.computed", NumeralItem.display(r.value()), cost));
+        setStatus(Component.translatable(r.swapped() ? "status.axiomatic.computed_swapped" : "status.axiomatic.computed",
+                NumeralItem.display(r.value()), cost));
         return new Job(cost, (int) Math.clamp(cost / 100, 4, 400), out);
     }
 }

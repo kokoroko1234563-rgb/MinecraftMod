@@ -65,6 +65,8 @@ public final class AxiomaticGameTests {
         test("rewriter_uses_certified_equivalences", EquivalenceGameTest::rewritesUnderSuccessor);
         test("two_coloured_network_runs_alternating", AxiomaticGameTests::twoColouredNetworkRunsAlternating);
         test("clashing_phases_short_circuit", AxiomaticGameTests::clashingPhasesShortCircuit);
+        test("add_comm_speed_card", SpeedCardGameTest::addCommSwapsInputs);
+        test("conjectured_speed_card_refused", SpeedCardGameTest::conjecturedSymmetryIsRefused);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {

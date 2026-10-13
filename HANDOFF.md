@@ -136,6 +136,9 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   failing on *some* numbers (`Truth.isRefutable`, with bounded ∃ counting as checkable): Prime
   (2n+1) qualifies, "∀n ∃k. k = S(n)" does not. A conjecture's check never uses a decider whose
   link depends on that same conjecture.
+- **Speed cards**: a fully proven f(x, y) = f(y, x) (no conjectures, no assumptions) in a
+  Compiled Machine's card slot swaps the inputs of a primitive-recursive f so it recurses on the
+  smaller one (game tests `add_comm_speed_card`, `conjectured_speed_card_refused`).
 - **Typed ports**: a Compiled Machine card's premises about its inputs must be met by the
   inputs' certificates. The Prime Forge instead computes premises for its bare candidates.
 - **Background checks** run when a conjectural card is used in a Compiled Machine or Prime Forge (the card's
@@ -182,8 +185,10 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
       (game test `two_n_plus_one_trap`); disasters drop paradox junk; config for block damage
 - [x] Circuit Board and Prime Core recipes needing certified numerals (Prime Core matches the
       property named exactly "Prime")
-- [ ] The Notebook (Modonomicon) with Getting Started, Machines, Logic and Proof
-- [ ] Placeholder CC0 textures and sounds
+- [~] The Notebook: a written book given on first join (`book/Notebook`, pages in `tools/gen_assets.py`);
+      Modonomicon still blocked (its maven host is unreachable from the cloud session)
+- [x] Placeholder textures (`tools/gen_assets.py`) and sounds (synthesized, `tools/gen_sounds.sh`);
+      own work, so no licence questions
 
 ## How the player builds things (design gaps filled in, worth reviewing)
 
@@ -201,7 +206,11 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 ## Suggested next steps
 
+1. Compact blocks: inspecting a Compiled Machine's ports, theorem cards slotted into other
+   machines (speed cards exist for the Compiled Machine).
 2. Monoids over a subset (closure + relativised laws). A worked ≡ mod n example (laws proven in
    game) would make a good game test.
-3. Notebook (Modonomicon) given on first join: needs `maven.blamejared.com`/`modmaven.dev` allowed.
-4. Theorem cards and compact blocks; Prime Core recipe; Graph Lens.
+3. More network physics from the design: Euler courier drone (all degrees even), max-flow /
+   min-cut throughput certificates, machine safety certificates (state graphs).
+4. Lock hypothesis items inside the Assumption Chamber physically.
+5. Modonomicon book and JEI: need `maven.blamejared.com` / `modmaven.dev` reachable.
