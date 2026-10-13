@@ -157,14 +157,14 @@ public final class DevTour {
         STEPS.add(new Step(10, mc -> com.klikli_dev.modonomicon.client.gui.BookGuiManager.get().openBook(
                 com.klikli_dev.modonomicon.client.gui.book.BookAddress.ignoreSaved(
                         io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK,
-                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "primes"),
-                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "primes/prime_cores"), 0))));
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "logic"),
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "logic/instantiator"), 0))));
         STEPS.add(new Step(30, mc -> shot(mc, "notebook_prime_cores")));
         STEPS.add(new Step(10, mc -> com.klikli_dev.modonomicon.client.gui.BookGuiManager.get().openBook(
                 com.klikli_dev.modonomicon.client.gui.book.BookAddress.ignoreSaved(
                         io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK,
                         net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "factory"),
-                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "factory/factories"), 0))));
+                        net.minecraft.resources.Identifier.fromNamespaceAndPath(Axiomatic.MODID, "factory/statement_conveyor"), 0))));
         STEPS.add(new Step(20, mc -> hoverSlotAt(mc, 0.61, 0.255)));
         STEPS.add(new Step(30, mc -> shot(mc, "notebook_factories")));
 

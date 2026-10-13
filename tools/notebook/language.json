@@ -1,0 +1,231 @@
+{
+  "chapter": "language",
+  "title": "The Language of Mathematics",
+  "entries": [
+    {
+      "id": "variables",
+      "title": "Variables",
+      "icon": "axiomatic:variable",
+      "gate": null,
+      "description": "Letters that stand for any number",
+      "pages": [
+        {
+          "type": "spotlight",
+          "item": "axiomatic:variable",
+          "title": "Variable",
+          "text": "A **Variable** stands for *any number*. Where a numeral says 12, a variable says n: whatever n is.\n\nVariables let you write general things: the circuit n + n means doubling any number, and a statement with n in it is a claim about every n.\n\n**How to use:** right-click in the air with a Variable to change its letter. The letters cycle n, a, b, c, d, j, k, m, p, q, x, y, z; sneak while right-clicking to go back. The item's name shows its letter: **Variable n**. Put Variables into machine slots wherever a circuit is accepted."
+        },
+        {
+          "type": "text",
+          "title": "Watch out",
+          "text": "- Many machines use up their inputs, Variables included, so keep a stack. The recipe makes 8.\n- Two Variables with the same letter are the *same* number: n + n is doubling, while a + b adds two numbers that may differ.\n- Letters matter in definitions: the inputs of a function you define are its variables in alphabetical order."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "variable"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "circuits",
+      "title": "Circuits",
+      "icon": "axiomatic:drafting_chamber",
+      "gate": null,
+      "description": "Expressions and machine designs, built in the Drafting Chamber",
+      "pages": [
+        {
+          "type": "text",
+          "title": "What a circuit is",
+          "text": "A **circuit** is an expression built from 0, S, variables and functions, like **n + n**, **S(S(0))** or **Double(n)**. It is also a machine design: a circuit describes a calculation, and its variables are the input wires.\n\nIn game it is a **Circuit** item whose tooltip shows the expression. Circuits go into the Drafting Chamber to define new functions, into the benches to make statements, and into a Compiled Machine to choose what it computes.\n\nAny slot that takes a circuit also takes a **Variable** (just that letter) or a **numeral up to 64** (wired as S(S(...0)); bigger ones are too long)."
+        },
+        {
+          "type": "spotlight",
+          "item": "axiomatic:drafting_chamber",
+          "title": "Drafting Chamber",
+          "text": "The Drafting Chamber is where mathematics is written: it assembles circuits and turns them into definitions. It has three inputs (**Input 1**, **Input 2**, **Input 3**), two outputs, and two buttons:\n\n- **Mode ▶** cycles the mode shown on the info line: Assemble, Define, General recursion, Name theorem, Axiom tablet, Link a decider.\n- **Function ▶** picks the function used by Assemble.\n\nThis entry covers Assemble; [Definitions](entry://axiomatic:notebook/language/definitions) covers Define."
+        },
+        {
+          "type": "text",
+          "title": "Assemble, step by step",
+          "text": "1. Press **Mode ▶** until the info line reads **Assemble: ...**.\n2. Press **Function ▶** to pick the function. It cycles **S**, then every defined function (add, mul, pow at first, then yours), then **↺**, the recursive call used in definitions. The info line shows the choice, for example **Assemble: add**.\n3. Put the function's inputs in Input 1, Input 2, Input 3, in order and with no gaps: circuits, Variables or numerals up to 64.\n4. The inputs are used up and a Circuit comes out on the right, for 1 unit."
+        },
+        {
+          "type": "text",
+          "title": "Example",
+          "text": "**Example:** the circuit n + n.\n\n- Function ▶ until **Assemble: add**.\n- Variable n in Input 1, another Variable n in Input 2.\n- Out comes a Circuit whose tooltip reads **n + n**.\n\nCircuits nest: with **Assemble: S** and that circuit in Input 1 you get S(n + n). Build big expressions from the inside out. Some functions print as symbols: add as +, mul as ×, pow as ^."
+        },
+        {
+          "type": "text",
+          "title": "Watch out",
+          "text": "- **Pick the function first.** The chamber works as soon as its inputs make sense: with S selected, whatever you drop into Input 1 becomes S(...) at once.\n- With too few or too many inputs the status says so, for example **add takes 2 inputs**, and waits.\n- **Slot 1 needs a circuit, variable or small numeral**: numerals above 64 and statements cannot be wired in.\n- Stacks are used one item at a time: a stack of Variables keeps making circuits until the outputs are full."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "drafting_chamber"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "definitions",
+      "title": "Definitions",
+      "icon": "axiomatic:drafting_chamber",
+      "gate": null,
+      "description": "Define mode: naming functions and properties",
+      "pages": [
+        {
+          "type": "text",
+          "title": "Define mode",
+          "text": "A **definition** gives a name to a calculation or a property. The name becomes part of your world's mathematics: it appears under **Function ▶** or **Property ▶**, machines can compute it, and the definition comes out as proven statements, its **defining statements**, which you use in proofs.\n\nSwitch the Drafting Chamber to **Define** with **Mode ▶**. The name comes from an anvil: rename the item for **Input 1 (rename in an anvil to define or name)**. Names start with a letter, then letters, digits or underscores. Defining costs 10 units, and both outputs must be empty. Your first definition earns **By Definition**."
+        },
+        {
+          "type": "text",
+          "title": "Explicit definitions",
+          "text": "The simplest kind: a name for a circuit.\n\n**How to use:** rename a circuit in an anvil and put it alone in Input 1.\n\n**Example:** assemble n + n, rename it **Double**, put it in Input 1. Out comes a Theorem: **∀n. Double(n) = n + n** (∀n means *for all n*). Double now appears under Function ▶.\n\nThe new function's inputs are the circuit's variables in alphabetical order: the circuit (a × b) + c defines a function of a, b and c, in that order."
+        },
+        {
+          "type": "text",
+          "title": "Recursion",
+          "text": "A function can also be defined by **primitive recursion**: say what it gives at 0, and how to get its value at S(y) from its value at y. That is how add is defined: a + 0 = a, and a + S(b) = S(a + b).\n\n**How to use:**\n- **Input 1:** the base case (the value at 0), renamed with the new name.\n- **Input 2 (step case, or measure):** the step, using ↺ for *this function, one step down*.\n- **Input 3 (variable recursed on, or termination proof):** the Variable that counts down. It stays.\n\nMake ↺ in Assemble mode: Function ▶ to ↺, Variables as its inputs."
+        },
+        {
+          "type": "text",
+          "title": "Recursion: example",
+          "text": "**Example:** Tri(n) = 0 + 1 + ... + n.\n\n- Assemble ↺ with Variable n: **↺(n)**. Assemble S with n: **S(n)**. Assemble add with those two: **↺(n) + S(n)**.\n- Rename a Numeral 0 to **Tri** in an anvil.\n- Define: ↺(n) + S(n) in Input 2 and Variable n in Input 3 first, then Tri (the 0) in Input 1.\n- Out come **Tri(0) = 0** and **∀n. Tri(S(n)) = Tri(n) + S(n)**.\n\nWith more inputs the others stay fixed: ↺(a, b) recursing on b defines a function of a and b, like add."
+        },
+        {
+          "type": "text",
+          "title": "Recursion: watch out",
+          "text": "- **↺ must be called as ↺(x, …, y) on plain variables, ending with the one recursed on.** ↺(S(n)) or ↺(n + 1) is refused: the call must be exactly one step down.\n- **Fill Input 1 last.** A named item alone in Input 1 is defined at once, as an explicit definition.\n- **Rename the first input in an anvil to name it**: the base case carries the name.\n- **Not a valid name**: no spaces or symbols.\n- A name can only be defined once per world."
+        },
+        {
+          "type": "text",
+          "title": "Properties and relations",
+          "text": "A **property** is a definition that is a statement rather than a number, like Even(n). A **relation** has two or more inputs, like a ≤ b.\n\n**How to use:** build an *unproven* statement (see [Statements](entry://axiomatic:notebook/language/statements)), rename it in an anvil, put it alone in Input 1. Its variables, in alphabetical order, become the inputs. Out come two Theorems: the property implies its meaning, and the meaning implies the property.\n\n**Watch out:** a proven statement is refused: **Define properties from unproven statements**."
+        },
+        {
+          "type": "text",
+          "title": "Properties: example",
+          "text": "**Example:** odd numbers.\n\n- Equation Bench: Variable n on the left, the circuit S(k + k) on the right: **∀n k. n = S(k + k)**.\n- Property Bench in Seal mode, with Variable k: **∀n. ∃k. n = S(k + k)**.\n- Rename it **IsOdd** and Define. Out come **∀n. IsOdd(n) → (∃k. n = S(k + k))** and the way back.\n\nIsOdd now appears under **Property ▶** on the Property Bench and the Test Bench."
+        },
+        {
+          "type": "text",
+          "title": "Looking up a definition",
+          "text": "Put an **unnamed** circuit f(...) or statement P(...) alone in Input 1 and you get the defining statements of the existing f or P again, for 1 unit, without using the input up.\n\n**Example:** the circuit a + b, unnamed, gives **∀a. a + 0 = a** and **∀a b. a + S(b) = S(a + b)**. That is how you get the equations of the starter definitions, which you did not define yourself.\n\n**Watch out:** if you forget to rename your n + n circuit, you get add's equations instead of a new Double."
+        },
+        {
+          "type": "text",
+          "title": "Starter definitions",
+          "text": "A new world already knows these, exactly as written. Nothing about them is proven: every theorem is yours to prove.\n\n- **add**, written +: a + 0 = a, a + S(b) = S(a + b).\n- **mul**, written ×: a × 0 = 0, a × S(b) = (a × b) + a.\n- **pow**, written ^: a ^ 0 = 1, a ^ S(b) = (a ^ b) × a.\n- **Even(n)**: ∃k. n = k + k. There is a k with n = k + k.\n- **le**, written ≤: a ≤ b means ∃k. a + k = b.\n- **Divides**, written |: d | n means ∃q. d × q = n."
+        },
+        {
+          "type": "text",
+          "title": "Starter definitions (2)",
+          "text": "- **Mersenne(n)**: ∃p. n + 1 = 2 ^ p. One less than a power of two, like 7 or 31.\n- **Prime(n)**: 2 ≤ n ∧ ¬∃d. (2 ≤ d ∧ S(d) ≤ n ∧ d | n). At least 2, and no d from 2 to n − 1 divides n. (∧ means *and*, ¬ means *not*, and S(d) ≤ n says d < n.)\n\nWhy are these given? The Test Bench certifies evens before you have a Drafting Chamber, and recipes ask for numerals certified **Even** or **Prime**. Fixed names keep that honest: nobody can define their own Prime as something trivially true."
+        },
+        {
+          "type": "text",
+          "title": "General recursion",
+          "text": "The mode after Define, **General recursion**, defines functions that call themselves on numbers that are smaller in any way, not just one step down, like Euclid's algorithm. It needs a proof that the calls shrink, so it is explained in [The Prime Path](entry://axiomatic:notebook/primes/general_recursion)."
+        }
+      ]
+    },
+    {
+      "id": "statements",
+      "title": "Statements",
+      "icon": "axiomatic:property_bench",
+      "gate": null,
+      "description": "Claims, theorems and the symbols they use",
+      "pages": [
+        {
+          "type": "text",
+          "title": "What a statement is",
+          "text": "A **statement** is a claim about numbers, like 0 + n = n or Even(Double(n)). It is an item:\n\n- **Statement**: *unproven*. The tooltip shows the claim and **Unproven**. Anyone can write one; it may be false.\n- **Theorem**: *proven*, and it glints. The tooltip says **Proven (N steps)**, the size of its proof. **Proven from conjectures**, in purple, means it rests on an unproven guess.\n- **Stamped Statement**: proven, but only under an assumption (see below).\n\nYou write statements on the benches in this entry, and turn them into theorems with the reasoning machines."
+        },
+        {
+          "type": "text",
+          "title": "Reading the symbols",
+          "text": "- **=** : both sides are the same number.\n- **∧** : and. P ∧ Q holds when both hold.\n- **→** : implies. P → Q: if P holds, so does Q.\n- **¬** : not. ¬P means P leads to a contradiction, written ⊥.\n- **∃k.** : there is a k such that...\n- **∀n.** : for all n. Free variables in a statement always mean *for all*; the tooltip writes them up front, so ∀n. 0 + n = n claims it for every n.\n- **≤**, **|**, **+**, **×**, **^** are starter definitions, and **S(n)** is n + 1."
+        },
+        {
+          "type": "text",
+          "title": "Hypotheses",
+          "text": "Some proofs work under an assumption: *suppose H; then Q*. Later you get the Assumption Chamber, which assumes H. What you prove from it is a **Stamped Statement**, and its tooltip lists **Assuming H (stamp N)**. The variables of H are locked while it is assumed. When you are done, the chamber discharges the assumption and you get a plain Theorem, **H → Q**.\n\nFor now, just know that a stamped item is not yet a full theorem."
+        },
+        {
+          "type": "spotlight",
+          "item": "axiomatic:equation_bench",
+          "title": "Equation Bench",
+          "text": "Writes equations.\n\n**How to use:** a circuit in **Left** and a circuit in **Right** (Variables and numerals up to 64 count). Both are used up and out comes the Statement **left = right**, unproven, for 1 unit.\n\n**Example:** the circuit 0 + n in Left and Variable n in Right give **∀n. 0 + n = n**, Unproven: the statement you will later prove by induction.\n\n**Reflexivity:** with the *same* circuit on both sides you get a **proven** Theorem t = t, since everything equals itself."
+        },
+        {
+          "type": "spotlight",
+          "item": "axiomatic:property_bench",
+          "title": "Property Bench",
+          "text": "Builds every other kind of statement. Slots: **Circuit, or statement P**; **Second circuit (relations), or statement Q**; **Variable to seal**. Buttons: **Property ▶** picks the property, **Mode ▶** the mode; the info line shows the current one.\n\n**Property mode** (info line **Property: Even**): a circuit in the first slot gives P(circuit). For a relation such as ≤ or Divides, add the second circuit. Property ▶ cycles every property and relation: Even, le, Divides, Mersenne, Prime, then yours."
+        },
+        {
+          "type": "text",
+          "title": "Property Bench: logic modes",
+          "text": "- **Seal with ∃ (statement + variable)**: a statement P in the first slot and a Variable k in the third give ∃k. P. The Variable stays.\n- **And: P ∧ Q**: statements in the first two slots.\n- **Implies: P → Q**: P first, Q second.\n- **Not: ¬P**: one statement in the first slot.\n\nEverything except the sealing Variable is used up, 1 unit per job. Every output is an **unproven** Statement, even if you fed in theorems: the bench writes claims, it does not prove them. Claims are for defining properties, testing, assuming and conjecturing."
+        },
+        {
+          "type": "text",
+          "title": "Property Bench: example",
+          "text": "**Example:** Property mode, **Property: Even** (the default), circuit Double(n) in the first slot: out comes **∀n. Even(Double(n))**, Unproven.\n\n**Example:** Property ▶ to le, Variable a in the first slot, Variable b in the second: **∀a b. a ≤ b**.\n\n**Watch out:** with the wrong number of circuits the status says so, for example **le takes 2 inputs**: add the second one. **Unknown property** means that name is not defined in this world."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "equation_bench",
+            "property_bench"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "first_proof",
+      "title": "First Proof",
+      "icon": "axiomatic:witness_bench",
+      "gate": null,
+      "description": "The Witness Bench, and proving Even(Double(n))",
+      "pages": [
+        {
+          "type": "text",
+          "title": "Proving with a witness",
+          "text": "To prove *there is a k such that...*, show one: a **witness**. If you know Double(n) = n + n, then k := n is a witness for ∃k. Double(n) = k + k, which is exactly what Even(Double(n)) means.\n\nThe **Witness Bench** turns a witness and a proof about it into a proof of the ∃. Because the proof only uses the variable n, it holds for *every* n at once: one machine step settles infinitely many cases, which no amount of testing can do."
+        },
+        {
+          "type": "spotlight",
+          "item": "axiomatic:witness_bench",
+          "title": "Witness Bench",
+          "text": "**How to use:**\n- **Statement to prove**: ∃k. φ(k), or a property defined by an ∃, like Even(...). Used up.\n- **Witness circuit**: the k you claim works, as a circuit, Variable or small numeral. It stays.\n- **Proof of the instance**: a Theorem saying φ with your witness in place of k. Used up.\n\nOut comes the Theorem, for 1 unit. Proving something with no assumptions earns **Q.E.D.**\n\n**Watch out:** **Needs a statement ∃k. … or a property defined by one**; and if the instance does not match, the status tells you what it needs (With k := n the statement needs ...)."
+        },
+        {
+          "type": "text",
+          "title": "Worked example (1)",
+          "text": "**Goal:** prove Even(Double(n)): doubling always gives an even number.\n\n1. **Drafting Chamber, Assemble:** Function ▶ to add; Variable n in Input 1 and in Input 2. Out: circuit **n + n**.\n2. **Anvil:** rename it **Double**.\n3. **Drafting Chamber, Define:** the Double circuit in Input 1. Out: Theorem **∀n. Double(n) = n + n**.\n4. **Duplicator** (optional): copy that Theorem for 1 unit, since the Witness Bench uses it up.\n5. **Drafting Chamber, Assemble** (press Mode ▶ until it comes round): Function ▶ to Double; Variable n in Input 1. Out: circuit **Double(n)**."
+        },
+        {
+          "type": "text",
+          "title": "Worked example (2)",
+          "text": "6. **Property Bench:** Property mode, Property: Even; circuit Double(n) in the first slot. Out: Statement **∀n. Even(Double(n))**, Unproven.\n7. **Witness Bench:** that Statement in **Statement to prove**, Variable n in **Witness circuit**, Double's Theorem in **Proof of the instance**.\n8. Out comes the Theorem **∀n. Even(Double(n))**. **Q.E.D.**\n\nWhat happened: Even(Double(n)) means ∃k. Double(n) = k + k. With k := n that reads Double(n) = n + n, which is Double's definition. The bench checked that, then folded the ∃ back into Even."
+        },
+        {
+          "type": "text",
+          "title": "Using your theorem",
+          "text": "A theorem is a tool. Put it in a **Compiled Machine** as a theorem card: the circuit **Double(n)** in **Design: a circuit f(…)**, your Theorem in **Theorem card**, numerals in **Input 1**. Each number that comes out is double the input and already **Certified: Even**, for just 1 unit on top of computing Double, instead of a Test Bench search. Feed it 6 and out comes 12, certified.\n\nThat is the start of every factory. See [Compiled Machine](entry://axiomatic:notebook/factory/compiled_machine)."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "witness_bench"
+          ]
+        }
+      ]
+    }
+  ]
+}

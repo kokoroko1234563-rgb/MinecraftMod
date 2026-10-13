@@ -1,0 +1,161 @@
+{
+  "chapter": "structures",
+  "entries": [
+    {
+      "id": "structure_bench",
+      "title": "Structures",
+      "icon": "axiomatic:structure_bench",
+      "gate": "named",
+      "description": "Prove a theorem once, use it for every operation that fits",
+      "pages": [
+        {
+          "type": "text",
+          "title": "Structures",
+          "text": "Addition and multiplication share many laws: both are associative, and both have a number that changes nothing (0 for +, 1 for ×). Why prove the same theorem twice?\n\nA **structure** is a list of *abstract symbols* with *axioms* about them, and nothing else. A theorem proven only from those axioms holds for **any** operation that obeys them. The game has four:\n\n- **Monoid**: an operation ∘ (Monoid.op) and an element e (Monoid.e)\n- **SetMonoid**: the same, inside a set A (see [Monoids on a set](entry://axiomatic:notebook/structures/set_monoids))\n- **Equivalence**: a relation ≡ (Equivalence.R)\n- **Order**: a relation ⊑ (Order.R)\n\nYou cannot type these names or define them: their axioms are all you know about them."
+        },
+        {
+          "type": "text",
+          "title": "The axioms",
+          "text": "Each structure has three axioms (letters a, b, c mean any value):\n\n**Monoid**\n1. (a ∘ b) ∘ c = a ∘ (b ∘ c) (associative)\n2. e ∘ a = a\n3. a ∘ e = a\n\n**Equivalence**\n1. a ≡ a (reflexive)\n2. a ≡ b → b ≡ a (symmetric)\n3. a ≡ b → b ≡ c → a ≡ c (transitive)\n\n**Order**\n1. a ⊑ a\n2. a ⊑ b → b ⊑ a → a = b (antisymmetric)\n3. a ⊑ b → b ⊑ c → a ⊑ c\n\nOnce the bench has shown you a structure's axioms, its symbols (such as Monoid.op and Monoid.e) also appear on the Drafting Chamber's **Function ▶** button, so you can build generic definitions with them."
+        },
+        {
+          "type": "text",
+          "title": "How to use",
+          "text": "Three buttons: **Mode ▶** cycles Axioms, Certify and Apply; **Structure ▶** cycles Monoid, SetMonoid, Equivalence and Order; **Axiom ▶** picks axiom 1, 2 or 3. The screen reads like *Axioms: Monoid #1*. Inputs are tools here: nothing is used up.\n\n- **Axioms**: the chosen axiom comes out as a proven statement. Prove generic theorems from it with your usual machines.\n- **Certify** and **Apply**: see the next page."
+        },
+        {
+          "type": "text",
+          "title": "Certify and Apply",
+          "text": "- **Certify**: put the three laws, proven for your own definitions, in the slots *Law 1, or a generic theorem (Apply)*, *Law 2, or a circuit naming the operation (Apply)* and *Law 3*, in axiom order. The Library records a **certificate** (see its Structures tab). Your first earns *Any Monoid Will Do*.\n- **Apply**: a generic theorem in slot 1 and a circuit naming a certified operation, such as add(a, b), in slot 2. Out comes the theorem for that operation, with no new proof."
+        },
+        {
+          "type": "text",
+          "title": "Example",
+          "text": "Certify addition as a monoid. Monoid.e must be a defined constant, so first define **zc** (Define mode: numeral 0 renamed \"zc\"). Prove the three laws:\n\n1. (a + b) + c = a + (b + c), by induction on c\n2. zc + a = a (zero_add, with 0 rewritten to zc)\n3. a + zc = a (from a + 0 = a)\n\nCertify mode, Structure Monoid, laws in order: status *Monoid certified: {Monoid.op=add, Monoid.e=zc}*.\n\nNow a generic theorem: define gpow(x, 0) = e, gpow(x, S(n)) = gpow(x, n) ∘ x, and prove gpow(x, 1) = x from axiom 2. In Apply mode, with that theorem and the circuit a + b, out comes the same theorem for gpow over addition: repeated adding, which is multiplication."
+        },
+        {
+          "type": "text",
+          "title": "Watch out",
+          "text": "- *These are not the Monoid laws, in order*: each law must have exactly the axiom's shape, in the right slot. 0 + a = a does not fit e ∘ a = a, because e must be a defined constant like zc.\n- Laws must be fully proven, with no open assumptions.\n- *add is not certified as a Monoid*: certify before you apply, and check the Structure button.\n- *Needs a circuit such as add(a, b)*: slot 2 in Apply mode needs a circuit, not a statement.\n- The generic theorem may rest on this structure's axioms only, and must have no open assumptions.\n- If a certificate already exists, the bench just shows it again."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "structure_bench"
+          ],
+          "text": "Four quartz, four Circuit Boards and a lapis block."
+        }
+      ]
+    },
+    {
+      "id": "set_monoids",
+      "title": "Monoids on a Set",
+      "icon": "axiomatic:library",
+      "gate": "named",
+      "description": "Monoid laws that only need to hold inside a set A",
+      "pages": [
+        {
+          "type": "text",
+          "title": "Monoids on a Set",
+          "text": "Some operations only behave inside a certain set of numbers. A **SetMonoid** is a monoid living in a set A, where A is a property such as \"a < 5\". It has three abstract symbols: the operation ∘, the element e, and the set A. Its laws only talk about members of A:\n\n1. A(e) ∧ (A(a) → A(b) → A(a ∘ b)): e is in A, and A is **closed**: combining two members gives a member.\n2. A(a) → A(b) → A(c) → (a ∘ b) ∘ c = a ∘ (b ∘ c)\n3. A(a) → (e ∘ a = a ∧ a ∘ e = a)\n\nCertify one in the Structure Bench exactly like a Monoid: Structure button on *SetMonoid*, the three laws in order."
+        },
+        {
+          "type": "text",
+          "title": "Why mod n needs it",
+          "text": "Arithmetic **mod n** works with remainders, like a clock: mod 5, 3 × 4 = 12 leaves remainder 2, so it gives 2.\n\nMultiplication mod 5 has 1 as its \"changes nothing\" element, but only for numbers below 5: 1 × 7 mod 5 gives 2, not 7. Over all numbers the identity law fails, so it is **not** a Monoid. Inside the set A(a) :⇔ a < 5 every law holds, so it **is** a SetMonoid.\n\nThat matters on the road to fast prime tests, which need powers a^n mod n. Define multiplication mod n yourself, certify it as a SetMonoid, and any theorem you proved once for every SetMonoid (about powers, say) applies to it in the Apply mode, with no new proof."
+        }
+      ]
+    },
+    {
+      "id": "equivalence_bench",
+      "title": "Equivalence Bench",
+      "icon": "axiomatic:equivalence_bench",
+      "gate": "named",
+      "description": "Recognise when two definitions are the same design",
+      "pages": [
+        {
+          "type": "text",
+          "title": "Equivalence Bench",
+          "text": "Sometimes you build the same thing twice under different names: your own **plus**, recursing on y with base x, is the starter **add** in disguise. The **Equivalence Bench** recognises this and proves the two equal, so every theorem about one can be used for the other.\n\nTwo definitions are the **same design** when their defining equations are identical once you rename the function, its inputs, its bound variables and the definitions it uses (checked all the way down)."
+        },
+        {
+          "type": "text",
+          "title": "How to use",
+          "text": "- **A design: circuit f(…) or statement P(…)**: for example the circuit add(a, b).\n- **Another design**: for example the circuit plus(x, y).\n\nBoth designs stay in their slots. For two functions you get the proven equation **f(x) = g(x)**, here add(a, b) = plus(a, b). For two properties you get both directions, P(x) → Q(x) and Q(x) → P(x). Each use costs 1 energy.\n\n**Example:** dbl(n) := n + n and twice(m) := plus(m, m) are recognised too, because add and plus are the same design. Feed the equation to the Rewriter to move theorems across."
+        },
+        {
+          "type": "text",
+          "title": "Watch out",
+          "text": "- *Needs a circuit such as add(a, b)*: each slot needs a circuit or a property statement naming the definition.\n- *f and g are not the same design*: the bench compares the definitions' equations, not their values. A version of addition that starts from 0 instead of x is a different design, and so is dbl compared to add.\n- The two outputs must be empty before it runs again."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "equivalence_bench"
+          ],
+          "text": "Four quartz, four Circuit Boards and a comparator."
+        }
+      ]
+    },
+    {
+      "id": "equivalences",
+      "title": "Equivalences",
+      "icon": "axiomatic:rewriter",
+      "gate": "named",
+      "description": "Rewrite with ≡ instead of =, and arithmetic mod 5",
+      "pages": [
+        {
+          "type": "text",
+          "title": "Equivalences",
+          "text": "An **equivalence** is a relation that behaves like \"is as good as\": every value is related to itself, and relations can be turned around and chained. \"Same remainder mod 5\" is one: 7 and 12 are not equal, but for a clock with 5 hours they are the same.\n\nOnce a relation ≡ has an **Equivalence certificate** (prove reflexive, symmetric and transitive, then Certify in the [Structure Bench](entry://axiomatic:notebook/structures/structure_bench)), the **Rewriter** can rewrite with it just as with an equation."
+        },
+        {
+          "type": "text",
+          "title": "How to use the Rewriter with ≡",
+          "text": "- **Proven statement**: a statement u ≡ v or u = v.\n- **Proven equation (or ≡)**: your proven s ≡ t. It stays.\n\n**Direction** and **Occurrence** work as usual. Out comes u' ≡ v', with the chosen s replaced by t.\n\nThere is one catch. Replacing s by t inside a function is only safe if that function **respects** ≡. So for every function between the top of the statement and the spot you rewrite, the Library must hold a **named congruence law**, such as:\n\n- a ≡ b → c ≡ d → a + c ≡ b + d (for +)\n- a ≡ b → S(a) ≡ S(b) (for S)\n\nProve it, rename it in an anvil and put it in the Drafting Chamber in Name theorem mode."
+        },
+        {
+          "type": "text",
+          "title": "Example: mod 5",
+          "text": "Define **Cong5(a, b)** :⇔ ∃j. ∃k. a + j × 5 = b + k × 5: adding some multiple of 5 to each side makes them meet.\n\n1. Prove Cong5 reflexive, symmetric and transitive, and certify it in the Structure Bench as an Equivalence.\n2. Prove the congruence law Cong5(x, y) → Cong5(c, d) → Cong5(x + c, y + d) and name it, say cong5_add.\n3. Prove Cong5(x + y × 5, x) (witnesses 0 and y).\n4. In the Rewriter: statement (x + y × 5) + z = (x + y × 5) + z, equivalence from step 3, Occurrence #1. Out comes Cong5(x + z, (x + y × 5) + z).\n\nYou just threw away a multiple of 5 inside a sum, legally."
+        },
+        {
+          "type": "text",
+          "title": "Watch out",
+          "text": "- *... is not a certified equivalence (certify it in the Structure Bench)*: the relation needs its certificate first.\n- Rewriting inside a function with no named congruence law is refused. With only cong5_add named, rewriting inside x × z fails: prove and name a law for × too.\n- The target must be a statement u ≡ v (same relation) or u = v.\n- The laws in the certificate and the congruence laws must have no open assumptions."
+        }
+      ]
+    },
+    {
+      "id": "implementation_bench",
+      "title": "Faster Machines",
+      "icon": "axiomatic:implementation_bench",
+      "gate": "structure",
+      "description": "Prove a fast function equal to a slow one and swap them",
+      "pages": [
+        {
+          "type": "text",
+          "title": "Faster Machines",
+          "text": "Your definitions are honest but often slow. If you write a faster function and **prove** it always gives the same answer, why not compute the slow one with the fast one?\n\nThat is what the **Implementation Bench** does. Give it a proven **fast(x) = slow(x)**, and from then on every machine that computes slow (Compiled Machines, the Test Bench, the Prime Forge, background checks) uses fast instead. Every theorem about slow stays true, because the two are proven equal: only the cost changes."
+        },
+        {
+          "type": "text",
+          "title": "How to use",
+          "text": "One slot: **Proof of fast(x) = slow(x)**. The proof stays in it. Status: *slow is now computed by fast*, and you earn *Faster Machines*.\n\n**Example:** slow(n) := n + 0 and fast(n) := n. Prove fast(n) = slow(n): start from fast(n) = fast(n) (Equation Bench), then in the Rewriter: fast's definition on Occurrence #2 gives fast(n) = n; a + 0 = a with Direction right to left on Occurrence #3 (the right-hand n) gives fast(n) = n + 0; slow's definition right to left gives fast(n) = slow(n). Put it in the bench: computing slow(1000) no longer walks through the + 0.\n\nThis is how a faster algorithm pays off everywhere at once. For a different kind of speed-up, see [speed cards](entry://axiomatic:notebook/factory/compiled_machine)."
+        },
+        {
+          "type": "text",
+          "title": "Watch out",
+          "text": "- *The proof must not rest on assumptions or conjectures*: fully proven only.\n- *Needs a proof of fast(x, …) = slow(x, …)*: both sides must be function calls.\n- *Both sides must take the same distinct variables, in the same order*: fast(a, b) = slow(a, b), not slow(b, a).\n- *A function cannot implement itself*: fast(n) = fast(n) is no use.\n- *... itself computes ...: that would loop*: refused if fast uses slow, since computing slow with fast would then never finish.\n- Both sides must be defined functions; abstract structure symbols cannot be used."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "implementation_bench"
+          ],
+          "text": "Four quartz, four Circuit Boards and an observer."
+        }
+      ]
+    }
+  ]
+}

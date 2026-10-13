@@ -1,0 +1,122 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:language/statements",
+  "category": "axiomatic:language",
+  "name": "book.axiomatic.notebook.language.statements.name",
+  "description": "book.axiomatic.notebook.language.statements.description",
+  "icon": {
+    "id": "axiomatic:property_bench"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gray",
+    "width": 26,
+    "height": 26
+  },
+  "x": 6,
+  "y": 0,
+  "sort_number": 3,
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.language.statements.p0.title",
+      "text": "book.axiomatic.notebook.language.statements.p0.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.language.statements.p1.title",
+      "text": "book.axiomatic.notebook.language.statements.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.language.statements.p2.title",
+      "text": "book.axiomatic.notebook.language.statements.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "item": {
+        "id": "axiomatic:equation_bench"
+      },
+      "title": "book.axiomatic.notebook.language.statements.p3.title",
+      "text": "book.axiomatic.notebook.language.statements.p3.text"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "item": {
+        "id": "axiomatic:property_bench"
+      },
+      "title": "book.axiomatic.notebook.language.statements.p4.title",
+      "text": "book.axiomatic.notebook.language.statements.p4.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p5",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 5,
+      "title": "book.axiomatic.notebook.language.statements.p5.title",
+      "text": "book.axiomatic.notebook.language.statements.p5.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p6",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 6,
+      "title": "book.axiomatic.notebook.language.statements.p6.title",
+      "text": "book.axiomatic.notebook.language.statements.p6.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p7",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 7,
+      "recipe_id_1": "axiomatic:equation_bench",
+      "recipe_id_2": "axiomatic:property_bench"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:language/definitions"
+    }
+  ]
+}

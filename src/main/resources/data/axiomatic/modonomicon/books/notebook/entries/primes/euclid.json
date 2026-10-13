@@ -1,0 +1,75 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:primes/euclid",
+  "category": "axiomatic:primes",
+  "name": "book.axiomatic.notebook.primes.euclid.name",
+  "description": "book.axiomatic.notebook.primes.euclid.description",
+  "icon": {
+    "id": "axiomatic:infinite_prime_well"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 6,
+  "y": 0,
+  "sort_number": 3,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/prime_forged"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.primes.euclid.p0.title",
+      "text": "book.axiomatic.notebook.primes.euclid.p0.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.primes.euclid.p1.title",
+      "text": "book.axiomatic.notebook.primes.euclid.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.primes.euclid.p2.title",
+      "text": "book.axiomatic.notebook.primes.euclid.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "recipe_id_1": "axiomatic:infinite_prime_well",
+      "text": "book.axiomatic.notebook.primes.euclid.p3.text"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:primes/general_recursion"
+    }
+  ]
+}

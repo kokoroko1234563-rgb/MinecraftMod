@@ -1,0 +1,87 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:logic/library",
+  "category": "axiomatic:logic",
+  "name": "book.axiomatic.notebook.logic.library.name",
+  "description": "book.axiomatic.notebook.logic.library.description",
+  "icon": {
+    "id": "axiomatic:library"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 8,
+  "y": 2,
+  "sort_number": 9,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/induction"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "item": {
+        "id": "axiomatic:library"
+      },
+      "title": "book.axiomatic.notebook.logic.library.p0.title",
+      "text": "book.axiomatic.notebook.logic.library.p0.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.logic.library.p1.title",
+      "text": "book.axiomatic.notebook.logic.library.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.logic.library.p2.title",
+      "text": "book.axiomatic.notebook.logic.library.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.logic.library.p3.title",
+      "text": "book.axiomatic.notebook.logic.library.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "recipe_id_1": "axiomatic:library"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:logic/even_add"
+    }
+  ]
+}

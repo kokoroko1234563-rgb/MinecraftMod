@@ -12,9 +12,9 @@
     "width": 26,
     "height": 26
   },
-  "x": 8,
-  "y": 0,
-  "sort_number": 4,
+  "x": 0,
+  "y": 2,
+  "sort_number": 5,
   "condition": {
     "type": "modonomicon:research_node_unlocked",
     "node_id": "axiomatic:notebook/circuit_board"
@@ -25,23 +25,59 @@
   "pages": [
     {
       "type": "modonomicon:text",
-      "id": "text",
+      "id": "p0",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 0,
-      "title": "book.axiomatic.notebook.factory.couriers.name",
-      "text": "book.axiomatic.notebook.factory.couriers.text",
+      "title": "book.axiomatic.notebook.factory.couriers.p0.title",
+      "text": "book.axiomatic.notebook.factory.couriers.p0.text",
       "show_title_separator": true
     },
     {
-      "type": "modonomicon:crafting_recipe",
-      "id": "recipe_0",
+      "type": "modonomicon:text",
+      "id": "p1",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 1,
-      "recipe_id_1": "axiomatic:courier_station"
+      "title": "book.axiomatic.notebook.factory.couriers.p1.title",
+      "text": "book.axiomatic.notebook.factory.couriers.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "item": {
+        "id": "axiomatic:courier_station"
+      },
+      "title": "book.axiomatic.notebook.factory.couriers.p2.title",
+      "text": "book.axiomatic.notebook.factory.couriers.p2.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.factory.couriers.p3.title",
+      "text": "book.axiomatic.notebook.factory.couriers.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "recipe_id_1": "axiomatic:courier_station",
+      "text": "book.axiomatic.notebook.factory.couriers.p4.text"
     }
   ],
   "parents": [

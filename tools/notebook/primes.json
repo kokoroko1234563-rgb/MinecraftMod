@@ -1,0 +1,98 @@
+{
+  "chapter": "primes",
+  "entries": [
+    {
+      "id": "prime_numbers",
+      "title": "Prime Numbers",
+      "icon": "axiomatic:prime_core",
+      "gate": "circuit_board",
+      "description": "What Prime(n) means, and your first certified primes",
+      "pages": [
+        {"type": "text", "title": "Prime Numbers", "text": "A **prime** is a number of at least 2 that nothing divides except 1 and itself: 2, 3, 5, 7, 11, 13... Every world starts with **Prime** already defined, exactly like this:\n\n**Prime(n)** means 2 ≤ n ∧ ¬∃d. (2 ≤ d ∧ d < n ∧ d | n)\n\nRead it as: n is at least 2 *and* (∧) there is *not* (¬) any number d (∃d, \"there is a d\") with 2 ≤ d, d below n, and d dividing n. The pieces are starter definitions too:\n\n- a ≤ b means ∃k. a + k = b (you can add something to a to reach b)\n- d | n (d divides n) means ∃q. d × q = n\n- d < n is written S(d) ≤ n, where S(d) = d + 1\n\nThe name is fixed so nobody can define a fake \"Prime\" that is always true."},
+        {"type": "text", "title": "Certifying primes", "text": "**How to use the Test Bench for primes:** press **Property ▶** until the screen reads *Property: Prime*. Put a numeral in the slot *Numeral to certify, or statement to test*. The bench tries every possible divisor d and every quotient q (trial division) and pays 1 energy per computation step.\n\n**Example:** numeral 7 in, numeral 7 out with *Certified: Prime* on its tooltip, and the status *Prime(7) certified, ... steps*. Numeral 9 comes out unchanged: *No witness: Prime(9) not certified*.\n\nRemember the four certified primes: they are what the Prime Core recipe asks for."},
+        {"type": "text", "title": "Why it gets expensive", "text": "Numbers here are **unary**: 7 is S(S(S(S(S(S(S(0))))))), and the starter + and × work by counting one step at a time. To rule out every divisor of n, the bench multiplies many pairs of numbers below n, each product built by repeated addition. The cost grows very fast.\n\nPrime(997) needs more than two billion steps this way. One Test Bench search stops at 200 million steps, so it gives up with **Too big to search**. Coal gives 16,000 energy, so stick to small primes for now.\n\nTwo ways out come later: a cheaper decider you link yourself (see Testing and Risk), and the binary upgrade at the end of this chapter, after which Prime(997) costs under a million steps."},
+        {"type": "text", "title": "Prime Core", "text": "A **Prime Core** is the crafting part of the prime tier: 4 gold ingots, 1 redstone and 4 numerals certified Prime. Any certified primes work, even small ones such as 2, 3, 5 and 7.\n\nPrime Cores go into the [Prime Forge](entry://axiomatic:notebook/primes/prime_forge), the [Factorization Vault](entry://axiomatic:notebook/primes/factorization_vault), the [Infinite Prime Well](entry://axiomatic:notebook/primes/euclid) and finally the [Perfect Core](entry://axiomatic:notebook/primes/perfect_core). Crafting one earns *Prime Time*.\n\n**Watch out:** a prime certified only by a conjecture still crafts a core, but the core remembers it. If that conjecture is ever refuted, the core turns to paradox junk."},
+        {"type": "recipe", "recipes": ["prime_core"], "text": "The four numerals must be certified Prime (Test Bench, or a theorem card)."}
+      ]
+    },
+    {
+      "id": "prime_forge",
+      "title": "Prime Forge",
+      "icon": "axiomatic:prime_forge",
+      "gate": "prime_core",
+      "description": "Candidate in, next prime out, certified by a method card",
+      "pages": [
+        {"type": "text", "title": "Prime Forge", "text": "The **Prime Forge** turns any numeral into the **next prime at or above it**, already certified. Instead of checking numbers one by one on a Test Bench, you hand the forge a *method*: a statement that says how to recognise primes. A better method makes a cheaper forge.\n\nThe method card is a statement of the shape **H(n) → Prime(n)**: \"if the test H passes for n, then n is prime\" (→ means *implies*). It must have exactly one variable."},
+        {"type": "text", "title": "How to use", "text": "- **Candidate numeral**: the number to start from.\n- **Method card: H(n) → Prime(n)**: your method statement. It stays in its slot.\n- The output slot on the right receives the prime.\n\nThe forge tries n, n + 1, n + 2, ... and stops at the first one where H holds. That number comes out certified Prime, and the candidate is used up. It pays 1 energy per computation step (it holds up to 1,000,000), and a job takes longer the more it computed.\n\nThe card may be a proven theorem, a statement **Tested** on the Test Bench (then only candidates inside the tested range), or a conjecture (then every use is checked in the background)."},
+        {"type": "text", "title": "Example", "text": "Define your own trial-division decider isPrime(n) (1 for primes, 0 otherwise) and prove its two link theorems: isPrime(n) = 1 → Prime(n) and Prime(n) → isPrime(n) = 1. The first one is a perfect method card.\n\nPut it in the method slot and numeral 8 in the candidate slot. The forge tries 8, 9 and 10 (isPrime gives 0) and 11 (gives 1): out comes **numeral 11, certified Prime**, with the status *Forged 11 (... steps)*. Your first one earns *Forging Primes*.\n\nA **proven** method is completely safe: everything it certifies is proven."},
+        {"type": "text", "title": "Risky methods", "text": "A **conjectured** method is fast, until it is wrong. The famous trap is the Fermat test: \"if a^n leaves remainder a when divided by n, then n is prime\". It is quick and right for almost every number, but **561 = 3 × 11 × 17** (a Carmichael number) passes it.\n\nWith a conjectural card, every candidate the forge certifies is checked in the background against the real definition of Prime. The moment the forge reaches 561 the check fails: *Counterexample found! Conjecture ... is refuted*. The candidate is used up, nothing comes out, and every item certified with that conjecture turns to paradox junk.\n\nA cheaper example to try: \"odd numbers are prime\" works for 3, 5 and 7 and is caught at 9."},
+        {"type": "text", "title": "Watch out", "text": "- *The method card must read H(n) → P(n), with one variable*: the conclusion must be a property of the card's only variable.\n- *The card must be a proven statement with no open assumptions*: unproven cards are refused unless they are Tested.\n- *Inputs above the tested range*: a Tested card only works up to its bound.\n- *Conjecture ... is dormant: power its block*: a conjectural card works only while its conjecture block is placed and powered.\n- *No prime found in 10000 candidates*: the forge gives up after 10,000 numbers in one run.\n- *Too big to search*: one run stops at 400 million steps."},
+        {"type": "recipe", "recipes": ["prime_forge"], "text": "Five iron blocks, two gold ingots, a blast furnace and a Prime Core."}
+      ]
+    },
+    {
+      "id": "general_recursion",
+      "title": "General Recursion",
+      "icon": "axiomatic:drafting_chamber",
+      "gate": "prime_forged",
+      "description": "Functions that call themselves on any smaller input",
+      "pages": [
+        {"type": "text", "title": "General Recursion", "text": "Ordinary recursion in the Drafting Chamber goes one step down: f(..., S(y)) is defined from f(..., y). Some algorithms jump further. **Euclid's algorithm** for the greatest common divisor says:\n\ngcd(a, b) = a when b = 0, otherwise gcd(b, remainder of a ÷ b)\n\nThe call is on a *smaller* number, but not one step down. A function like this is only allowed if it **always finishes**. You prove that by giving a **measure**, a circuit that gets strictly smaller at every self-call, and a proof that it really does shrink. A definition is forever, so this proof must be complete: no assumptions, no conjectures."},
+        {"type": "text", "title": "Choosing a branch: ifz", "text": "A self-call must only happen in the cases where it is safe, so you need a way to branch. Define **ifz** by ordinary recursion in Define mode: Input 1 = Variable e (renamed \"ifz\" in an anvil), Input 2 = Variable t, Input 3 = Variable c. Inputs come in alphabetical order, so you get **ifz(e, t, c)**: e when c = 0, t otherwise.\n\nifz is a *selector*: each case just picks one of its inputs. The game notices this and computes only the branch it picks. It also knows that the t branch only runs when ¬(c = 0) (c is not 0), and uses that fact in the termination proof."},
+        {"type": "text", "title": "How to use", "text": "Press **Mode ▶** until the Drafting Chamber reads *General recursion*. To call the function inside its own body, pick ↺ with **Function ▶** in Assemble mode. The inputs of ↺ are the variables of body and measure, in alphabetical order.\n\n- Input 1: the **body**, a circuit using ↺, renamed in an anvil to the function's name.\n- Input 2: the **measure**, a circuit that must shrink.\n- Input 3: empty at first.\n\nWith Input 3 empty, the chamber hands you the **termination obligation**: an unproven statement saying the measure shrinks at every call, \"x < y\" written ∃k. x + S(k) = y. Prove it with your reasoning machines, put the proof in Input 3, and out come the definition's equations, proven (20 energy). This earns *Euclid Would Be Proud*."},
+        {"type": "text", "title": "Example", "text": "A countdown: f(n) = ifz(0, ↺(pred(n)), n), with measure n. Here pred(n) is n − 1, defined by recursion: pred(0) = 0, pred(S(y)) = y.\n\nThe chamber's obligation is:\n\n¬(n = 0) → ∃k. pred(n) + S(k) = n\n\nProve it by induction on n. For 0, ¬(0 = 0) contradicts 0 = 0, and from a contradiction anything follows (ex falso on the Modus Ponens Press). For S(n), choose k = 0: pred(S(n)) + S(0) = n + S(0) = S(n + 0) = S(n). Put the proof in Input 3 and f is defined; f(500) computes to 0.\n\nEuclid's gcd works the same way, with measure b and the obligation that the remainder of a ÷ b is less than b when b is not 0."},
+        {"type": "text", "title": "Watch out", "text": "- A body that never calls itself is refused: define it explicitly instead.\n- Nested calls such as ↺(↺(n)), and calls inside the measure, are refused outright.\n- A function that does not finish, like loop(n) = loop(S(n)), gets an obligation that is false (S(n) < n), so no proof exists.\n- *The termination proof must not rest on assumptions or conjectures*: no shortcuts with a conjecture here.\n- *Termination needs a proof of ...*: the proof must state exactly the obligation the chamber gave you (variable names may differ).\n- *Output full*: empty the outputs first, a definition can only be made once."}
+      ]
+    },
+    {
+      "id": "euclid",
+      "title": "Infinitely Many Primes",
+      "icon": "axiomatic:infinite_prime_well",
+      "gate": "prime_forged",
+      "description": "Euclid's proof that the primes never run out",
+      "pages": [
+        {"type": "text", "title": "Primes never run out", "text": "Your forge always finds the next prime... but is there always a next prime? Over two thousand years ago Euclid proved there is. In this game the statement reads:\n\n**∀n. ∃p. n ≤ p ∧ Prime(p)**\n\n\"For every number n (∀, *for all*), there is a p (∃, *there is*) with n ≤ p and p prime.\" However far you count, a prime lies ahead.\n\nThis is a long proof from Peano's axioms, a real milestone. Proving it, with nothing assumed and no conjectures, is what lets you build the Infinite Prime Well."},
+        {"type": "text", "title": "What it takes", "text": "One classic route, in stepping stones:\n\n- Define the factorial: 0! = 1, S(m)! = m! × S(m).\n- Prove every number from 1 to n divides n!.\n- Prove that if d divides both x and x + 1, then d = 1. So no d from 2 to n divides n! + 1.\n- Prove every number of at least 2 has a prime divisor: its smallest divisor of at least 2 is prime.\n- A prime divisor p of n! + 1 is then not between 2 and n, so n ≤ p.\n\nEach stone is a useful theorem of its own: name them in the Library as you go. The finished theorem must read exactly ∀n. ∃p. n ≤ p ∧ Prime(p) (other variable names are fine), using the starter ≤ and Prime, with no open assumptions."},
+        {"type": "text", "title": "Infinite Prime Well", "text": "The **Infinite Prime Well** emits the primes in order, 2, 3, 5, 7, 11..., forever, each one **certified Prime by computation**, never by a conjecture. Your proof is what guarantees each search ends.\n\n**How to use:** place it and give it energy. It has two output slots and keeps working while at least one has room: pull primes out with a hopper or by hand. The screen shows *Last prime: ...*, and each find reports *Forged ... (... steps)*. It uses your linked Prime decider if you have one, otherwise trial division, paying 1 energy per step (it holds up to 1,000,000).\n\n**Watch out:** *Cannot decide the next prime (out of energy or computation)*: one search stops at 400 million steps, which unary trial division reaches quickly. Link a faster decider, or prove binary."},
+        {"type": "recipe", "recipes": ["infinite_prime_well"], "text": "The scroll is a proven statement: ∀n. ∃p. n ≤ p ∧ Prime(p), that primes never run out. Copy it in a Duplicator first if you want to keep it."}
+      ]
+    },
+    {
+      "id": "factorization_vault",
+      "title": "Factorization Vault",
+      "icon": "axiomatic:factorization_vault",
+      "gate": "prime_forged",
+      "description": "Many kinds of item stored as one number",
+      "pages": [
+        {"type": "text", "title": "Factorization Vault", "text": "Every number of at least 2 is a product of primes in exactly one way: 864 = 2 × 2 × 2 × 2 × 2 × 3 × 3 × 3 = 2⁵ × 3³. The **Factorization Vault** turns this into storage. The first kind of item you put in gets the first prime, 2; the second kind gets 3; then 5, 7, 11 and so on. How many you store is that prime's **exponent**. The whole vault is just one number.\n\nIt needs no energy."},
+        {"type": "text", "title": "How to use", "text": "- **Items to store**: drop any items here; they vanish into the number at once.\n- The six output slots on the right offer up to a stack of each of the **first six kinds that still have items**. Take from them as from a chest and the number shrinks.\n\nThe screen shows the number as primes, such as 2^5 × 3^3 (the first four kinds, then × ...), and the status *Stored as one number of ... digits*. An empty vault reads *Empty: the number 1*.\n\n**Example:** put in 5 coal, then 3 iron ingots: the vault is 2⁵ × 3³ = **864** (3 digits). Take 2 coal from the first output: it becomes 2³ × 3³ = **216**."},
+        {"type": "text", "title": "Watch out", "text": "- Items count as the same kind only if they match exactly: a renamed or enchanted item, or a numeral with a different value or certificate, is a new kind.\n- A kind keeps its prime while anything stored after it remains, even if it runs out; only kinds at the end of the list are removed when empty.\n- Only the first six kinds with items left can be taken out. To reach a seventh kind, empty one of the first six.\n- **Breaking the vault keeps everything**: the vault item carries its number, like a shulker box. Place it again and your items are back."},
+        {"type": "recipe", "recipes": ["factorization_vault"], "text": "Four iron blocks, four chests and a Prime Core."}
+      ]
+    },
+    {
+      "id": "binary",
+      "title": "Binary",
+      "icon": "axiomatic:duplicator",
+      "gate": "structure",
+      "description": "Prove numbers have binary digits and pay per digit",
+      "pages": [
+        {"type": "text", "title": "Binary", "text": "Unary numbers cost as much as they are big: copying 1,000,000 costs a million energy. Writing numbers in **binary** (base 2) needs only about 20 digits for a million. You unlock this by **proving** that every number splits into a half and a last bit:\n\n**n = (h(n) + h(n)) + p(n) ∧ p(n) ≤ 1**\n\nHere h(n) is \"half of n, rounded down\" and p(n) is the last bit (0 for even, 1 for odd). Any functions you define work, as long as the theorem has exactly this shape, uses the starter + and ≤, and is **named in the Library** (Drafting Chamber, Name theorem mode), fully proven, with no conjectures."},
+        {"type": "text", "title": "The route", "text": "Three definitions by recursion (Define mode):\n\n- **flip**: flip(0) = 1, flip(S(x)) = 0\n- **par** (the bit): par(0) = 0, par(S(n)) = flip(par(n)). *Par flips.*\n- **half**: half(0) = 0, half(S(n)) = half(n) + par(n). *Half adds par.*\n\nThen the lemmas, each by induction on n:\n\n1. flip(flip(par(n))) = par(n)\n2. par(n) + flip(par(n)) = 1 (uses lemma 1 and a + b = b + a)\n3. n = (half(n) + half(n)) + par(n) (uses lemma 2, and the commutative and associative laws of +)\n\nFinally par(n) ≤ 1, with witness k := flip(par(n)) from lemma 2, and join it to lemma 3 with ∧ on the Conjunction Press."},
+        {"type": "text", "title": "What changes", "text": "Once the theorem is named, numbers go binary everywhere:\n\n- **+ and ×** are computed directly: + costs about the number of digits, × the product of the two digit counts. 3000 × 3000 drops from over a million steps to under a thousand.\n- **Divisor searches are solved directly**: instead of trying every d and q, the game solves d × q = n by division. Prime(997) falls from over two billion steps to under a million; Prime(1,000,003) and Even(10³⁰) become cheap.\n- **The Duplicator** pays per binary digit plus one, not the value plus one.\n\n**Watch out:** a conjectured version does not count (but if you later prove that conjecture, it starts counting). Proving just the first half of the ∧, or a bound other than 1, does not count either."}
+      ]
+    },
+    {
+      "id": "perfect_core",
+      "title": "Perfect Numbers",
+      "icon": "axiomatic:perfect_core",
+      "gate": "prime_well",
+      "description": "Mersenne primes, perfect numbers and the final craft",
+      "pages": [
+        {"type": "text", "title": "Perfect Numbers", "text": "A **perfect number** equals the sum of its divisors below itself: 6 = 1 + 2 + 3, and 28 = 1 + 2 + 4 + 7 + 14. They are rare: 6, 28, 496, 8128...\n\nEuclid found where they come from, and Euler proved that every even one comes this way (the **Euclid–Euler theorem**): whenever 2^p − 1 is prime, the number\n\n**2^(p−1) × (2^p − 1)**\n\nis perfect. For p = 5: 2^5 − 1 = 31 is prime, so 16 × 31 = 496 is perfect.\n\nPrimes of the form 2^p − 1 are **Mersenne primes**: 3, 7, 31, 127, 8191... Every world has the property **Mersenne** built in: Mersenne(n) means ∃p. n + 1 = 2^p."},
+        {"type": "text", "title": "Perfect Core", "text": "The **Perfect Core** is the top crafting tier and the final challenge of the prime path. Its recipe needs a numeral certified **both Prime and Mersenne**, plus a netherite ingot and seven Prime Cores.\n\n**How to get the numeral:** on the Test Bench, press **Property ▶** to *Mersenne* and put in, say, 31: it comes out certified Mersenne, since 31 + 1 = 2^5. Certify it Prime too (Test Bench, Prime Forge or Infinite Prime Well). Hover it to see both certificates.\n\n**Watch out:** this recipe takes **no conjectures**. A prime certified by a conjectural card, or by a decider resting on one, is refused. Proof or honest computation only.\n\nCrafting it earns *Perfect*. After that, chase bigger Mersenne primes: how large can you prove one?"},
+        {"type": "recipe", "recipes": ["perfect_core"], "text": "The numeral must be certified both Prime and Mersenne, by proof or computation: no conjectures."}
+      ]
+    }
+  ]
+}

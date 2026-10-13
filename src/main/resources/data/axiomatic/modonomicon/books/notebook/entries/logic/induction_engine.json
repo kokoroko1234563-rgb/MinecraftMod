@@ -1,0 +1,76 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:logic/induction_engine",
+  "category": "axiomatic:logic",
+  "name": "book.axiomatic.notebook.logic.induction_engine.name",
+  "description": "book.axiomatic.notebook.logic.induction_engine.description",
+  "icon": {
+    "id": "axiomatic:induction_engine"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 2,
+  "y": 2,
+  "sort_number": 6,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/proven"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "item": {
+        "id": "axiomatic:induction_engine"
+      },
+      "title": "book.axiomatic.notebook.logic.induction_engine.p0.title",
+      "text": "book.axiomatic.notebook.logic.induction_engine.p0.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.logic.induction_engine.p1.title",
+      "text": "book.axiomatic.notebook.logic.induction_engine.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.logic.induction_engine.p2.title",
+      "text": "book.axiomatic.notebook.logic.induction_engine.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "recipe_id_1": "axiomatic:induction_engine"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:logic/presses"
+    }
+  ]
+}

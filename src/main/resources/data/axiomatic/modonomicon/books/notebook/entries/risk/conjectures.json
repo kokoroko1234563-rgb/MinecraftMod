@@ -25,23 +25,83 @@
   "pages": [
     {
       "type": "modonomicon:text",
-      "id": "text",
+      "id": "p0",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 0,
-      "title": "book.axiomatic.notebook.risk.conjectures.name",
-      "text": "book.axiomatic.notebook.risk.conjectures.text",
+      "title": "book.axiomatic.notebook.risk.conjectures.p0.title",
+      "text": "book.axiomatic.notebook.risk.conjectures.p0.text",
       "show_title_separator": true
     },
     {
-      "type": "modonomicon:crafting_recipe",
-      "id": "recipe_0",
+      "type": "modonomicon:spotlight",
+      "id": "p1",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 1,
-      "recipe_id_1": "axiomatic:conjecture_bench"
+      "item": {
+        "id": "axiomatic:conjecture_bench"
+      },
+      "title": "book.axiomatic.notebook.risk.conjectures.p1.title",
+      "text": "book.axiomatic.notebook.risk.conjectures.p1.text"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "item": {
+        "id": "axiomatic:conjecture_block"
+      },
+      "title": "book.axiomatic.notebook.risk.conjectures.p2.title",
+      "text": "book.axiomatic.notebook.risk.conjectures.p2.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.risk.conjectures.p3.title",
+      "text": "book.axiomatic.notebook.risk.conjectures.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "title": "book.axiomatic.notebook.risk.conjectures.p4.title",
+      "text": "book.axiomatic.notebook.risk.conjectures.p4.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p5",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 5,
+      "title": "book.axiomatic.notebook.risk.conjectures.p5.title",
+      "text": "book.axiomatic.notebook.risk.conjectures.p5.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p6",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 6,
+      "recipe_id_1": "axiomatic:conjecture_bench",
+      "text": "book.axiomatic.notebook.risk.conjectures.p6.text"
     }
   ],
   "parents": [

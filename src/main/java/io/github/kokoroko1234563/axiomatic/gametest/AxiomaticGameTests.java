@@ -248,7 +248,7 @@ public final class AxiomaticGameTests {
         var loaded = com.klikli_dev.modonomicon.data.BookDataManager.get()
                 .getBook(io.github.kokoroko1234563.axiomatic.book.Notebook.BOOK);
         h.assertTrue(loaded != null, "the Notebook's book data loaded");
-        h.assertValueEqual(loaded.getCategories().size(), 6, "six chapters");
+        h.assertValueEqual(loaded.getCategories().size(), 7, "seven chapters");
         h.succeed();
     }
 

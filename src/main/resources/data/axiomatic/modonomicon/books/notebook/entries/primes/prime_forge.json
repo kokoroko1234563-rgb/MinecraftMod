@@ -25,28 +25,73 @@
   "pages": [
     {
       "type": "modonomicon:text",
-      "id": "text",
+      "id": "p0",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 0,
-      "title": "book.axiomatic.notebook.primes.prime_forge.name",
-      "text": "book.axiomatic.notebook.primes.prime_forge.text",
+      "title": "book.axiomatic.notebook.primes.prime_forge.p0.title",
+      "text": "book.axiomatic.notebook.primes.prime_forge.p0.text",
       "show_title_separator": true
     },
     {
-      "type": "modonomicon:crafting_recipe",
-      "id": "recipe_0",
+      "type": "modonomicon:text",
+      "id": "p1",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 1,
-      "recipe_id_1": "axiomatic:prime_forge"
+      "title": "book.axiomatic.notebook.primes.prime_forge.p1.title",
+      "text": "book.axiomatic.notebook.primes.prime_forge.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.primes.prime_forge.p2.title",
+      "text": "book.axiomatic.notebook.primes.prime_forge.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.primes.prime_forge.p3.title",
+      "text": "book.axiomatic.notebook.primes.prime_forge.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "title": "book.axiomatic.notebook.primes.prime_forge.p4.title",
+      "text": "book.axiomatic.notebook.primes.prime_forge.p4.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p5",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 5,
+      "recipe_id_1": "axiomatic:prime_forge",
+      "text": "book.axiomatic.notebook.primes.prime_forge.p5.text"
     }
   ],
   "parents": [
     {
-      "entry": "axiomatic:primes/prime_cores"
+      "entry": "axiomatic:primes/prime_numbers"
     }
   ]
 }

@@ -1,0 +1,64 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:primes/perfect_core",
+  "category": "axiomatic:primes",
+  "name": "book.axiomatic.notebook.primes.perfect_core.name",
+  "description": "book.axiomatic.notebook.primes.perfect_core.description",
+  "icon": {
+    "id": "axiomatic:perfect_core"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 2,
+  "y": 2,
+  "sort_number": 6,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/prime_well"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.primes.perfect_core.p0.title",
+      "text": "book.axiomatic.notebook.primes.perfect_core.p0.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.primes.perfect_core.p1.title",
+      "text": "book.axiomatic.notebook.primes.perfect_core.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "recipe_id_1": "axiomatic:perfect_core",
+      "text": "book.axiomatic.notebook.primes.perfect_core.p2.text"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:primes/binary"
+    }
+  ]
+}

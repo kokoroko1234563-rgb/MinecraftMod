@@ -1,0 +1,145 @@
+{
+  "chapter": "logic",
+  "entries": [
+    {
+      "id": "how_proofs_work",
+      "title": "How Proofs Work",
+      "icon": "axiomatic:statement",
+      "gate": null,
+      "description": "Statements, theorems, stamps: what a proof is here",
+      "pages": [
+        {"type": "text", "title": "What Is a Proof?", "text": "Most of this mod builds *numbers*. This chapter builds *truths*.\n\nA **statement** is a claim, such as 0 + n = n, carried as an item. Hover it: a plain claim says **Unproven**. A statement that comes out of a proof machine is a **Theorem** and says **Proven (N steps)**.\n\nEvery machine in this chapter makes one small logical move, a **rule**. Before anything comes out, the mod's proof checker verifies that the move is legal. There is no way around it: if an item says Proven, the statement really follows from Peano's axioms and your definitions. A proof is simply a chain of machine runs, and you get to build it."},
+        {"type": "text", "title": "Reading Statements", "text": "A letter such as n or a means *any number*: a proven a + 0 = a holds for every a (it may be shown as ∀a. a + 0 = a, where ∀ means *for all*). Other symbols:\n\n- **S(n)** is the successor, n + 1\n- **→** means *implies*: P → Q is *if P, then Q*\n- **∧** means *and*, **¬** means *not*\n- **∃k.** means *there is a k such that*\n- **⊥** is *contradiction*, the impossible statement; ¬P is short for P → ⊥\n\nCircuits (expressions like 0 + n), Variables and small numerals (up to 64) are the *tools* you feed into machines; statements are what gets transformed."},
+        {"type": "text", "title": "Hypotheses and Stamps", "text": "Many proofs start with *suppose...*. The [](item://axiomatic:assumption_chamber) lets you suppose a statement H and gives you a **Stamped Statement**: H, proven, but only under that assumption. Its tooltip says *Assuming H (stamp #)*.\n\nEverything you make from it carries the stamp along, so the checker always knows what a result still depends on. When you are done, the result goes back into the chamber and the stamp becomes an honest *H → result*.\n\nWhile H is assumed, its letters are **locked**: they stand for one particular number, so machines will not replace them."},
+        {"type": "text", "title": "What a Proof Rests On", "text": "Every theorem remembers what it **rests on**: the axioms and definitions it used, and any **conjectures** (unproven guesses you chose to bet on, see the Testing and Risk chapter). A result built on a conjecture says **Proven from conjectures** instead, and falls if that conjecture is ever refuted.\n\n**Energy:** each machine run costs 1 energy unit, so proofs are cheap (one coal gives 16,000). The step count on a theorem's tooltip adds up every rule used to make it; it matters when you name the theorem.\n\nThe statement being transformed is used up; tools such as equations, Variables and circuits mostly stay in their slots."}
+      ]
+    },
+    {
+      "id": "axioms",
+      "title": "Peano's Axioms",
+      "icon": "axiomatic:axiom_tablet_succ_not_zero",
+      "gate": null,
+      "description": "The few rules all of arithmetic grows from, and Axiom Tablets",
+      "pages": [
+        {"type": "text", "title": "Peano's Axioms", "text": "All arithmetic here grows from a few rules written down by Giuseppe Peano. In plain words:\n\n- **0** is a number.\n- Every number n has a next one, its **successor** S(n) = n + 1.\n- **S(n) ≠ 0**: 0 is not the next number after anything (axiom 3).\n- **S(a) = S(b) → a = b**: different numbers have different successors (axiom 4).\n- **Induction**: if something holds for 0, and whenever it holds for n it also holds for S(n), then it holds for every number (axiom 5).\n\nThe first two are machines you know: the Zero Source and the Successor. Induction is the [Induction Engine](entry://axiomatic:notebook/logic/induction_engine)."},
+        {"type": "spotlight", "item": "axiomatic:axiom_tablet_succ_injective", "title": "Axiom Tablets", "text": "Axioms 3 and 4 come on tablets. Hover one: *Axiom 3: ∀x. ¬(S(x) = 0)* or *Axiom 4: ∀x y. S(x) = S(y) → x = y*."},
+        {"type": "text", "title": "Using a Tablet", "text": "**How to use:** set the [](item://axiomatic:drafting_chamber) to Tablet mode: press **Mode ▶** until the label reads *Axiom tablet* (from Assemble that is four presses: Define, General recursion, Name theorem, Axiom tablet). Put the tablet in Input 1. Out comes its axiom as a proven statement, for 1 energy. The tablet stays, and gives another copy whenever the output slot is empty.\n\n**Example:** the S(x) ≠ 0 tablet gives the theorem ¬(S(x) = 0), that is S(x) = 0 → ⊥. If some proof ever reaches S(x) = 0, the [Modus Ponens Press](entry://axiomatic:notebook/logic/presses) turns it into ⊥: a contradiction.\n\n**Watch out:** in Tablet mode anything else in Input 1 gives *Needs an Axiom Tablet*. Early theorems like 0 + n = n need no tablets, only definitions and induction."},
+        {"type": "recipe", "recipes": ["axiom_tablet_succ_not_zero", "axiom_tablet_succ_injective"]}
+      ]
+    },
+    {
+      "id": "instantiator",
+      "title": "Instantiator",
+      "icon": "axiomatic:instantiator",
+      "gate": "proven",
+      "description": "Put something specific in place of a variable",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:instantiator", "title": "Instantiator", "text": "A proven statement about a letter is true for *every* number. The Instantiator cashes that in: it puts something specific in place of one variable, everywhere it occurs. From a + 0 = a you get 0 + 0 = 0, or 5 + 0 = 5, or (b + c) + 0 = b + c."},
+        {"type": "text", "title": "How to Use", "text": "- **Proven statement**: the statement to specialise (used up).\n- **Variable**: which letter to replace. A Variable item; right-click it in the air to change its letter.\n- **Circuit**: what to put in: a circuit, another Variable, or a numeral up to 64.\n\nOne run costs 1 energy. The Variable and the Circuit stay in their slots, ready for the next statement.\n\nTo replace two letters, run it twice."},
+        {"type": "text", "title": "Example", "text": "First get addition's defining equations: Drafting Chamber in *Define* mode, the **unnamed** circuit a + b in Input 1. Out come two theorems: **a + 0 = a** and **a + S(b) = S(a + b)**.\n\nNow put a + 0 = a in the Instantiator, a Variable set to **a**, and the numeral **0**. Out comes the proven **0 + 0 = 0**: the base case of the [0 + n = n walkthrough](entry://axiomatic:notebook/logic/zero_add).\n\nTwo letters: a + S(b) = S(a + b) with a := 0 gives 0 + S(b) = S(0 + b); then b := n (a Variable n in the Circuit slot) gives 0 + S(n) = S(0 + n)."},
+        {"type": "text", "title": "Watch Out", "text": "- *Variable a is locked by an open assumption and cannot be instantiated*: that letter occurs in a stamp the statement carries. Discharge the assumption first.\n- *Slot 1 needs a proven statement*: an unproven claim cannot be specialised.\n- *Slot 2 needs a Variable*: the middle slot takes only a Variable item.\n- *Slot 3 needs a circuit, variable or small numeral*: numerals above 64 are too big to be circuits.\n- Replacing a letter that does not occur is allowed and changes nothing, so check the result's tooltip."},
+        {"type": "recipe", "recipes": ["instantiator"], "text": "Needs a Circuit Board: four certified evens, copper and redstone (see Getting Started)."}
+      ]
+    },
+    {
+      "id": "rewriter",
+      "title": "Rewriter",
+      "icon": "axiomatic:rewriter",
+      "gate": "proven",
+      "description": "Swap equals for equals",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:rewriter", "title": "Rewriter", "text": "If two things are proven equal, you may swap one for the other anywhere. Given a proven statement and a proven equation s = t, the Rewriter replaces s with t in the statement. It is the workhorse of calculation."},
+        {"type": "text", "title": "How to Use", "text": "- **Proven statement**: the statement to change (used up).\n- **Proven equation (or ≡)**: the equation to rewrite with (it stays).\n- **Direction**: *Left → right* replaces the equation's left side by its right side; *Right → left* the reverse.\n- **Occurrence**: rewrite *all* matches, or only one: #1, #2, up to #8, then back to all.\n\nThe label shows the setting, for example *Left → right, all* or *Right → left, #2*. 1 energy per run."},
+        {"type": "text", "title": "Patterns", "text": "The letters of the equation are **pattern variables**: they match *anything*. The proven a + b = b + a turns 2 + 7 into 7 + 2, or (j + k) + k into k + (j + k).\n\nMatches are numbered in **reading order**: left to right, and a whole expression before the pieces inside it. In (j + j) + (k + k) the pattern a + b matches the whole sum (#1), then j + j (#2), then k + k (#3).\n\n**Locked letters** are the exception: a letter that occurs in one of the equation's own stamps stands for one particular number, so it only matches itself. The stamped hypothesis 0 + n = n rewrites exactly 0 + n, never 0 + 5."},
+        {"type": "text", "title": "Example", "text": "In the [0 + n = n walkthrough](entry://axiomatic:notebook/logic/zero_add): statement 0 + S(n) = S(0 + n), equation the stamped hypothesis 0 + n = n, *Left → right, all*. Out comes **0 + S(n) = S(n)**, carrying the stamp.\n\n**Turning an equation around:** make a + 0 = a + 0 on the Equation Bench (the same circuit twice gives it proven), then rewrite it with a + 0 = a at #1: you get **a = a + 0**.\n\n**Equivalences:** the Rewriter also takes a proven s ≡ t for a relation certified as an Equivalence in the Library (like *same remainder mod 5*). It rewrites inside u ≡ v or u = v, giving u' ≡ v'; each function around the match needs a named congruence law. See [Equivalences](entry://axiomatic:notebook/structures/equivalences)."},
+        {"type": "text", "title": "Watch Out", "text": "- *Nothing matches ... in ...*: the side you rewrite from does not occur. Check the Direction.\n- *Only 2 matches of ...*: Occurrence is set higher than the number of matches.\n- *The Rewriter needs a proven equation*: the second slot is not an equation.\n- *... is not a certified equivalence (certify it in the Structure Bench)*: a relation used as ≡ without its certificate.\n- *all* with a pattern rewrites every match, often more than you meant. When in doubt pick one occurrence and read the result's tooltip."},
+        {"type": "recipe", "recipes": ["rewriter"]}
+      ]
+    },
+    {
+      "id": "assumption_chamber",
+      "title": "Assumption Chamber",
+      "icon": "axiomatic:assumption_chamber",
+      "gate": "proven",
+      "description": "Suppose H, prove Q, get H → Q",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:assumption_chamber", "title": "Assumption Chamber", "text": "Real proofs say *suppose H; then ... so Q*. This is where you suppose. The chamber holds H and gives you a stamped H. Reach Q from it, give Q back, and out comes **H → Q** with the stamp gone."},
+        {"type": "text", "title": "How to Use", "text": "Slots: **Statement to assume**, **Conclusion to discharge**, **Variable to open an ∃ as (optional)**, two outputs. Buttons: **Release** and **Copy**. The label reads *Nothing assumed* or *Assuming H*.\n\n1. Put a statement H (unproven is fine, from the Equation or Property Bench) in **Statement to assume**. It is used up, the chamber holds H, and out comes the **Stamped Statement** H. Its letters are now locked.\n2. Use the stamped item in other machines.\n3. Put the result Q, still stamped, in **Conclusion to discharge**. Out comes **H → Q**.\n\nIf Q is **⊥**, you get **¬H**: H is impossible. Q need not even use H.\n\n**Copy** gives another stamped H. **Release** empties the chamber."},
+        {"type": "text", "title": "Opening an ∃", "text": "A proven *there is a k with...* (∃k. ...) works differently: you cannot point at k, so you give it a name. Put a Variable, say **j**, in **Variable to open an ∃ as**, then the proven ∃k. a = k + k in **Statement to assume**. Out comes the stamped **a = j + j**: j is now a letter you can build circuits with. (With the slot empty you get an untypeable name like k#7.)\n\nOnce you reach a conclusion that no longer mentions j, put it in **Conclusion to discharge**: out comes that conclusion itself, not an implication, because the ∃ was proven. Stamps the ∃ carried come along."},
+        {"type": "text", "title": "Working Memory", "text": "A chamber holds **one** assumption at a time, so chambers are your working memory: a proof that supposes four things at once (like [even + even](entry://axiomatic:notebook/logic/even_add)) needs four chambers. Close them in reverse order, last opened first.\n\nTo save chambers, prove helper facts (*lemmas*) first, outright, then use them as plain theorems. A finished lemma takes no chamber.\n\n**Watch out:**\n- *Already assuming something: Release first*: discharging does not empty the chamber.\n- *Nothing is assumed yet*: a conclusion arrived before any assumption.\n- Release forgets H for good: its stamped items can no longer be discharged. Finish first.\n- *The conclusion still mentions j, which only exists inside the chamber*: get rid of j before closing."},
+        {"type": "recipe", "recipes": ["assumption_chamber"]}
+      ]
+    },
+    {
+      "id": "presses",
+      "title": "The Presses",
+      "icon": "axiomatic:modus_ponens_press",
+      "gate": "proven",
+      "description": "Conjunction Press (∧) and Modus Ponens Press (→)",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:conjunction_press", "title": "Conjunction Press", "text": "**∧** means *and*. The Conjunction Press packs two theorems into one, or unpacks one into two."},
+        {"type": "text", "title": "Conjunction Press: How to Use", "text": "- **Left** and **Right** both filled with proven P and Q: out comes **P ∧ Q** (both used up).\n- Only **Left** filled, with a proven P ∧ Q: out come **P** and **Q** separately.\n\nStamps from the inputs carry over. 1 energy per run.\n\n**Example:** 0 + 0 = 0 and a + 0 = a give 0 + 0 = 0 ∧ a + 0 = a. Put that back alone in Left and you get the two halves again.\n\n**Watch out:** *Needs a statement P ∧ Q to split*: only Left is filled and it holds no ∧. *Slot 1 needs a proven statement*: claims cannot be pressed."},
+        {"type": "spotlight", "item": "axiomatic:modus_ponens_press", "title": "Modus Ponens Press", "text": "The oldest rule in logic: if P → Q is true and P is true, then Q is true."},
+        {"type": "text", "title": "Modus Ponens: How to Use", "text": "- **P → Q**: a proven implication. It stays in the slot, so you can use it again.\n- **P**: a proven statement exactly equal to the implication's left side (used up).\n\nOut comes **Q**, with the stamps of both. 1 energy.\n\n**Example:** Even's definition gives Even(n) → ∃k. n = k + k. Instantiate n := a, then press it with the stamped hypothesis Even(a): out comes the stamped **∃k. a = k + k**. That is how [even + even](entry://axiomatic:notebook/logic/even_add) unpacks what *even* means.\n\n**Watch out:** *The premise ... does not match ...*: instantiate first so the letters agree. *Expected a statement of the form P → Q*: the first slot holds no implication."},
+        {"type": "text", "title": "Ex Falso", "text": "**From a contradiction, anything follows.** If the **P → Q** slot holds a proven **⊥**, then whatever statement sits in **P**, proven or not, comes out proven, carrying ⊥'s stamps.\n\nUsually that ⊥ is stamped: you assumed something impossible (say S(n) = 0, which axiom 3 turns into ⊥), and this is how you finish that branch of the proof.\n\nLogic here is *constructive*: there is no rule *either P or not P*. You prove things by building them."},
+        {"type": "recipe", "recipes": ["conjunction_press", "modus_ponens_press"]}
+      ]
+    },
+    {
+      "id": "induction_engine",
+      "title": "Induction Engine",
+      "icon": "axiomatic:induction_engine",
+      "gate": "proven",
+      "description": "Prove a statement for every number at once",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:induction_engine", "title": "Induction Engine", "text": "How can you prove something for *every* number when there are infinitely many? Picture an endless row of dominoes. If the first falls, and every domino knocks over the next, they all fall. This machine is Peano's fifth axiom."},
+        {"type": "text", "title": "How to Use", "text": "- **Base case P(0)**: the statement with 0 in place of n, proven. The first domino falls.\n- **Step P(n) → P(S(n))**: if it holds for n, it holds for n + 1. Each domino knocks over the next. Usually made in an [Assumption Chamber](entry://axiomatic:notebook/logic/assumption_chamber): assume P(n), work your way to P(S(n)), discharge.\n- **Variable**: a Variable set to the letter you induct on, usually n (it stays).\n\nOut comes **P(n)** for all n; base and step are used up. 1 energy. Your first one earns *Domino Effect*.\n\n**Example:** base 0 + 0 = 0, step 0 + n = n → 0 + S(n) = S(n), Variable n: out comes **∀n. 0 + n = n**."},
+        {"type": "text", "title": "Watch Out", "text": "The checker reads P off the left side of the step, then checks the rest exactly:\n\n- *The base case should be ..., got ...*: the base is not P with 0 put in for n. Wrong Variable? Using a instead of n fails here too.\n- *The step should conclude ..., got ...*: the right side is not P with S(n) put in for n.\n- *The step must have the form P(n) → P(S(n))*: the step is not an implication. Did you forget to discharge?\n- *Variable n is locked by an open assumption*: base or step still carries a stamp that mentions n."},
+        {"type": "recipe", "recipes": ["induction_engine"]}
+      ]
+    },
+    {
+      "id": "zero_add",
+      "title": "Walkthrough: 0 + n = n",
+      "icon": "axiomatic:statement",
+      "gate": "proven",
+      "description": "Your first proof by induction, machine by machine",
+      "pages": [
+        {"type": "text", "title": "Why Bother?", "text": "Addition is defined by two equations: **a + 0 = a** and **a + S(b) = S(a + b)**. They say nothing about 0 + n! That n + 0 = n is a definition; that 0 + n = n is a theorem, and it needs induction. It is the classic first proof, and the finished theorem crafts the Statement Conveyor.\n\n**You need**, all powered: Drafting Chamber, Equation Bench, Instantiator, Assumption Chamber, Rewriter, Induction Engine. Also Variables a, b and n, numerals 0, and the circuits a + b and 0 + n (Drafting Chamber, Assemble mode: **Function ▶** to add, inputs Variables or the numeral)."},
+        {"type": "text", "title": "Steps 0 and 1", "text": "**Step 0, the definition:** set the Drafting Chamber to *Define* (one press of **Mode ▶**) and put the **unnamed** circuit a + b in Input 1. Since add already exists, it hands you its two defining theorems: **a + 0 = a** and **a + S(b) = S(a + b)**. The circuit stays.\n\n**Step 1, the base case:** Instantiator: a + 0 = a, Variable **a**, numeral **0**. Out comes **0 + 0 = 0**. Put it aside for the end."},
+        {"type": "text", "title": "Steps 2 and 3", "text": "**Step 2, the claim:** Equation Bench: circuit 0 + n in **Left**, Variable n in **Right**. Out comes the unproven **0 + n = n**. Put it in the Assumption Chamber's **Statement to assume**: out comes the stamped **0 + n = n**. You are now *supposing* it holds for n.\n\n**Step 3, the next case:** Instantiator: a + S(b) = S(a + b), Variable **a**, numeral **0**. Out comes 0 + S(b) = S(0 + b). Run that again with Variable **b** and a Variable **n** in the Circuit slot: **0 + S(n) = S(0 + n)**."},
+        {"type": "text", "title": "Steps 4 to 6", "text": "**Step 4, use the hypothesis:** Rewriter on *Left → right, all*: statement 0 + S(n) = S(0 + n), equation the stamped 0 + n = n. Out comes **0 + S(n) = S(n)**, stamped.\n\n**Step 5, discharge:** put it in the chamber's **Conclusion to discharge**. Out comes **0 + n = n → 0 + S(n) = S(n)**, with no stamp: each domino knocks over the next.\n\n**Step 6, induction:** Induction Engine: base 0 + 0 = 0, the step, Variable n. Out comes **∀n. 0 + n = n**. Hear the chime: *Domino Effect*. Press **Release** on the chamber to free it."},
+        {"type": "text", "title": "Name It", "text": "A proof in your pocket is one item; a **named** theorem belongs to your world. Rename the theorem **zero_add** in an anvil. Set the Drafting Chamber to *Name theorem* (from Define, two more presses of **Mode ▶**: General recursion, then Name theorem) and put it in Input 1. It enters the [Library](entry://axiomatic:notebook/logic/library) and comes back out wearing its name. Naming costs the proof's step count in energy, and earns *A Library of One*.\n\nKeep the theorem: it crafts the Statement Conveyor, and bigger proofs such as a + b = b + a build on it."}
+      ]
+    },
+    {
+      "id": "even_add",
+      "title": "Walkthrough: Even + Even",
+      "icon": "axiomatic:witness_bench",
+      "gate": "induction",
+      "description": "Four chambers, two opened ∃: even + even = even",
+      "pages": [
+        {"type": "text", "title": "The Goal", "text": "Prove that the sum of two evens is even:\n\n**Even(a) → Even(b) → Even(a + b)**\n\nRead it as: if a is even, then if b is even, a + b is even. Even is a starter definition: Even(n) means ∃k. n = k + k, *n is some number plus itself*.\n\nThis uses the whole chapter: **four** Assumption Chambers (two assumptions, two opened ∃), Property Bench, Drafting Chamber, Instantiator, Modus Ponens Press, Equation Bench, Rewriter, Witness Bench. You also need two lemmas proven first by induction, like [zero_add](entry://axiomatic:notebook/logic/zero_add): associativity **(a + b) + c = a + (b + c)** and commutativity **a + b = b + a**."},
+        {"type": "text", "title": "1. Claims and Assumptions", "text": "Property Bench (property Even): the circuits a, b and a + b give the unproven **Even(a)**, **Even(b)** and **Even(a + b)**. Keep Even(a + b), the goal, for the end.\n\nAssume Even(a) in chamber A and Even(b) in chamber B: out come the stamped Even(a) and Even(b).\n\nDrafting Chamber in *Define* mode with an **unnamed** Even(a) in Input 1: out come Even's two defining theorems. Keep **Even(n) → ∃k. n = k + k**."},
+        {"type": "text", "title": "2. Unpack and Open", "text": "Instantiator: Even(n) → ∃k. n = k + k, Variable **n**, a Variable **a** in the Circuit slot: Even(a) → ∃k. a = k + k. Modus Ponens Press with the stamped Even(a) as **P**: the stamped **∃k. a = k + k**. Same for b.\n\nNow open them. Chamber C: Variable **j** in **Variable to open an ∃ as**, then ∃k. a = k + k in **Statement to assume**: out comes the stamped **a = j + j**. Chamber D: Variable **k**, then ∃k. b = k + k: **b = k + k**. Now j and k are letters you can calculate with."},
+        {"type": "text", "title": "3. Calculate", "text": "Equation Bench with the circuit a + b in both slots: proven **a + b = a + b**. Rewrite it six times (matches count in reading order, left side first):\n\n1. a = j + j, Left → right, #2: a + b = (j + j) + b\n2. b = k + k, Left → right, #2: a + b = (j + j) + (k + k)\n3. associativity, Left → right, #1: ... = j + (j + (k + k))\n4. associativity, Right → left, #2: ... = j + ((j + k) + k)\n5. commutativity, Left → right, #3: ... = j + (k + (j + k))\n6. associativity, Right → left, #1: **a + b = (j + k) + (j + k)**"},
+        {"type": "text", "title": "4. Witness and Close", "text": "Witness Bench: **Statement to prove** Even(a + b), **Witness circuit** j + k, **Proof of the instance** the equation just made. Out comes Even(a + b), proven, carrying four stamps.\n\nClose in reverse order, each time into **Conclusion to discharge**. Chamber D, then chamber C: the result no longer mentions k or j, so Even(a + b) comes out unchanged. Then chamber B: Even(b) → Even(a + b). Then chamber A: **Even(a) → Even(b) → Even(a + b)**, proven outright. Release all four chambers."},
+        {"type": "text", "title": "Why Closure Matters", "text": "This is a **closure theorem**: the evens are *closed* under +, adding two never leaves them. Such theorems are what factories run on.\n\nIn a [](item://axiomatic:compiled_machine) with the design a + b, this theorem in the **Theorem card** slot certifies the outputs: each premise Even(a), Even(b) is matched against the certificates of the numerals fed in, and the sum comes out certified Even. The certificate passes through the factory with no search for a witness.\n\nName it in the Library so it is part of your world."}
+      ]
+    },
+    {
+      "id": "library",
+      "title": "The Library",
+      "icon": "axiomatic:library",
+      "gate": "induction",
+      "description": "Name theorems and see everything your world knows",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:library", "title": "Library", "text": "Your world's memory of mathematics: every definition, named theorem, conjecture and certificate in one place. Place it and use it to open its screen. It needs no energy."},
+        {"type": "text", "title": "Naming Theorems", "text": "A theorem enters the Library when you **name** it:\n\n1. Rename the proven statement in an anvil (zero_add, add_comm...).\n2. Set the [](item://axiomatic:drafting_chamber) to *Name theorem* with **Mode ▶**.\n3. Put it in Input 1.\n\nIt comes back out wearing its name. Naming costs energy equal to the proof's step count and earns *A Library of One*.\n\n**Watch out:** *Rename the first input in an anvil to name it*: no name given. A name can be used only once (*... already names a theorem*), and a statement still carrying stamps cannot be named."},
+        {"type": "text", "title": "The Tabs", "text": "- **Definitions**: every function and property with its inputs and kind: explicit, by recursion, property, by general recursion, or abstract (structure).\n- **Named theorems**: name, statement, number of dependencies and steps, and a **rests on** line listing the definitions, structures and conjectures it was built from (conjectures first, in purple: they are the risk).\n- **Conjectures**: each bet and its state, [active], [dormant], [proven] or [REFUTED], with the counterexample that killed it.\n- **Structures**: certificates from the Structure Bench.\n- **Statuses**: what the world knows about each statement."},
+        {"type": "text", "title": "Statuses", "text": "- **Proven**: proven with no open assumptions and no conjectures behind it. Settled forever.\n- **Tested up to N**: the Test Bench checked every case up to N and found no counterexample. Evidence, not proof.\n- **Refuted at ...**: a counterexample was found. Permanent.\n- **Unknown**: nothing known yet.\n\nA named theorem resting on a conjecture is listed, but its statement does not become Proven. Statuses ignore letter names: Even(Double(n)) and Even(Double(m)) share one line.\n\nNamed theorems are what other machines look up, such as the congruence laws the Rewriter needs for ≡."},
+        {"type": "recipe", "recipes": ["library"]}
+      ]
+    }
+  ]
+}

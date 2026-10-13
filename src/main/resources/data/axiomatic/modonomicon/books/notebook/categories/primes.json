@@ -4,7 +4,7 @@
   "icon": {
     "id": "axiomatic:prime_core"
   },
-  "sort_number": 4,
+  "sort_number": 5,
   "display_mode": "node",
   "show_category_button": true,
   "background": "modonomicon:textures/gui/dark_slate_seamless.png",

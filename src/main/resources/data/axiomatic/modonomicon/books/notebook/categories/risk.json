@@ -4,7 +4,7 @@
   "icon": {
     "id": "axiomatic:conjecture_bench"
   },
-  "sort_number": 2,
+  "sort_number": 3,
   "display_mode": "node",
   "show_category_button": true,
   "background": "modonomicon:textures/gui/dark_slate_seamless.png",

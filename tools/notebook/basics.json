@@ -1,0 +1,242 @@
+{
+  "chapter": "basics",
+  "title": "Getting Started",
+  "entries": [
+    {
+      "id": "welcome",
+      "title": "The Notebook",
+      "icon": "axiomatic:numeral",
+      "gate": null,
+      "description": "What this mod is, and how every machine screen works",
+      "pages": [
+        {
+          "type": "text",
+          "title": "Welcome",
+          "text": "This Notebook teaches **Axiomatic**, a mod where you do real mathematics with machines.\n\nEverything starts from **Peano's axioms**: there is a number 0, and every number n has a next one, S(n). Addition, even numbers and primes are all built on top of that, by you.\n\nNumbers, formulas and proofs are items. Machines make them, combine them and check them. Coal pays for the energy; mathematics decides how wisely it is spent. Checking a fact by brute force costs energy every single time. A **proof** covers every case forever, so each theorem you prove makes your factories cheaper."
+        },
+        {
+          "type": "text",
+          "title": "How this book grows",
+          "text": "The book has chapters, and each chapter is a map of entries joined in reading order.\n\nMany entries are hidden at first. They appear as you earn the mod's advancements: making your first 0, certifying a number, crafting a Circuit Board, proving your first theorem, and so on. Newly opened entries are shown as recently unlocked.\n\nEverything in this chapter and in [The Language of Mathematics](entry://axiomatic:notebook/language/variables) is open from the start."
+        },
+        {
+          "type": "text",
+          "title": "Machine screens",
+          "text": "Every machine has the same kind of screen.\n\n- **Slots**: inputs on the left, outputs on the right. Hover over an *empty* slot to see what it wants.\n- **Info line** at the top: the selected mode or property.\n- **Energy bar** on the far left, in red. Hover over it to read the energy stored.\n- **Progress arrow** in the middle: it fills blue as the job runs and is paid for.\n- **Status line** under the slots: what the machine is doing, or why it refuses.\n- **Buttons** on the right switch modes or properties."
+        },
+        {
+          "type": "text",
+          "title": "Machines run themselves",
+          "text": "There is no start button. A machine looks at its inputs a few times a second and starts a job as soon as they make sense. The inputs are taken at once; the job then pays its energy cost over its duration, and the outputs appear once it is fully paid.\n\nHoppers work: they fill input slots from above or the side, and a hopper underneath pulls finished outputs out. Shift-click only moves items into input or fuel slots.\n\n**Waiting for energy** on the status line means the job is stalled until power arrives. **Output full** means empty the output slots."
+        },
+        {
+          "type": "text",
+          "title": "Breaking machines",
+          "text": "**Watch out** when you mine a machine.\n\n- Everything in its slots drops, so nothing in its inventory is lost.\n- A job in progress is different: its inputs are already used up. If the job was fully paid, its outputs drop too. If it was **not yet paid**, the job and its inputs are lost.\n\nSo wait until the progress arrow is full before you pick up a busy machine.\n\nStart with [Energy](entry://axiomatic:notebook/basics/power)."
+        }
+      ]
+    },
+    {
+      "id": "power",
+      "title": "Energy",
+      "icon": "axiomatic:coal_dynamo",
+      "gate": null,
+      "description": "Coal Dynamo and Copper Cable: powering your machines",
+      "pages": [
+        {
+          "type": "spotlight",
+          "item": "axiomatic:coal_dynamo",
+          "title": "Coal Dynamo",
+          "text": "The Coal Dynamo is your power plant: it burns fuel and turns it into energy for your machines. One unit of energy pays for one axiom use or one step of computation.\n\n**How to use:** place it and put fuel in its one slot (**Fuel**). Any furnace fuel works; coal and charcoal are the usual. It makes **10 units per tick**, so one coal (80 seconds of burning) gives **16,000 units**. It stores up to 20,000.\n\nThe status line says **Burning** while it runs and **No fuel** when it is empty."
+        },
+        {
+          "type": "spotlight",
+          "item": "axiomatic:copper_cable",
+          "title": "Copper Cable",
+          "text": "Machines get energy in two ways.\n\n- **Touching the dynamo**: a machine on any side of the dynamo gets its energy directly, with no loss.\n- **Through Copper Cable**: cables carry energy to every machine they touch. Cables are drawn as pipes that connect to neighbouring cables and machines, so you can see the network.\n\nMachines do not pass energy on; only cables do. A dynamo shares its energy among all the machines it reaches."
+        },
+        {
+          "type": "text",
+          "title": "Losses",
+          "text": "Energy loses **2% for every cable** on the way to a machine, at most half. A machine 10 cables away gets 80% of what is sent to it; the rest is wasted coal.\n\n**Example:** dynamo, a line of 5 cables, then a Zero Source: the Zero Source receives 90% of what the dynamo spends on it.\n\nThere is a way out. Once you can build a Network Surveyor, it can certify that your network is a **tree** (exactly one route to every machine, no loops). A certified tree carries energy without loss, and the dynamo then says **Burning (lossless tree network)**. Any change to the network voids the certificate."
+        },
+        {
+          "type": "text",
+          "title": "Watch out",
+          "text": "- Right-clicking a cable with an **empty hand** switches its phase (the cable changes colour). A network that mixes both phases needs a Network Surveyor's certificate, or it shorts: the dynamo shows **Short circuit! Mixed phases need a surveyed two-colouring** and only machines touching the dynamo get power. If you see that, click the odd cables back.\n- Other mods' generators can power these machines too: 4 FE make 1 unit."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "coal_dynamo",
+            "copper_cable"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "numerals",
+      "title": "Numerals",
+      "icon": "axiomatic:zero_source",
+      "gate": null,
+      "description": "Numbers as items: the Zero Source and the Successor",
+      "pages": [
+        {
+          "type": "spotlight",
+          "item": "axiomatic:numeral",
+          "title": "Numerals",
+          "text": "A **numeral** is a natural number as an item: 0, 1, 2 and so on. Inside, every number is built from the axioms: 3 is S(S(S(0))), the successor of the successor of the successor of 0. You never have to read it that way: the item is named with its value in digits, like **Numeral 12** (very long values are shortened and show their number of digits).\n\nA numeral can also carry **certificates**, facts about it such as Even, listed in its tooltip: see [Certificates](entry://axiomatic:notebook/basics/certificates).\n\nMachines use up the numerals they read, so you will make a lot of them."
+        },
+        {
+          "type": "spotlight",
+          "item": "axiomatic:zero_source",
+          "title": "Zero Source",
+          "text": "The Zero Source is axiom 1 as a machine: **0 is a number**.\n\n**How to use:** place it next to power. It has one output slot and fills it with **Numeral 0**, one at a time, for 1 unit each. A hopper underneath can pull the zeros out.\n\nMaking your first 0 earns the advancement **Zero**."
+        },
+        {
+          "type": "spotlight",
+          "item": "axiomatic:successor",
+          "title": "Successor",
+          "text": "The Successor is axiom 2: **every number n has a next one, S(n)**, that is n + 1.\n\n**How to use:** put a numeral in the left slot. It comes out on the right one higher, for 1 unit.\n\n**Example:** Numeral 0 in, Numeral 1 out. Feed the 1 back in and you get 2.\n\n**Watch out:** the result is a plain numeral. Certificates do not carry over, because a fact about n says nothing about n + 1: 12 is even, 13 is not."
+        },
+        {
+          "type": "text",
+          "title": "Counting with hoppers",
+          "text": "Hoppers move numerals between machines: a hopper under a machine pulls out its output, and a hopper pointing into a machine fills its input.\n\n- **Counting line:** a Zero Source, a hopper under it pointing sideways into a Successor, a hopper under that pointing into the next Successor, and so on down a staircase. Each Successor adds 1.\n- **Counting loop:** hoppers only move items down or sideways, so to send a numeral back into the same Successor you must lift it, for example with a dropper facing up on a redstone clock. Each pass adds 1 and costs 1 unit.\n\nCounting is slow for big numbers. Later, proofs and Compiled Machines get you there faster."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "zero_source",
+            "successor"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "duplicator",
+      "title": "Duplicator",
+      "icon": "axiomatic:duplicator",
+      "gate": null,
+      "description": "Copying numerals, statements and circuits",
+      "pages": [
+        {
+          "type": "spotlight",
+          "item": "axiomatic:duplicator",
+          "title": "Duplicator",
+          "text": "Machines use up their inputs, so the Duplicator is how you use something twice. It copies numerals, statements and circuits.\n\n**How to use:** put the item in the left slot. It is used up and **two** copies come out on the right.\n\n**Cost:**\n- A numeral costs its **value + 1** units: copying 12 costs 13, and the status line shows **Cost: 13**. A number is a chain of S's, copied one by one.\n- A statement or circuit costs **1 unit**: copying a known fact is cheap."
+        },
+        {
+          "type": "text",
+          "title": "Certificates are copied",
+          "text": "A numeral's certificates are copied with it. Certify Numeral 12 as Even once, then duplicate it: both copies say **Certified: Even**.\n\n**Example:** Numeral 12 (Certified: Even) in; two of the same out, for 13 units.\n\n**Watch out:** big numerals are expensive. Copying 1,000 costs 1,001 units and takes a while. A later chapter shows how to prove that numbers can be written in **binary**; from then on a copy costs only its number of binary digits + 1 (1,000 has 10 binary digits, so 11 units)."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "duplicator"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "certificates",
+      "title": "Certificates",
+      "icon": "axiomatic:test_bench",
+      "gate": null,
+      "description": "Facts carried by numerals, and the Test Bench",
+      "pages": [
+        {
+          "type": "text",
+          "title": "What a certificate is",
+          "text": "A **certificate** is a fact attached to a numeral, such as **Even(12)**: 12 is even. It shows in the numeral's tooltip as **Certified: Even**.\n\nRecipes and machines check certificates, not numbers. A plain numeral is not known to be anything, even if it happens to be even: *nothing is known until it is established*.\n\nThere are two kinds:\n- **Proven** (gold line): established by computation or by a proven theorem.\n- **Conjectural** (purple, marked *(conjectural)*): resting on a conjecture, an unproven guess. It works until a counterexample turns up."
+        },
+        {
+          "type": "text",
+          "title": "How to get one",
+          "text": "There are two ways to certify a numeral.\n\n- **Search**, on the Test Bench: the machine computes the property for that number, for example by looking for a k with 12 = k + k. Every step costs energy, so big numbers cost more.\n- **Proof**: once you prove a theorem such as *Double(n) is always even*, a Compiled Machine certifies each of its outputs with it for 1 unit, with no search at all. That is the point of proving things.\n\nYou start with search."
+        },
+        {
+          "type": "spotlight",
+          "item": "axiomatic:test_bench",
+          "title": "Test Bench",
+          "text": "The Test Bench checks a property of a numeral by computation, and certifies the numeral if it holds.\n\n**How to use (numeral mode):**\n- Pick the property with **Property ▶**. The info line shows it: **Property: Even** is the default. The button cycles through every one-place property the world knows: Even, Mersenne, Prime, and later your own.\n- Put a numeral in the first slot (**Numeral to certify, or statement to test**). Leave **Bound numeral (range mode)** empty.\n- The same numeral comes out on the right, certified if the property holds."
+        },
+        {
+          "type": "text",
+          "title": "Test Bench: example",
+          "text": "**Example:** Property: Even, Numeral 12 in. The status line shows **Computing…**, then **Even(12) certified, N steps**, and Numeral 12 comes out with **Certified: Even**. The energy cost is the number of steps. Your first certificate earns **Twelve Is Even**.\n\nIf the property is false you still pay, and get the numeral back uncertified: **No witness: Even(7) not certified (N steps)**. A numeral that already has the certificate passes through for free."
+        },
+        {
+          "type": "text",
+          "title": "Test Bench: watch out",
+          "text": "- **Too big to search**: the computation hit its limit. Use a smaller number, or prove something instead.\n- **Prime** is expensive: the bench tries every possible divisor, so primes in the thousands already cost a lot of coal. Better ways come later.\n- A **statement** in the first slot and a numeral in the bound slot switch the bench to range mode, which tests a statement for every number up to the bound. A later chapter covers it."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "test_bench"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "circuit_boards",
+      "title": "Circuit Boards",
+      "icon": "axiomatic:circuit_board",
+      "gate": null,
+      "description": "The first gate: four certified evens",
+      "pages": [
+        {
+          "type": "spotlight",
+          "item": "axiomatic:circuit_board",
+          "title": "Circuit Board",
+          "text": "The **Circuit Board** is your first gate. Most reasoning machines, the Compiled Machine and the Library need one in their recipe, so you cannot go far without it.\n\n**Recipe:** four numerals certified **Even** on the sides, copper ingots in the corners, redstone in the middle. Plain numerals do not fit: the recipe checks the certificate.\n\nCrafting one earns **Even Better** and opens new entries in this book.\n\nThe Drafting Chamber and the Equation, Property and Witness Benches need no board, so you can start on your first proof at the same time."
+        },
+        {
+          "type": "text",
+          "title": "Making four evens",
+          "text": "**Example:** count to Numeral 12, certify it on the Test Bench, then run it through the Duplicator: three copy jobs (13 units each) turn one certified 12 into four. Any even numbers work, and they do not have to match: 0 and 2 are even too, and cheap.\n\n**Watch out:** a numeral certified only *conjecturally* is accepted, but the board remembers the conjecture. If it is ever refuted, the board, and every machine built with it, stops working."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "circuit_board"
+          ],
+          "text": "The four numerals must be certified Even (Test Bench, or a theorem card)."
+        }
+      ]
+    },
+    {
+      "id": "graph_lens",
+      "title": "Graph Lens",
+      "icon": "axiomatic:graph_lens",
+      "gate": null,
+      "description": "Seeing the pointed graph inside any object",
+      "pages": [
+        {
+          "type": "spotlight",
+          "item": "axiomatic:graph_lens",
+          "title": "Graph Lens",
+          "text": "Every mathematical object in this mod is stored the same way: as a **pointed graph**, nodes joined by arrows, with one node marked as the point where reading starts. The Graph Lens shows it.\n\n**How to use:** hold the lens in one hand and a numeral, circuit or statement in the other, then use the lens (right-click). The graph is printed in chat: **Pointed graph: N nodes (● = the point)**, then one line per node with its label and the nodes it points to."
+        },
+        {
+          "type": "text",
+          "title": "Reading the graph",
+          "text": "Labels: **0** and **S** for numbers, **var:n** for a variable, **app:add** for a function applied to its inputs, and **eq**, **and**, **imp**, **ex:k**, **pred:Even** for the parts of statements.\n\n**Example:** Numeral 3 has 4 nodes: 0 and three S's, each pointing at the one below. The circuit n + n has only 2: app:add points twice at the same var:n, because identical parts are stored once.\n\nLong numerals are cut short, and big graphs show only their first lines."
+        },
+        {
+          "type": "text",
+          "title": "Looking inside a machine",
+          "text": "Right-click a **Compiled Machine** with the lens to see the design it runs: chat prints **Inside f:** and the defining statements of its function f.\n\n**Watch out:** with nothing suitable in your other hand the lens says **Hold a numeral, circuit or statement in your other hand**."
+        },
+        {
+          "type": "recipe",
+          "recipes": [
+            "graph_lens"
+          ]
+        }
+      ]
+    }
+  ]
+}

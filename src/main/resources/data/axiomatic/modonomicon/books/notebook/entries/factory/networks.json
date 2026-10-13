@@ -12,9 +12,9 @@
     "width": 26,
     "height": 26
   },
-  "x": 4,
+  "x": 6,
   "y": 0,
-  "sort_number": 2,
+  "sort_number": 3,
   "condition": {
     "type": "modonomicon:research_node_unlocked",
     "node_id": "axiomatic:notebook/circuit_board"
@@ -25,28 +25,75 @@
   "pages": [
     {
       "type": "modonomicon:text",
-      "id": "text",
+      "id": "p0",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 0,
-      "title": "book.axiomatic.notebook.factory.networks.name",
-      "text": "book.axiomatic.notebook.factory.networks.text",
+      "title": "book.axiomatic.notebook.factory.networks.p0.title",
+      "text": "book.axiomatic.notebook.factory.networks.p0.text",
       "show_title_separator": true
     },
     {
-      "type": "modonomicon:crafting_recipe",
-      "id": "recipe_0",
+      "type": "modonomicon:text",
+      "id": "p1",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 1,
-      "recipe_id_1": "axiomatic:network_surveyor"
+      "title": "book.axiomatic.notebook.factory.networks.p1.title",
+      "text": "book.axiomatic.notebook.factory.networks.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "item": {
+        "id": "axiomatic:network_surveyor"
+      },
+      "title": "book.axiomatic.notebook.factory.networks.p2.title",
+      "text": "book.axiomatic.notebook.factory.networks.p2.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.factory.networks.p3.title",
+      "text": "book.axiomatic.notebook.factory.networks.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "title": "book.axiomatic.notebook.factory.networks.p4.title",
+      "text": "book.axiomatic.notebook.factory.networks.p4.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p5",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 5,
+      "recipe_id_1": "axiomatic:network_surveyor",
+      "text": "book.axiomatic.notebook.factory.networks.p5.text"
     }
   ],
   "parents": [
     {
-      "entry": "axiomatic:factory/sorting"
+      "entry": "axiomatic:factory/certificate_sorter"
     }
   ]
 }

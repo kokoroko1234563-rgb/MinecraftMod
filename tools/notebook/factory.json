@@ -1,0 +1,105 @@
+{
+  "chapter": "factory",
+  "title": "Factories and Networks",
+  "entries": [
+    {
+      "id": "compiled_machine",
+      "title": "Compiled Machine",
+      "icon": "axiomatic:compiled_machine",
+      "gate": "proven",
+      "description": "Run your own function; theorem cards certify every output",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:compiled_machine", "title": "Compiled Machine", "text": "A Compiled Machine runs one of your defined functions on numerals: a calculator you designed yourself. Its real power is the **theorem card**. With a proven statement about the function in its card slot, every output comes out *certified*, for just 1 extra energy unit. No searching on the Test Bench.\n\nThis is the payoff of proving: prove once that Double always gives an even number, and every Double you ever make is certified Even almost for free."},
+        {"type": "text", "title": "How to use", "text": "**How to use**\n\n- *Design: a circuit f(…)*: a circuit such as Double(n) or add(a, b). Only the function counts, not the variable names. At most 3 inputs.\n- *Input 1*, *Input 2*, *Input 3*: numerals, in the order of f's inputs. Fill as many as f takes.\n- *Theorem card*: optional, a statement about f.\n- The output slot on the right.\n\nEach run uses one numeral from each input; the design and the card stay. Energy: 1 unit per computing step, plus 1 for the card. The screen shows *Computes Double* and then *Computed 42 (… steps)*."},
+        {"type": "text", "title": "Example", "text": "**Example**\n\nDesign: the circuit Double(n). Card: your theorem ∀n. Even(Double(n)) from the first proof. Input 1: the numeral 21.\n\nOut comes 42, and its tooltip says *Certified: Even*. Put a stack of numerals in Input 1 and a hopper underneath, and you have an even-number factory.\n\nWithout a card the machine still computes, but its outputs carry no certificate. The outputs are always fresh numerals: certificates on the inputs are not copied over."},
+        {"type": "text", "title": "Which cards fit", "text": "The card must end in a property of f applied to plain variables: Even(Double(n)), or Even(a) → Even(b) → Even(a + b) (→ means *implies*). The variables inside f(…) match the inputs in the same order.\n\n**Typed ports**: conditions before the → must be met by certificates the inputs already carry. With design add(a, b) and that card, a certified-Even 4 in Input 1 and a certified-Even 6 in Input 2 give 10, *Certified: Even*. A plain 3 gives *Needs a certificate for Even(3)*, and nothing comes out. Conditions that are equations are simply computed."},
+        {"type": "text", "title": "Other cards", "text": "- **Tested** statements work inside their tested range; outside it: *Inputs above the tested range (N)*.\n- **Conjectural** cards work while their conjecture's block is powered. Each use runs a background check of the conjecture on those inputs, and a counterexample refutes it (see [Conjectures](entry://axiomatic:notebook/risk/conjectures)). Their certificates say *(conjectural)*.\n- **Speed cards**: a fully proven f(x, y) = f(y, x), like a + b = b + a. It certifies nothing. Instead, for a function defined by recursion, the machine swaps the inputs to recurse on the smaller one: 3 + 2000 then takes a handful of steps instead of over 2000. Status: *Computed 2003 (… steps, inputs swapped by the card)*."},
+        {"type": "text", "title": "Watch out", "text": "- *The card must be a proven statement with no open assumptions*: unproven (and untested) statements, and statements still stamped by an Assumption Chamber, are refused.\n- *The card must conclude a property of Double(…) of plain variables*: the card is about another function, or about Double(S(n)) instead of Double(n).\n- *Conjecture … is dormant: power its block*.\n- *A symmetry card swaps inputs, so it must be fully proven (no conjectures)*.\n- *Too big to search*: over 5 million steps in one run.\n- Right-click the machine with a [](item://axiomatic:graph_lens) to read the definition it runs."},
+        {"type": "recipe", "recipes": ["compiled_machine"], "text": "Copper, Circuit Boards and a block of redstone."}
+      ]
+    },
+    {
+      "id": "statement_conveyor",
+      "title": "Statement Conveyor",
+      "icon": "axiomatic:statement_conveyor",
+      "gate": "induction",
+      "description": "Moves statements and circuits from machine to machine",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:statement_conveyor", "title": "Statement Conveyor", "text": "Hoppers move numerals. The Statement Conveyor moves **statements and circuits**: one item every 8 ticks (2.5 a second) from the block behind it to the block in front of it. With it a factory can hand theorems and designs from machine to machine without you carrying them. It needs no energy.\n\nEverything else (numerals, coal, dirt) is left where it is."},
+        {"type": "text", "title": "How to use", "text": "**How to use**\n\n- Place it while looking the way items should travel: the arrow on its front face points there.\n- The block behind it is the source, the block in front the target: chests, barrels or machines.\n- From a machine it takes only from output slots. Into a machine it puts items where a hopper would: the first input slot that accepts them.\n\n**Example**: Witness Bench, conveyor, Compiled Machine in a row. Each theorem the Witness Bench proves rolls into the Compiled Machine's *Theorem card* slot (a circuit would go to its *Design* slot)."},
+        {"type": "text", "title": "Watch out", "text": "**Watch out**\n\n- Placed the wrong way? Break it and place it again facing the other way.\n- A full or unwilling target simply waits; nothing is lost.\n- A card slot that already holds a different statement won't take another.\n\nThe recipe needs a proven ∀n. 0 + n = n (zero_add, from the Logic chapter), and crafting uses it up. Copy it first: the Duplicator copies a statement for 1 unit."},
+        {"type": "recipe", "recipes": ["statement_conveyor"], "text": "The scroll is a proven statement: ∀n. 0 + n = n (zero_add). Any variable name works."}
+      ]
+    },
+    {
+      "id": "certificate_sorter",
+      "title": "Certificate Sorter",
+      "icon": "axiomatic:certificate_sorter",
+      "gate": "induction",
+      "description": "Splits numerals by whether they carry a certificate",
+      "pages": [
+        {"type": "spotlight", "item": "axiomatic:certificate_sorter", "title": "Certificate Sorter", "text": "The item filter of a factory. It splits a stream of numerals by one question: does this numeral carry a certificate for the property in the filter? Certified ones go one way, the rest the other. 1 energy per numeral.\n\nIt reads certificates; it does not compute. An 8 with no Even certificate counts as *not certified*, even though 8 is even. Certify first (Test Bench or a theorem card), then sort."},
+        {"type": "text", "title": "How to use", "text": "**How to use**\n\n- *Numeral*: the numerals to sort.\n- *Filter: a property statement like Even(n)*: any statement of one property applied to one thing, proven or not; only the property's name counts. Make it on the Property Bench.\n- *Certified (out below)*: a hopper under the sorter pulls these out.\n- *Not certified (pushed out the sides)*: the sorter pushes these into a chest, barrel or hopper on any of its four sides.\n- *Strict*: switches between *Sorts by Even (any cert.)* and *Sorts by Even (proven only)*. Strict treats *(conjectural)* certificates as not certified."},
+        {"type": "text", "title": "Example", "text": "**Example**\n\nFilter: the statement Even(n). A hopper below the sorter, a chest beside it. Put in two 6s certified Even and three plain 8s: the two 6s drop into the hopper, the three 8s are pushed into the chest.\n\nTurn on *Strict* to keep conjectural numerals out of a line that feeds recipes or machines you don't want at risk."},
+        {"type": "text", "title": "Watch out", "text": "**Watch out**\n\n- *Put a property statement like Even(n) in the filter slot*: the filter is empty or holds something else (an equation, a relation of two things).\n- With no container beside it, the *Not certified* slot fills up and sorting stops.\n- A hopper that feeds the side chest back into the sorter makes a loop: rejects go round forever at 1 unit per pass.\n- Hoppers can't fill the filter slot; put it in by hand."},
+        {"type": "recipe", "recipes": ["certificate_sorter"], "text": "Iron, a hopper, comparators and a Circuit Board."}
+      ]
+    },
+    {
+      "id": "networks",
+      "title": "Networks",
+      "icon": "axiomatic:network_surveyor",
+      "gate": "circuit_board",
+      "description": "Survey your cables; a certified tree loses no energy",
+      "pages": [
+        {"type": "text", "title": "Cables as a graph", "text": "Energy flows from the dynamo along Copper Cables, and each machine loses 2% of it for every cable on its way (at most half). Machines touching the dynamo lose nothing.\n\nA **graph** is dots joined by lines. Your cables make one: the dots (nodes) are every cable and every machine touching one; the lines (edges) are every place two cables touch, or a cable touches a machine. A **tree** is a graph with no loops: exactly one route between any two nodes. On a tree there is no wasted route, and the mod rewards proving it."},
+        {"type": "text", "title": "Counting a tree", "text": "You don't need to inspect every route: a connected graph is a tree exactly when it has one edge fewer than nodes. More generally, edges − nodes + 1 counts its independent cycles (loops).\n\nThe [](item://axiomatic:network_surveyor) counts both. If the cycles come to 0, the network is **certified a tree** and the dynamo sends energy over it without loss: *Burning (lossless tree network)*."},
+        {"type": "spotlight", "item": "axiomatic:network_surveyor", "title": "Network Surveyor", "text": "**How to use**\n\n- Place it touching a cable of the network. It runs on energy like any machine: 10 per node per survey.\n- It surveys when placed, whenever you press *Survey*, and again every 10 seconds.\n- The top line reads *Network: 5 nodes, 4 edges*. The status says *A tree (0 cycles): certified, lossless.* or *Not a tree: 1 independent cycles, energy is lost.*, then what it found about [couriers](entry://axiomatic:notebook/factory/couriers) and [phases](entry://axiomatic:notebook/factory/phases)."},
+        {"type": "text", "title": "Example", "text": "**Example**\n\nA dynamo, two cables in a line, a Successor at the far end, and the Surveyor on top of the first cable. Nodes: 2 cables and 3 machines (dynamo, Successor, Surveyor) make 5. Edges: cable to cable, and each machine to its cable, make 4. One fewer: a tree, certified.\n\nNow lay two more cables beside the first two, making a 2 × 2 square. That is 7 nodes and 7 edges: *Not a tree: 1 independent cycles, energy is lost.*"},
+        {"type": "text", "title": "Watch out", "text": "**Watch out**\n\n- Any change (a cable or machine added or removed, a phase switched) voids the certificate until the next survey.\n- A machine touching two cables of the same network closes a loop. So does a 2 × 2 block of cables.\n- Each separate network the Surveyor touches is surveyed and certified on its own; the screen reports the first. The dynamo runs lossless only if every network it feeds is a certified tree.\n- *Touch a cable network to survey it*: no cable next to the Surveyor."},
+        {"type": "recipe", "recipes": ["network_surveyor"], "text": "Copper, a map, compasses and a Circuit Board."}
+      ]
+    },
+    {
+      "id": "phases",
+      "title": "Phases",
+      "icon": "axiomatic:copper_cable",
+      "gate": "circuit_board",
+      "description": "Two-colour your cables for double-speed power",
+      "pages": [
+        {"type": "text", "title": "Two phases", "text": "Every Copper Cable has a **phase**, A or B. Right-click a cable with an empty hand to switch it: *Cable phase A* (copper look) or *Cable phase B* (silver).\n\nA network that uses both phases makes a claim: *no two touching cables share a phase*. In graph language that is a **two-colouring**: give every node one of two colours so that each edge joins different colours. Only cable-to-cable contacts count; machines don't take part."},
+        {"type": "text", "title": "Alternating power", "text": "Once a [Network Surveyor](entry://axiomatic:notebook/factory/networks) confirms the claim, the dynamo runs **alternating power**: *Burning: alternating power (x2)*. It makes twice the energy per tick and burns fuel twice as fast, so a coal still gives 16,000, delivered in half the time. Busy machines that wait for energy get it twice as fast.\n\nNot every network can be two-coloured. Going round a loop the colours must alternate, so a loop of odd length comes back to the same colour. Lines, trees and even loops (a 2 × 2 square) all work."},
+        {"type": "text", "title": "Short circuit", "text": "Until the claim is checked, mixed phases are a short: *Short circuit! Mixed phases need a surveyed two-colouring*. The dynamo throws away its stored energy every second, and only machines touching the dynamo itself get power.\n\nThat includes the Surveyor: out on the cables it gets nothing. So place it touching **both** the dynamo and a cable of the network. If the colouring is wrong it says where: *; phases clash at x y z (odd cycle or same-phase neighbours)*."},
+        {"type": "text", "title": "Example", "text": "**Example**\n\nA dynamo with a phase A cable east of it, a phase B cable east of that leading to a Successor, and another B cable on top of the A cable. Put the Surveyor on top of the dynamo, touching that upper B cable. Each B touches only the A: certified, and the dynamo runs at x2.\n\nAdd one more B cable on top of the eastern B: it touches two B cables, the Surveyor reports a clash, and the dynamo shorts.\n\n**Watch out**: switching any phase changes the network; it must be surveyed again."}
+      ]
+    },
+    {
+      "id": "couriers",
+      "title": "Couriers",
+      "icon": "axiomatic:courier_station",
+      "gate": "circuit_board",
+      "description": "On an Eulerian network, deliver items to every machine",
+      "pages": [
+        {"type": "text", "title": "Euler circuits", "text": "Can you draw a figure without lifting your pen, using every line exactly once and ending where you started? Euler answered it: yes exactly when the figure is connected and every dot has an even number of lines. Each visit to a dot uses one line in and one line out. Such a walk is an **Euler circuit**.\n\nA courier that walks every cable exactly once passes every machine on the way, and needs a network where that walk exists."},
+        {"type": "text", "title": "Eulerian networks", "text": "For couriers only the cables count: every cable must touch an even number of other cables (2, 4 or 6), and there must be at least 3 cables. A closed loop with no loose ends works. A dead end (one neighbour) or a T-junction (three) breaks it. Machines along the loop don't matter.\n\nThe Network Surveyor checks it on every survey: *Every cable has an even number of cable neighbours: Eulerian, certified for couriers.* or *Some cable has an odd number of cable neighbours.*"},
+        {"type": "spotlight", "item": "axiomatic:courier_station", "title": "Courier Station", "text": "**How to use**\n\n- Place it touching a cable of the network, and have a Surveyor certify that network.\n- Fill the three *Cargo for the machines on the network* slots with anything.\n- Every half second it visits the next machine in turn and hands over one item that machine accepts, into the slot a hopper from above would fill. 1 energy per item.\n\nThe status reads *Delivering to N machines*, counting every machine on the network except the station itself."},
+        {"type": "text", "title": "Example", "text": "**Example**\n\nA ring of 8 cables around one block, with the Courier Station in the middle. On top of the ring: a Surveyor and a Successor. Every cable touches exactly two others: certified Eulerian. Put two numerals 4 in the cargo: both are delivered to the Successor, which counts them up.\n\n**Watch out**\n\n- *Needs a network surveyed as Eulerian: every cable joined to an even number of cables*: a loose end, or no survey since the last change.\n- *No machine on the network takes this item*."},
+        {"type": "recipe", "recipes": ["courier_station"], "text": "Copper, a minecart, hoppers and a Circuit Board."}
+      ]
+    },
+    {
+      "id": "automation",
+      "title": "Automation",
+      "icon": "minecraft:hopper",
+      "gate": "induction",
+      "description": "Hoppers, other mods' pipes and power, and risk in factories",
+      "pages": [
+        {"type": "text", "title": "Hoppers", "text": "Every machine works with hoppers. The rule: items go **into input slots** (and the dynamo's fuel slot), and come **out of output slots**.\n\n- A hopper pointing into a machine, from above or from the side, puts each item into the first input slot that accepts it.\n- A hopper underneath pulls finished items from the output slots. Inputs are never pulled out.\n- The Coal Dynamo takes fuel from hoppers and gives back what burnt fuel leaves (empty buckets)."},
+        {"type": "text", "title": "The Certificate Sorter", "text": "The sorter has its own face rules:\n\n- From above: into *Numeral* only.\n- From the sides: into *Numeral*; pipes on the sides may also take from *Not certified*.\n- From below: out of *Certified (out below)* only.\n- The filter slot is filled by hand.\n\nIt also pushes its rejects into containers beside it by itself, so a plain chest beside it is enough."},
+        {"type": "text", "title": "Watch out", "text": "**Watch out**: a hopper can't choose a slot; it fills the first one that takes the item.\n\n- Compiled Machine: a circuit lands in *Design*, a statement in *Theorem card*, and numerals fill *Input 1*, then *Input 2* when Input 1 holds a different number. For two-input designs, feed by hand or keep the inputs in step.\n- Test Bench: if the first slot holds a different numeral, the next one lands in the *Bound numeral (range mode)* slot.\n- The Statement Conveyor and the Courier Station fill slots the same way a hopper above would."},
+        {"type": "text", "title": "Other mods", "text": "Pipes from other mods follow the same rules as hoppers: they may insert into input slots and take from output slots, from any side (the sorter keeps its own face rules).\n\nGenerators from other mods can power any Axiomatic machine directly: **4 FE make 1 unit** of energy (the server option foreignEnergyPerUnit; 0 turns it off). Small trickles add up. Energy only goes in: you can't pull Axiomatic energy out to run other mods' machines, and the Coal Dynamo takes no FE."},
+        {"type": "text", "title": "Risk in factories", "text": "Conjectural certificates travel. A recipe that accepts a certified numeral also accepts a *(conjectural)* one, and the result remembers it: a Circuit Board made from conjecturally certified evens shows *Depends on 1 unproven conjecture(s)*. Whatever you craft from that board, machines included, inherits the risk, and a machine keeps it when you break it and place it again.\n\nIf the conjecture is refuted, such a machine stops: *Built from parts resting on refuted …: it no longer works*. Risky items in your inventory turn into Paradox Junk. A *Strict* [Certificate Sorter](entry://axiomatic:notebook/factory/certificate_sorter) keeps conjectural numerals out of your crafting lines."}
+      ]
+    }
+  ]
+}

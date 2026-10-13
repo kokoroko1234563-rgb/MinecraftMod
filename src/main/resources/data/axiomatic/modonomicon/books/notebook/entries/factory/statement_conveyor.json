@@ -1,0 +1,77 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:factory/statement_conveyor",
+  "category": "axiomatic:factory",
+  "name": "book.axiomatic.notebook.factory.statement_conveyor.name",
+  "description": "book.axiomatic.notebook.factory.statement_conveyor.description",
+  "icon": {
+    "id": "axiomatic:statement_conveyor"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 2,
+  "y": 0,
+  "sort_number": 1,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/induction"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "item": {
+        "id": "axiomatic:statement_conveyor"
+      },
+      "title": "book.axiomatic.notebook.factory.statement_conveyor.p0.title",
+      "text": "book.axiomatic.notebook.factory.statement_conveyor.p0.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.factory.statement_conveyor.p1.title",
+      "text": "book.axiomatic.notebook.factory.statement_conveyor.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.factory.statement_conveyor.p2.title",
+      "text": "book.axiomatic.notebook.factory.statement_conveyor.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "recipe_id_1": "axiomatic:statement_conveyor",
+      "text": "book.axiomatic.notebook.factory.statement_conveyor.p3.text"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:factory/compiled_machine"
+    }
+  ]
+}

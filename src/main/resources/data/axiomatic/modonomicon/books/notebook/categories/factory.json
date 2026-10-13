@@ -2,9 +2,9 @@
   "name": "book.axiomatic.notebook.factory.name",
   "description": "",
   "icon": {
-    "id": "axiomatic:statement_conveyor"
+    "id": "axiomatic:compiled_machine"
   },
-  "sort_number": 3,
+  "sort_number": 4,
   "display_mode": "node",
   "show_category_button": true,
   "background": "modonomicon:textures/gui/dark_slate_seamless.png",

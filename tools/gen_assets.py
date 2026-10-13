@@ -122,47 +122,6 @@ def circuit_board():
     return img
 
 
-NOTEBOOK_GATES = {'Theorem cards': 'proven', 'Speed cards': 'proven', 'Reasoning': 'proven', 'Assumptions': 'proven', 'Opening exists': 'proven', 'Induction': 'proven', 'The Library': 'induction', 'Testing': 'induction', 'Deciders': 'induction', 'Conjectures': 'induction', 'Factories': 'induction', 'Sorting': 'induction', 'Prime Cores': 'circuit_board', 'Networks': 'circuit_board', 'Phases': 'circuit_board', 'Couriers': 'circuit_board', 'Prime Forge': 'prime_core', 'Structures': 'named', 'Monoids on a set': 'named', 'Equivalences': 'named', 'Arithmetic mod n': 'named', 'Safety': 'conjecture', 'Traps': 'conjecture', 'General recursion': 'prime_forged', 'Infinitely many': 'prime_forged', 'Faster machines': 'structure', 'Binary': 'structure', 'Perfect numbers': 'prime_well'}
-
-NOTEBOOK = [
-    "The Mathematician's Notebook\n\nEverything here is built from Peano's axioms. Coal pays for energy; mathematics decides how wisely it is spent.",
-    "Power\n\nCraft a Coal Dynamo (copper, furnace, redstone) and Copper Cables (3 copper make 8). Machines touching the dynamo or its cables get energy. One coal gives 16,000 units.",
-    "First numbers\n\nThe Zero Source makes 0. The Successor adds one S. A hopper loop counts up. The Duplicator copies a numeral; in the unary age a copy costs its value.",
-    "Certificates\n\nNumerals carry certificates. The Test Bench certifies a numeral by witness search: 12 is Even because 12 = 6 + 6. Bigger numbers cost more energy.",
-    "Circuit Boards\n\nFour certified even numerals with copper and redstone make a Circuit Board. Boards unlock the reasoning machines.",
-    "Circuits\n\nVariable blocks (paper and lapis) stand for any number; use one in the air to change its letter. The Drafting Chamber's Assemble mode builds circuits: pick a function, add inputs.",
-    "Definitions\n\nDefine mode: rename a circuit in an anvil, say Double, to define it. For recursion give a base case, a step using the loop sign (the call one step down), and the variable recursed on.",
-    "Statements\n\nThe Equation Bench makes left = right; the same circuit twice gives the proven t = t. The Property Bench makes P(circuit), and its Mode button builds and, implies, not and exists.",
-    "First proof\n\nEven(Double(n)): state it on the Property Bench, then give the Witness Bench the witness n and Double(n) = n + n. Every Double output can now be certified for free.",
-    "Theorem cards\n\nThe Compiled Machine runs a defined function on numerals. A proven statement about it in the card slot certifies each output for 1 unit: no more searching.",
-    "Speed cards\n\nA proven a + b = b + a in the Compiled Machine's card slot is a speed card: the machine swaps its inputs to recurse on the smaller one. Only fully proven symmetries work.",
-    "Reasoning\n\nInstantiator: put a circuit in for a variable. Rewriter: swap one side of a proven equation for the other; its variables match anything. Conjunction and Modus Ponens Presses: and, and P -> Q with P gives Q.",
-    "Assumptions\n\nThe Assumption Chamber assumes a statement and stamps what follows; its variables are locked. Put a conclusion in the discharge slot to get H -> Q.",
-    "Opening exists\n\nPut a proven exists, like exists j. a = j + j, in a chamber with a Variable in its open-as slot: you get a = j + j to work with. Close it by discharging a conclusion that does not mention j.",
-    "Induction\n\nThe Induction Engine takes P(0), the step P(n) -> P(S(n)) and the variable n, and proves P(n) for every n. Start with 0 + n = n: six machine steps.",
-    "The Library\n\nName mode: rename a proven statement in an anvil to file it as a theorem. The Library block lists definitions, theorems, conjectures and tests. The Graph Lens shows any object's graph.",
-    "Testing\n\nPut a statement and a bound numeral in the Test Bench: it checks every case up to the bound. Tested statements work as cards inside their range. One counterexample refutes forever.",
-    "Deciders\n\nA decider is a circuit answering 1 or 0, like isPrime. Prove both links, f(n) = 1 -> P(n) and P(n) -> f(n) = 1, and link them in the Drafting Chamber: then machines compute P with f.",
-    "Conjectures\n\nThe Conjecture Bench turns a named claim into a card and a block. Keep the block powered. Each use is checked: one counterexample and it fails, with everything built on it.",
-    "Prime Cores\n\nPrime is predefined: 2 <= n and no d with 2 <= d < n divides n. The Test Bench can certify primes by trying every d: slow and costly. Cards and deciders make it cheap.",
-    "Prime Forge\n\nThe Forge finds the next prime from a candidate, certified by its method card H(n) -> Prime(n). A proven decider link is safe. A conjectured test is fast, until a Carmichael number like 561 comes by.",
-    "Structures\n\nThe Structure Bench shows the axioms of monoids, equivalences and orders. Prove a theorem once for any monoid, certify an operation's three laws, and apply the theorem to it for free.",
-    "Monoids on a set\n\nSetMonoid is a monoid on a set A: e is in A, A is closed, and each law assumes its inputs are in A. Multiplication mod n needs it, since 1 is its identity only below n.",
-    "Factories\n\nThe Statement Conveyor moves statements and circuits between machines; it needs a proven 0 + n = n to craft. The Duplicator copies statements for 1 unit. Every step still costs energy.",
-    "Couriers\n\nIf every cable touches an even number of other cables (a loop with no loose ends), an Euler circuit walks each cable once. The Surveyor certifies it, and a Courier Station there delivers its items to every machine in turn.",
-    "Sorting\n\nThe Certificate Sorter splits a stream of numerals by a property in its filter slot, like Even(n): certified ones drop out below into a hopper, the rest are pushed out the sides.",
-    "Safety\n\nAn unpowered conjecture block goes dormant: safe, but its cards stop working. Seal a conjecture block in obsidian or tinted glass near a Containment Controller to keep its failure harmless.",
-    "General recursion\n\nEuclid's algorithm calls itself on smaller numbers, not just one step down. Give the Drafting Chamber the body, a measure and a proof that the measure shrinks at each call. Define ifz(t, e, c) by recursion on c to branch.",
-    "Networks\n\nCables lose 2% per block of cable. A Network Surveyor turns your cables into a graph: if it is a tree, with one route to every machine, it is certified and transfer becomes lossless.",
-    "Phases\n\nClick a cable to switch its phase (A copper, B silver). If neighbouring cables always differ, the Surveyor certifies alternating power: double speed. Mixed phases without that proof short out, so survey from next to the dynamo.",
-    "Infinitely many\n\nProve that above every n there is a prime: for all n, exists p, n <= p and Prime(p). That proof crafts the Infinite Prime Well, which emits primes forever. The Factorization Vault stores items as one number.",
-    "Equivalences\n\nCertify a relation as an Equivalence in the Structure Bench and the Rewriter accepts s ≡ t in place of an equation. It rewrites only inside functions that respect ≡: name a law like a ≡ b → c ≡ d → a + c ≡ b + d in the Library for each one.",
-    "Arithmetic mod n\n\nDefine a ≡ b mod 5 as ∃j ∃k. a + j×5 = b + k×5. Prove it reflexive, symmetric and transitive (distributivity helps), certify it, and name a law that it respects +. The Rewriter then drops multiples of 5 inside sums.",
-    "Faster machines\n\nProve fast(x) = slow(x) and put the proof in the Implementation Bench: every machine computes slow with fast from then on, and every theorem about slow still holds.",
-    "Binary\n\nProve every number is halves plus a bit: n = (h(n) + h(n)) + p(n) and p(n) ≤ 1. Name it in the Library and numbers go binary: + and × and the Duplicator pay per digit, not per unit. Hint: par flips, half adds par.",
-    "Perfect numbers\n\nA Mersenne prime is a prime one less than a power of two, like 7 or 31. By Euclid and Euler each one gives a perfect number. A Perfect Core needs a numeral certified both Prime and Mersenne, without conjectures.",
-    "Traps\n\nFamous false claims: 2n + 1 is always prime. n*n + n + 41 is always prime. a + b is a valid pairing. Test before you trust. A proof is forever.",
-]
 
 
 # The advancement tree: (id, parent, icon, criterion, title, description, frame).
@@ -660,57 +619,21 @@ LANG = {
 
 # ---- The Mathematician's Notebook (a Modonomicon book) -------------------------------------
 #
-# Each NOTEBOOK page becomes an entry (title = its first line). Entries are grouped into the
-# chapters below, laid out left to right, and show the recipes of the machines they introduce.
-# An entry gated in NOTEBOOK_GATES unlocks with that advancement, through Modonomicon research:
-# advancement hook -> fact -> node -> entry condition.
+# The content lives in tools/notebook/<chapter>.json (format in tools/notebook/SPEC.md): entries
+# with text, spotlight and recipe pages. An entry's "gate" names an advancement; the entry stays
+# hidden until it is earned, through Modonomicon research: advancement hook -> fact -> node.
 
 BOOK = "notebook"
 CHAPTERS = [
-    ("basics", "Getting Started", "axiomatic:coal_dynamo", [
-        ("The Mathematician's Notebook", []), ("Power", ["coal_dynamo", "copper_cable"]),
-        ("First numbers", ["zero_source", "successor", "duplicator"]), ("Certificates", ["test_bench"]),
-        ("Circuit Boards", ["circuit_board"]), ("Circuits", ["drafting_chamber", "variable"]),
-        ("Definitions", []), ("Statements", ["equation_bench", "property_bench"]),
-        ("First proof", ["witness_bench", "graph_lens"]),
-    ]),
-    ("logic", "Logic and Proof", "axiomatic:induction_engine", [
-        ("Reasoning", ["instantiator", "rewriter", "conjunction_press", "modus_ponens_press"]),
-        ("Assumptions", ["assumption_chamber"]), ("Opening exists", []),
-        ("Induction", ["induction_engine", "axiom_tablet_succ_not_zero", "axiom_tablet_succ_injective"]),
-        ("The Library", ["library"]), ("Theorem cards", ["compiled_machine"]), ("Speed cards", []),
-    ]),
-    ("risk", "Testing and Risk", "axiomatic:conjecture_bench", [
-        ("Testing", []), ("Deciders", []), ("Conjectures", ["conjecture_bench"]),
-        ("Safety", ["containment_controller"]), ("Traps", []),
-    ]),
-    ("factory", "Factories and Networks", "axiomatic:statement_conveyor", [
-        ("Factories", ["statement_conveyor"]), ("Sorting", ["certificate_sorter"]),
-        ("Networks", ["network_surveyor"]), ("Phases", []), ("Couriers", ["courier_station"]),
-    ]),
-    ("primes", "The Prime Path", "axiomatic:prime_core", [
-        ("Prime Cores", ["prime_core"]), ("Prime Forge", ["prime_forge"]), ("General recursion", []),
-        ("Infinitely many", ["infinite_prime_well", "factorization_vault"]), ("Perfect numbers", ["perfect_core"]),
-    ]),
-    ("structures", "Structures and Speed", "axiomatic:structure_bench", [
-        ("Structures", ["structure_bench"]), ("Monoids on a set", []), ("Equivalences", ["equivalence_bench"]),
-        ("Arithmetic mod n", []), ("Faster machines", ["implementation_bench"]), ("Binary", []),
-    ]),
+    ("basics", "Getting Started", "axiomatic:coal_dynamo"),
+    ("language", "The Language of Mathematics", "axiomatic:drafting_chamber"),
+    ("logic", "Machines of Proof", "axiomatic:induction_engine"),
+    ("risk", "Testing and Risk", "axiomatic:conjecture_bench"),
+    ("factory", "Factories and Networks", "axiomatic:compiled_machine"),
+    ("primes", "The Prime Path", "axiomatic:prime_core"),
+    ("structures", "Structures and Speed", "axiomatic:structure_bench"),
 ]
-
-
-# Captions under recipes whose ingredients are not plain items.
-RECIPE_NOTES = {
-    "circuit_board": "The four numerals must be certified Even (Test Bench, or a theorem card).",
-    "prime_core": "The four numerals must be certified Prime.",
-    "perfect_core": "The numeral must be certified both Prime and Mersenne, by proof or computation: no conjectures.",
-    "statement_conveyor": "The scroll is a proven statement: ∀n. 0 + n = n (zero\\_add).",
-    "infinite_prime_well": "The scroll is a proven statement: ∀n. ∃p. n ≤ p ∧ Prime(p), that primes never run out.",
-}
-
-
-def slug(title):
-    return "".join(c if c.isalnum() else "_" for c in title.lower()).strip("_")
+NOTEBOOK_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "notebook")
 
 
 def book_text(text):
@@ -718,15 +641,27 @@ def book_text(text):
     return text.replace("_", "\\_")
 
 
+def load_chapters():
+    chapters = []
+    for cat, cat_name, icon in CHAPTERS:
+        path = os.path.join(NOTEBOOK_DIR, cat + ".json")
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        assert data["chapter"] == cat, path
+        chapters.append((cat, cat_name, icon, data["entries"]))
+    return chapters
+
+
 def write_book(lang):
+    import re
     import shutil
+    chapters = load_chapters()
     root = os.path.join(DATA, "modonomicon", "books", BOOK)
     shutil.rmtree(root, ignore_errors=True)
-    pages = {page.split("\n")[0]: page for page in NOTEBOOK}
-    placed = [t for _, _, _, entries in CHAPTERS for t, _ in entries]
-    assert sorted(placed) == sorted(pages), (set(pages) ^ set(placed))
-    assert set(NOTEBOOK_GATES) <= set(pages), set(NOTEBOOK_GATES) - set(pages)
-    recipes = {f[:-5] for f in os.listdir(os.path.join(DATA, "recipe"))} if os.path.isdir(os.path.join(DATA, "recipe")) else None
+    recipes = {f[:-5] for f in os.listdir(os.path.join(DATA, "recipe"))}
+    advancements = {a[0] for a in ADVANCEMENTS}
+    entry_ids = {f"{cat}/{e['id']}" for cat, _, _, entries in chapters for e in entries}
+    assert len(entry_ids) == sum(len(c[3]) for c in chapters), "duplicate entry ids"
 
     key = f"book.{NS}.{BOOK}"
     write_json(os.path.join(root, "book.json"), {
@@ -741,10 +676,9 @@ def write_book(lang):
     lang[f"{key}.tooltip"] = "Mathematics from Peano's axioms, one machine at a time"
     lang[f"{key}.description"] = "Chapters open as you prove things."
 
-    # Research: one node per gating advancement.
-    gates = sorted(set(NOTEBOOK_GATES.values()))
+    gates = sorted({e["gate"] for _, _, _, entries in chapters for e in entries if e.get("gate")})
     for g in gates:
-        assert any(a[0] == g for a in ADVANCEMENTS), g
+        assert g in advancements, f"unknown gate {g}"
     research = os.path.join(DATA, "modonomicon", "research", BOOK)
     shutil.rmtree(research, ignore_errors=True)
     write_json(os.path.join(research, "facts.json"), [{"id": f"{NS}:{BOOK}/{g}_done"} for g in gates])
@@ -756,7 +690,8 @@ def write_book(lang):
         {"id": f"{NS}:{BOOK}/{g}", "required_facts": [f"{NS}:{BOOK}/{g}_done"]} for g in gates])
 
     none = {"type": "modonomicon:none"}
-    for ci, (cat, cat_name, icon, entries) in enumerate(CHAPTERS):
+    long_pages = []
+    for ci, (cat, cat_name, icon, entries) in enumerate(chapters):
         cat_key = f"{key}.{cat}"
         write_json(os.path.join(root, "categories", cat + ".json"), {
             "name": f"{cat_key}.name", "description": "", "icon": {"id": icon}, "sort_number": ci,
@@ -768,56 +703,63 @@ def write_book(lang):
         })
         lang[f"{cat_key}.name"] = cat_name
         previous = None
-        for ei, (title, machines) in enumerate(entries):
-            eid = slug(title)
+        for ei, e in enumerate(entries):
+            eid = e["id"]
             ekey = f"{cat_key}.{eid}"
-            body = pages[title].split("\n\n", 1)[1] if "\n\n" in pages[title] else ""
-            lang[f"{ekey}.name"] = title
-            lang[f"{ekey}.description"] = body.split(". ")[0][:60]
-            lang[f"{ekey}.text"] = book_text(body)
-            entry_pages = [{"type": "modonomicon:text", "id": "text", "condition": none, "sort_number": 0,
-                            "title": f"{ekey}.name", "text": f"{ekey}.text", "show_title_separator": True}]
-            # Recipes two to a page; one with a caption gets a page of its own.
-            groups, pending = [], []
-            for m in machines:
-                assert recipes is None or m in recipes, m
-                if m in RECIPE_NOTES:
-                    groups.append([m])
+            lang[f"{ekey}.name"] = e["title"]
+            lang[f"{ekey}.description"] = e.get("description", "")
+            pages = []
+            for pi, page in enumerate(e["pages"]):
+                pkey = f"{ekey}.p{pi}"
+                text = page.get("text")
+                if text:
+                    for link in re.findall(r"entry://axiomatic:notebook/([a-z_]+/[a-z_0-9]+)", text):
+                        assert link in entry_ids, f"{cat}/{eid}: broken link {link}"
+                    for item in re.findall(r"item://([a-z_]+:[a-z_0-9]+)", text):
+                        assert not item.startswith(NS + ":") or os.path.exists(
+                            os.path.join(ASSETS, "items", item.split(":")[1] + ".json")), f"{cat}/{eid}: no item {item}"
+                    lang[f"{pkey}.text"] = book_text(text)
+                    if len(text) > 900:
+                        long_pages.append(f"{cat}/{eid} p{pi}: {len(text)}")
+                if page.get("title"):
+                    lang[f"{pkey}.title"] = page["title"]
+                common = {"id": f"p{pi}", "condition": none, "sort_number": pi}
+                kind = page["type"]
+                if kind == "text":
+                    pages.append({"type": "modonomicon:text", **common, "title": f"{pkey}.title" if page.get("title") else "",
+                                  "text": f"{pkey}.text", "show_title_separator": bool(page.get("title"))})
+                elif kind == "spotlight":
+                    pages.append({"type": "modonomicon:spotlight", **common, "item": {"id": page["item"]},
+                                  "title": f"{pkey}.title" if page.get("title") else "", "text": f"{pkey}.text" if text else ""})
+                elif kind == "recipe":
+                    ids = page["recipes"]
+                    assert 1 <= len(ids) <= 2 and all(r in recipes for r in ids), f"{cat}/{eid}: recipes {ids}"
+                    rp = {"type": "modonomicon:crafting_recipe", **common, "recipe_id_1": f"{NS}:{ids[0]}"}
+                    if len(ids) > 1:
+                        rp["recipe_id_2"] = f"{NS}:{ids[1]}"
+                    if text:
+                        rp["text"] = f"{pkey}.text"
+                    pages.append(rp)
                 else:
-                    pending.append(m)
-                    if len(pending) == 2:
-                        groups.append(pending)
-                        pending = []
-            if pending:
-                groups.append(pending)
-            for gi, group in enumerate(groups):
-                page = {"type": "modonomicon:crafting_recipe", "id": f"recipe_{gi}", "condition": none,
-                        "sort_number": 1 + gi, "recipe_id_1": f"{NS}:{group[0]}"}
-                if len(group) > 1:
-                    page["recipe_id_2"] = f"{NS}:{group[1]}"
-                if group[0] in RECIPE_NOTES:
-                    note_key = f"{ekey}.{group[0]}.note"
-                    lang[note_key] = RECIPE_NOTES[group[0]]
-                    page["text"] = note_key
-                entry_pages.append(page)
-            gate = NOTEBOOK_GATES.get(title)
+                    raise AssertionError(f"{cat}/{eid}: page type {kind}")
+            gate = e.get("gate")
             entry = {
                 "type": "modonomicon:content", "id": f"{NS}:{cat}/{eid}", "category": f"{NS}:{cat}",
-                "name": f"{ekey}.name", "description": f"{ekey}.description",
-                "icon": {"id": f"{NS}:{machines[0]}" if machines and not machines[0].startswith("axiom_tablet")
-                         else icon},
+                "name": f"{ekey}.name", "description": f"{ekey}.description", "icon": {"id": e["icon"]},
                 "background": {"sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/"
-                               + ("square_gold" if machines else "square_gray"), "width": 26, "height": 26},
+                               + ("square_gray" if gate is None else "square_gold"), "width": 26, "height": 26},
                 "x": 2 * (ei % 5), "y": 2 * (ei // 5), "sort_number": ei,
                 "condition": {"type": "modonomicon:research_node_unlocked", "node_id": f"{NS}:{BOOK}/{gate}"}
                 if gate else none,
                 "marker_condition": none,
-                "pages": entry_pages,
+                "pages": pages,
             }
             if previous:
                 entry["parents"] = [{"entry": previous}]
             write_json(os.path.join(root, "entries", cat, eid + ".json"), entry)
             previous = f"{NS}:{cat}/{eid}"
+    for line in long_pages:
+        print("long Notebook page (consider splitting):", line)
 
 
 def main():

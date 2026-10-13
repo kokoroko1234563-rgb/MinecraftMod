@@ -8,13 +8,13 @@
     "id": "axiomatic:circuit_board"
   },
   "background": {
-    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gray",
     "width": 26,
     "height": 26
   },
-  "x": 8,
-  "y": 0,
-  "sort_number": 4,
+  "x": 0,
+  "y": 2,
+  "sort_number": 5,
   "condition": {
     "type": "modonomicon:none"
   },
@@ -23,25 +23,38 @@
   },
   "pages": [
     {
-      "type": "modonomicon:text",
-      "id": "text",
+      "type": "modonomicon:spotlight",
+      "id": "p0",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 0,
-      "title": "book.axiomatic.notebook.basics.circuit_boards.name",
-      "text": "book.axiomatic.notebook.basics.circuit_boards.text",
-      "show_title_separator": true
+      "item": {
+        "id": "axiomatic:circuit_board"
+      },
+      "title": "book.axiomatic.notebook.basics.circuit_boards.p0.title",
+      "text": "book.axiomatic.notebook.basics.circuit_boards.p0.text"
     },
     {
-      "type": "modonomicon:crafting_recipe",
-      "id": "recipe_0",
+      "type": "modonomicon:text",
+      "id": "p1",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 1,
+      "title": "book.axiomatic.notebook.basics.circuit_boards.p1.title",
+      "text": "book.axiomatic.notebook.basics.circuit_boards.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
       "recipe_id_1": "axiomatic:circuit_board",
-      "text": "book.axiomatic.notebook.basics.circuit_boards.circuit_board.note"
+      "text": "book.axiomatic.notebook.basics.circuit_boards.p2.text"
     }
   ],
   "parents": [

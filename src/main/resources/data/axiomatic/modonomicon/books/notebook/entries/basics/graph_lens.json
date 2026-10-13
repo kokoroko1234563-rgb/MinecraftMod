@@ -1,0 +1,75 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:basics/graph_lens",
+  "category": "axiomatic:basics",
+  "name": "book.axiomatic.notebook.basics.graph_lens.name",
+  "description": "book.axiomatic.notebook.basics.graph_lens.description",
+  "icon": {
+    "id": "axiomatic:graph_lens"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gray",
+    "width": 26,
+    "height": 26
+  },
+  "x": 2,
+  "y": 2,
+  "sort_number": 6,
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "item": {
+        "id": "axiomatic:graph_lens"
+      },
+      "title": "book.axiomatic.notebook.basics.graph_lens.p0.title",
+      "text": "book.axiomatic.notebook.basics.graph_lens.p0.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.basics.graph_lens.p1.title",
+      "text": "book.axiomatic.notebook.basics.graph_lens.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.basics.graph_lens.p2.title",
+      "text": "book.axiomatic.notebook.basics.graph_lens.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "recipe_id_1": "axiomatic:graph_lens"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:basics/circuit_boards"
+    }
+  ]
+}

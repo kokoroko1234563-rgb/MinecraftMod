@@ -1,0 +1,65 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:primes/binary",
+  "category": "axiomatic:primes",
+  "name": "book.axiomatic.notebook.primes.binary.name",
+  "description": "book.axiomatic.notebook.primes.binary.description",
+  "icon": {
+    "id": "axiomatic:duplicator"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 0,
+  "y": 2,
+  "sort_number": 5,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/structure"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.primes.binary.p0.title",
+      "text": "book.axiomatic.notebook.primes.binary.p0.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.primes.binary.p1.title",
+      "text": "book.axiomatic.notebook.primes.binary.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.primes.binary.p2.title",
+      "text": "book.axiomatic.notebook.primes.binary.p2.text",
+      "show_title_separator": true
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:primes/factorization_vault"
+    }
+  ]
+}

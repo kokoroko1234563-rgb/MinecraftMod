@@ -1,0 +1,76 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:logic/axioms",
+  "category": "axiomatic:logic",
+  "name": "book.axiomatic.notebook.logic.axioms.name",
+  "description": "book.axiomatic.notebook.logic.axioms.description",
+  "icon": {
+    "id": "axiomatic:axiom_tablet_succ_not_zero"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gray",
+    "width": 26,
+    "height": 26
+  },
+  "x": 2,
+  "y": 0,
+  "sort_number": 1,
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.logic.axioms.p0.title",
+      "text": "book.axiomatic.notebook.logic.axioms.p0.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "item": {
+        "id": "axiomatic:axiom_tablet_succ_injective"
+      },
+      "title": "book.axiomatic.notebook.logic.axioms.p1.title",
+      "text": "book.axiomatic.notebook.logic.axioms.p1.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.logic.axioms.p2.title",
+      "text": "book.axiomatic.notebook.logic.axioms.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "recipe_id_1": "axiomatic:axiom_tablet_succ_not_zero",
+      "recipe_id_2": "axiomatic:axiom_tablet_succ_injective"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:logic/how_proofs_work"
+    }
+  ]
+}

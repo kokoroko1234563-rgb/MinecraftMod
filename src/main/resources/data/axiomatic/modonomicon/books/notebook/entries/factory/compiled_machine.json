@@ -1,0 +1,105 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:factory/compiled_machine",
+  "category": "axiomatic:factory",
+  "name": "book.axiomatic.notebook.factory.compiled_machine.name",
+  "description": "book.axiomatic.notebook.factory.compiled_machine.description",
+  "icon": {
+    "id": "axiomatic:compiled_machine"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 0,
+  "y": 0,
+  "sort_number": 0,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/proven"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "item": {
+        "id": "axiomatic:compiled_machine"
+      },
+      "title": "book.axiomatic.notebook.factory.compiled_machine.p0.title",
+      "text": "book.axiomatic.notebook.factory.compiled_machine.p0.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.factory.compiled_machine.p1.title",
+      "text": "book.axiomatic.notebook.factory.compiled_machine.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.factory.compiled_machine.p2.title",
+      "text": "book.axiomatic.notebook.factory.compiled_machine.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.factory.compiled_machine.p3.title",
+      "text": "book.axiomatic.notebook.factory.compiled_machine.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "title": "book.axiomatic.notebook.factory.compiled_machine.p4.title",
+      "text": "book.axiomatic.notebook.factory.compiled_machine.p4.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p5",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 5,
+      "title": "book.axiomatic.notebook.factory.compiled_machine.p5.title",
+      "text": "book.axiomatic.notebook.factory.compiled_machine.p5.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p6",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 6,
+      "recipe_id_1": "axiomatic:compiled_machine",
+      "text": "book.axiomatic.notebook.factory.compiled_machine.p6.text"
+    }
+  ]
+}

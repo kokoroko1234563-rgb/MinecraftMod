@@ -5,16 +5,16 @@
   "name": "book.axiomatic.notebook.structures.equivalences.name",
   "description": "book.axiomatic.notebook.structures.equivalences.description",
   "icon": {
-    "id": "axiomatic:equivalence_bench"
+    "id": "axiomatic:rewriter"
   },
   "background": {
     "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
     "width": 26,
     "height": 26
   },
-  "x": 4,
+  "x": 6,
   "y": 0,
-  "sort_number": 2,
+  "sort_number": 3,
   "condition": {
     "type": "modonomicon:research_node_unlocked",
     "node_id": "axiomatic:notebook/named"
@@ -25,28 +25,52 @@
   "pages": [
     {
       "type": "modonomicon:text",
-      "id": "text",
+      "id": "p0",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 0,
-      "title": "book.axiomatic.notebook.structures.equivalences.name",
-      "text": "book.axiomatic.notebook.structures.equivalences.text",
+      "title": "book.axiomatic.notebook.structures.equivalences.p0.title",
+      "text": "book.axiomatic.notebook.structures.equivalences.p0.text",
       "show_title_separator": true
     },
     {
-      "type": "modonomicon:crafting_recipe",
-      "id": "recipe_0",
+      "type": "modonomicon:text",
+      "id": "p1",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 1,
-      "recipe_id_1": "axiomatic:equivalence_bench"
+      "title": "book.axiomatic.notebook.structures.equivalences.p1.title",
+      "text": "book.axiomatic.notebook.structures.equivalences.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.structures.equivalences.p2.title",
+      "text": "book.axiomatic.notebook.structures.equivalences.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.structures.equivalences.p3.title",
+      "text": "book.axiomatic.notebook.structures.equivalences.p3.text",
+      "show_title_separator": true
     }
   ],
   "parents": [
     {
-      "entry": "axiomatic:structures/monoids_on_a_set"
+      "entry": "axiomatic:structures/equivalence_bench"
     }
   ]
 }

@@ -1,0 +1,98 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:logic/even_add",
+  "category": "axiomatic:logic",
+  "name": "book.axiomatic.notebook.logic.even_add.name",
+  "description": "book.axiomatic.notebook.logic.even_add.description",
+  "icon": {
+    "id": "axiomatic:witness_bench"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "width": 26,
+    "height": 26
+  },
+  "x": 6,
+  "y": 2,
+  "sort_number": 8,
+  "condition": {
+    "type": "modonomicon:research_node_unlocked",
+    "node_id": "axiomatic:notebook/induction"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:text",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "title": "book.axiomatic.notebook.logic.even_add.p0.title",
+      "text": "book.axiomatic.notebook.logic.even_add.p0.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "title": "book.axiomatic.notebook.logic.even_add.p1.title",
+      "text": "book.axiomatic.notebook.logic.even_add.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "title": "book.axiomatic.notebook.logic.even_add.p2.title",
+      "text": "book.axiomatic.notebook.logic.even_add.p2.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.logic.even_add.p3.title",
+      "text": "book.axiomatic.notebook.logic.even_add.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "title": "book.axiomatic.notebook.logic.even_add.p4.title",
+      "text": "book.axiomatic.notebook.logic.even_add.p4.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p5",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 5,
+      "title": "book.axiomatic.notebook.logic.even_add.p5.title",
+      "text": "book.axiomatic.notebook.logic.even_add.p5.text",
+      "show_title_separator": true
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:logic/zero_add"
+    }
+  ]
+}

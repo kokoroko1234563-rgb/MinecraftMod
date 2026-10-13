@@ -8,13 +8,13 @@
     "id": "axiomatic:test_bench"
   },
   "background": {
-    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gold",
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gray",
     "width": 26,
     "height": 26
   },
-  "x": 6,
+  "x": 8,
   "y": 0,
-  "sort_number": 3,
+  "sort_number": 4,
   "condition": {
     "type": "modonomicon:none"
   },
@@ -24,28 +24,74 @@
   "pages": [
     {
       "type": "modonomicon:text",
-      "id": "text",
+      "id": "p0",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 0,
-      "title": "book.axiomatic.notebook.basics.certificates.name",
-      "text": "book.axiomatic.notebook.basics.certificates.text",
+      "title": "book.axiomatic.notebook.basics.certificates.p0.title",
+      "text": "book.axiomatic.notebook.basics.certificates.p0.text",
       "show_title_separator": true
     },
     {
-      "type": "modonomicon:crafting_recipe",
-      "id": "recipe_0",
+      "type": "modonomicon:text",
+      "id": "p1",
       "condition": {
         "type": "modonomicon:none"
       },
       "sort_number": 1,
+      "title": "book.axiomatic.notebook.basics.certificates.p1.title",
+      "text": "book.axiomatic.notebook.basics.certificates.p1.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "item": {
+        "id": "axiomatic:test_bench"
+      },
+      "title": "book.axiomatic.notebook.basics.certificates.p2.title",
+      "text": "book.axiomatic.notebook.basics.certificates.p2.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.basics.certificates.p3.title",
+      "text": "book.axiomatic.notebook.basics.certificates.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "title": "book.axiomatic.notebook.basics.certificates.p4.title",
+      "text": "book.axiomatic.notebook.basics.certificates.p4.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p5",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 5,
       "recipe_id_1": "axiomatic:test_bench"
     }
   ],
   "parents": [
     {
-      "entry": "axiomatic:basics/first_numbers"
+      "entry": "axiomatic:basics/duplicator"
     }
   ]
 }

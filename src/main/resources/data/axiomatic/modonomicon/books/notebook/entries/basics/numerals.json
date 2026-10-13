@@ -1,0 +1,91 @@
+{
+  "type": "modonomicon:content",
+  "id": "axiomatic:basics/numerals",
+  "category": "axiomatic:basics",
+  "name": "book.axiomatic.notebook.basics.numerals.name",
+  "description": "book.axiomatic.notebook.basics.numerals.description",
+  "icon": {
+    "id": "axiomatic:zero_source"
+  },
+  "background": {
+    "sprite": "modonomicon:modonomicon/themes/default/node/entry_backgrounds/square_gray",
+    "width": 26,
+    "height": 26
+  },
+  "x": 4,
+  "y": 0,
+  "sort_number": 2,
+  "condition": {
+    "type": "modonomicon:none"
+  },
+  "marker_condition": {
+    "type": "modonomicon:none"
+  },
+  "pages": [
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p0",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 0,
+      "item": {
+        "id": "axiomatic:numeral"
+      },
+      "title": "book.axiomatic.notebook.basics.numerals.p0.title",
+      "text": "book.axiomatic.notebook.basics.numerals.p0.text"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p1",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 1,
+      "item": {
+        "id": "axiomatic:zero_source"
+      },
+      "title": "book.axiomatic.notebook.basics.numerals.p1.title",
+      "text": "book.axiomatic.notebook.basics.numerals.p1.text"
+    },
+    {
+      "type": "modonomicon:spotlight",
+      "id": "p2",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 2,
+      "item": {
+        "id": "axiomatic:successor"
+      },
+      "title": "book.axiomatic.notebook.basics.numerals.p2.title",
+      "text": "book.axiomatic.notebook.basics.numerals.p2.text"
+    },
+    {
+      "type": "modonomicon:text",
+      "id": "p3",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 3,
+      "title": "book.axiomatic.notebook.basics.numerals.p3.title",
+      "text": "book.axiomatic.notebook.basics.numerals.p3.text",
+      "show_title_separator": true
+    },
+    {
+      "type": "modonomicon:crafting_recipe",
+      "id": "p4",
+      "condition": {
+        "type": "modonomicon:none"
+      },
+      "sort_number": 4,
+      "recipe_id_1": "axiomatic:zero_source",
+      "recipe_id_2": "axiomatic:successor"
+    }
+  ],
+  "parents": [
+    {
+      "entry": "axiomatic:basics/power"
+    }
+  ]
+}
