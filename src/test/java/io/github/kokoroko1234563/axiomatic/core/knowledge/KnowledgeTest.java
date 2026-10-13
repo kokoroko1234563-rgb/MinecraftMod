@@ -162,12 +162,28 @@ class KnowledgeTest {
 
     @Test
     void unboundedExistsCannotBeConjectured() {
-        // Even(n) unfolds to ∃k. n = k + k: a failure could never be caught by search.
-        Formula claim = Formula.pred("Even", app("Double", var("n")));
-        assertThrows(ProofException.class, () -> library.conjecture(kernel, deciders, "evens", claim));
-        // Under a premise, ∃ is fine: finding the witness refutes the claim.
-        Formula negated = Formula.not(Formula.pred("Even", succ(app("Double", var("n")))));
-        library.conjecture(kernel, deciders, "oddsAreNotEven", negated);
+        // ∃k. k = S(n): nothing bounds k, so a failure could never be caught by search.
+        Formula claim = Formula.exists("k", Formula.eq(var("k"), succ(var("n"))));
+        assertThrows(ProofException.class, () -> library.conjecture(kernel, deciders, "unbounded", claim));
+        // Even(n) is ∃k. n = k + k, bounded by k ≤ n: checkable, so it may be conjectured.
+        library.conjecture(kernel, deciders, "evens", Formula.pred("Even", app("Double", var("n"))));
+        // Under a premise, an unbounded ∃ is fine: finding the witness refutes the claim.
+        Formula negated = Formula.not(Formula.exists("k", Formula.eq(var("k"), succ(var("n")))));
+        library.conjecture(kernel, deciders, "noSuccessor", negated);
+    }
+
+    @Test
+    void boundedSearchSettlesPrimality() {
+        // With the starter definitions, ≤ and | are bounded, so Prime is decided by brute force.
+        MathState state = MathState.newWorld();
+        Truth truth = new Truth(state.signature(), state.deciders(), new Evaluator(state.signature(), 50_000_000),
+                BigInteger.ZERO);
+        assertEquals(Truth.Value.TRUE, truth.property("Prime", nums(13)));
+        assertEquals(Truth.Value.FALSE, truth.property("Prime", nums(15)));
+        assertEquals(Truth.Value.FALSE, truth.property("Prime", nums(1)));
+        assertEquals(Truth.Value.TRUE, truth.property("le", nums(3, 9)));
+        assertEquals(Truth.Value.FALSE, truth.property("le", nums(9, 3)));
+        assertNotNull(Certifier.byComputation(truth, "Prime", nums(31)));
     }
 
     @Test
@@ -196,11 +212,7 @@ class KnowledgeTest {
         Term n = var("n");
         // "isZero is a decider for Even" is false (isZero(2) = 0 but Even(2)), and links via conjectures.
         Formula decides = Formula.eq(app("isZero", n), numeral(1));
-        // The forward link could never be caught failing (Even is an unbounded ∃), so the bench
-        // refuses it; it is made directly here to set up the decider.
-        assertThrows(ProofException.class, () -> library.conjecture(kernel, deciders, "fakeF",
-                Formula.implies(decides, Formula.pred("Even", n))));
-        Theorem fwd = kernel.conjecture("fakeF", Formula.implies(decides, Formula.pred("Even", n)));
+        Theorem fwd = library.conjecture(kernel, deciders, "fakeF", Formula.implies(decides, Formula.pred("Even", n)));
         Theorem back = library.conjecture(kernel, deciders, "fakeB", Formula.implies(Formula.pred("Even", n), decides));
         deciders.register("Even", "isZero", fwd, back);
         // Checking fakeB at n = 2 must unfold Even (witness k = 1), not ask the decider fakeB vouches for.

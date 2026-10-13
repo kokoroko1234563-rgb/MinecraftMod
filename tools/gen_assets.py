@@ -135,7 +135,7 @@ NOTEBOOK = [
     "Testing\n\nPut a statement and a bound numeral in the Test Bench: it checks every case up to the bound. Tested statements work as cards inside their range. One counterexample refutes forever.",
     "Deciders\n\nA decider is a circuit answering 1 or 0, like isPrime. Prove both links, f(n) = 1 -> P(n) and P(n) -> f(n) = 1, and link them in the Drafting Chamber: then machines compute P with f.",
     "Conjectures\n\nThe Conjecture Bench turns a named claim into a card and a block. Keep the block powered. Each use is checked: one counterexample and it fails, with everything built on it.",
-    "Prime Cores\n\nPrime is predefined: 2 <= n and no d with 2 <= d < n divides n. Define a trial-division decider isPrime. A card isPrime(f(n)) = 1 -> Prime(f(n)) in a Compiled Machine certifies outputs: conjecture it now, prove it later.",
+    "Prime Cores\n\nPrime is predefined: 2 <= n and no d with 2 <= d < n divides n. The Test Bench can certify primes by trying every d: slow and costly. Cards and deciders make it cheap.",
     "Prime Forge\n\nThe Forge finds the next prime from a candidate, certified by its method card H(n) -> Prime(n). A proven decider link is safe. A conjectured test is fast, until a Carmichael number like 561 comes by.",
     "Structures\n\nThe Structure Bench shows the axioms of monoids, equivalences and orders. Prove a theorem once for any monoid, certify an operation's three laws, and apply the theorem to it for free.",
     "Factories\n\nThe Statement Conveyor moves statements and circuits between machines; it needs a proven 0 + n = n to craft. The Duplicator copies statements for 1 unit. Every step still costs energy.",

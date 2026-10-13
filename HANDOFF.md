@@ -116,11 +116,15 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   are committed on the server thread after re-checking the inputs. The evaluator does about
   40M steps/s. Refused inputs are remembered so the same work is not redone every 4 ticks.
 - **Test Bench witness cap** = the numeral's own value (covers Even, ≤-style properties).
+- **Bounded ∃** (`core/knowledge/Bounds`): an ∃v whose body has a conjunct x + v = t,
+  x × v = t or S…S(v) ≤ t is searched exactly up to t, so "no witness" is FALSE, not unknown.
+  Recognised only when +, × and ≤ have the canonical shapes (checked structurally). So the
+  starter Even, ≤, | and Prime are decidable by brute force: the Test Bench certifies primes by
+  trial division, expensively.
 - **Conjecture Bench rule**: a statement may be conjectured only if computation can catch it
-  failing on *some* numbers (`Truth.isRefutable`): Prime(2n+1) qualifies (a divisor refutes it),
-  "∀n ∃k. n = k + k" does not. Bounded ∃ ("∃k ≤ n") is not recognised, so Prime can be *refuted*
-  by search but only *certified* by a linked decider or a card. A conjecture's check never uses a
-  decider whose link depends on that same conjecture.
+  failing on *some* numbers (`Truth.isRefutable`, with bounded ∃ counting as checkable): Prime
+  (2n+1) qualifies, "∀n ∃k. k = S(n)" does not. A conjecture's check never uses a decider whose
+  link depends on that same conjecture.
 - **Typed ports**: a Compiled Machine card's premises about its inputs must be met by the
   inputs' certificates. The Prime Forge instead computes premises for its bare candidates.
 - **Background checks** run when a conjectural card is used in a Compiled Machine or Prime Forge (the card's

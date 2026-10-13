@@ -11,6 +11,7 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Definition;
 import io.github.kokoroko1234563.axiomatic.core.logic.Evaluator;
 import io.github.kokoroko1234563.axiomatic.core.logic.Formula;
 import io.github.kokoroko1234563.axiomatic.core.logic.Signature;
+import io.github.kokoroko1234563.axiomatic.core.logic.Term;
 
 /**
  * Decides statements about concrete numbers by computation, the way the Test Bench and the
@@ -86,6 +87,21 @@ public final class Truth {
             }
             case Formula.Exists ex -> {
                 Map<String, BigInteger> inner = new HashMap<>(env);
+                Term boundTerm = Bounds.bound(signature, ex);
+                if (boundTerm != null) {
+                    // A bounded ∃: searching up to the bound settles it either way.
+                    BigInteger bound = evaluator.eval(boundTerm, env);
+                    boolean unknown = false;
+                    for (BigInteger k = BigInteger.ZERO; k.compareTo(bound) <= 0; k = k.add(BigInteger.ONE)) {
+                        inner.put(ex.var(), k);
+                        Value v = evaluate(ex.body(), inner);
+                        if (v == Value.TRUE) {
+                            yield Value.TRUE;
+                        }
+                        unknown |= v == Value.UNKNOWN;
+                    }
+                    yield unknown ? Value.UNKNOWN : Value.FALSE;
+                }
                 for (BigInteger k = BigInteger.ZERO; k.compareTo(searchCap) <= 0; k = k.add(BigInteger.ONE)) {
                     inner.put(ex.var(), k);
                     if (evaluate(ex.body(), inner) == Value.TRUE) {
@@ -138,8 +154,8 @@ public final class Truth {
             case Formula.Bottom b -> true;
             case Formula.And a -> canBeFalse(a.left(), sig, d) || canBeFalse(a.right(), sig, d);
             case Formula.Implies i -> canBeTrue(i.premise(), sig, d) && canBeFalse(i.conclusion(), sig, d);
-            // Not finding a witness never shows an ∃ false.
-            case Formula.Exists ex -> false;
+            // Not finding a witness shows an ∃ false only when it is bounded.
+            case Formula.Exists ex -> Bounds.bound(sig, ex) != null && canBeFalse(ex.body(), sig, d);
             // Definitions cannot refer to themselves, so unfolding always ends.
             case Formula.Pred p -> d.get(p.name()) != null
                     || (sig.get(p.name()) instanceof Definition.Predicate && canBeFalse(body(sig, p), sig, d));
