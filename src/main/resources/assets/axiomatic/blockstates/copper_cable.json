@@ -1,10 +1,138 @@
 {
-  "variants": {
-    "phase=false": {
-      "model": "axiomatic:block/copper_cable"
+  "multipart": [
+    {
+      "when": {
+        "phase": "false"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable"
+      }
     },
-    "phase=true": {
-      "model": "axiomatic:block/copper_cable_b"
+    {
+      "when": {
+        "north": "true",
+        "phase": "false"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "phase": "false"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "phase": "false"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "phase": "false"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "phase": "false"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "true",
+        "phase": "false"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm",
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "phase": "true"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_b"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "phase": "true"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm_b"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "phase": "true"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm_b",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "phase": "true"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm_b",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "phase": "true"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm_b",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "phase": "true"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm_b",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "true",
+        "phase": "true"
+      },
+      "apply": {
+        "model": "axiomatic:block/copper_cable_arm_b",
+        "x": 90
+      }
     }
-  }
+  ]
 }

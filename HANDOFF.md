@@ -49,7 +49,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 | `core/knowledge/` | Truth (3-valued evaluation), Deciders (+ link theorems), Fact/Certifier (numeral certificates), TestBench (range checks), Library (statuses, named theorems, conjectures), MathState (world save format, starter definitions) |
 | `registry/ModRegistries` | Every block, item, block entity, menu, component, ingredient type and the creative tab |
 | `machine/` | Machine framework (`MachineBlockEntity`: inventory, energy, jobs paid over time, sync; one `MachineMenu`; layouts) and each machine |
-| `energy/` | Copper Cable and the network search that delivers dynamo energy; `ForeignEnergy` exposes machines (insert only) via `Capabilities.Energy.BLOCK` so other mods' generators can power them; `registry/ModCapabilities` also registers `Capabilities.Item.BLOCK` (NeoForge's `WorldlyContainerWrapper`, same face rules as hoppers) for other mods' pipes |
+| `energy/` | Copper Cable (draws pipe arms toward neighbouring cables and machines: blockstate `north`…`down`, multipart model; the look only, energy uses the network search) and the network search that delivers dynamo energy; `ForeignEnergy` exposes machines (insert only) via `Capabilities.Energy.BLOCK` so other mods' generators can power them; `registry/ModCapabilities` also registers `Capabilities.Item.BLOCK` (NeoForge's `WorldlyContainerWrapper`, same face rules as hoppers) for other mods' pipes |
 | `item/` | Numeral item; `NumeralData` component = value + certificates |
 | `world/AxiomaticData` | SavedData wrapping `MathState` (base64 in level data) |
 | `crafting/CertifiedNumeralIngredient` | Recipe ingredient "numeral certified with property P" |

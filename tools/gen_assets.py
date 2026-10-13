@@ -899,9 +899,22 @@ def main():
         "textures": {"all": tex_b, "particle": tex_b},
         "elements": [{"from": [5, 5, 5], "to": [11, 11, 11], "faces": faces}],
     })
-    write_json(os.path.join(ASSETS, "blockstates", "copper_cable.json"),
-               {"variants": {"phase=false": {"model": f"{NS}:block/copper_cable"},
-                             "phase=true": {"model": f"{NS}:block/copper_cable_b"}}})
+    # Arms toward neighbours: one model per phase, pointing north, rotated by the multipart blockstate.
+    for suffix, tex_name in (("", tex), ("_b", tex_b)):
+        write_json(os.path.join(ASSETS, "models", "block", f"copper_cable_arm{suffix}.json"), {
+            "parent": "minecraft:block/block",
+            "textures": {"all": tex_name, "particle": tex_name},
+            "elements": [{"from": [5, 5, 0], "to": [11, 11, 5], "faces": faces}],
+        })
+    rotations = {"north": {}, "east": {"y": 90}, "south": {"y": 180}, "west": {"y": 270},
+                 "up": {"x": 270}, "down": {"x": 90}}
+    multipart = []
+    for phase, suffix in (("false", ""), ("true", "_b")):
+        multipart.append({"when": {"phase": phase}, "apply": {"model": f"{NS}:block/copper_cable{suffix}"}})
+        for side, rot in rotations.items():
+            multipart.append({"when": {side: "true", "phase": phase},
+                              "apply": {"model": f"{NS}:block/copper_cable_arm{suffix}", **rot}})
+    write_json(os.path.join(ASSETS, "blockstates", "copper_cable.json"), {"multipart": multipart})
     write_json(os.path.join(ASSETS, "items", "copper_cable.json"),
                {"model": {"type": "minecraft:model", "model": f"{NS}:block/copper_cable"}})
     pickaxe.append(f"{NS}:copper_cable")

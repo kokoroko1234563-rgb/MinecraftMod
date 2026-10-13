@@ -107,7 +107,13 @@ public final class DevTour {
 
     private static void buildSteps() {
         STEPS.add(new Step(100, mc -> server(mc, DevTour::stage)));
-        STEPS.add(new Step(80, mc -> shot(mc, "world")));
+        STEPS.add(new Step(60, mc -> server(mc, server -> command(server, "tp @a 4 151 -3 50 30"))));
+        STEPS.add(new Step(20, mc -> {
+            mc.getToastManager().clear();
+            mc.gui.getChat().clearMessages(false);
+        }));
+        STEPS.add(new Step(10, mc -> shot(mc, "world")));
+        STEPS.add(new Step(10, mc -> server(mc, server -> command(server, "tp @a 0 150 -3 0 15"))));
         STEPS.add(new Step(10, mc -> mc.setScreen(new InventoryScreen(mc.player))));
         STEPS.add(new Step(20, mc -> hover(mc, 0)));
         STEPS.add(new Step(10, mc -> shot(mc, "inventory")));
@@ -210,6 +216,27 @@ public final class DevTour {
         level.setBlockAndUpdate(ORIGIN.offset(-1, 1, 3), ModRegistries.STATEMENT_CONVEYOR.get().defaultBlockState());
         level.setBlockAndUpdate(ORIGIN.offset(1, 1, 3), ModRegistries.CONTAINMENT_CONTROLLER.get().defaultBlockState());
         level.setBlockAndUpdate(ORIGIN.offset(3, 1, 3), ModRegistries.CONJECTURE_BLOCK.get().defaultBlockState());
+        // A cable network in front of the row: from the dynamo at (0, 3) toward the player, a cross
+        // with a riser, and two phase-B cables, so the world shot shows how cables join up.
+        List<BlockPos> cables = new java.util.ArrayList<>();
+        for (int z = 0; z <= 2; z++) {
+            cables.add(ORIGIN.offset(0, 0, z));
+        }
+        for (int x = -2; x <= 2; x++) {
+            if (x != 0) {
+                cables.add(ORIGIN.offset(x, 0, 0));
+            }
+        }
+        cables.add(ORIGIN.offset(2, 1, 0));
+        for (BlockPos p : cables) {
+            boolean phaseB = p.getX() == ORIGIN.getX() + 1 || p.getZ() == ORIGIN.getZ() + 1;
+            level.setBlockAndUpdate(p, ModRegistries.COPPER_CABLE.get().defaultBlockState()
+                    .setValue(io.github.kokoroko1234563.axiomatic.energy.CableBlock.PHASE, phaseB));
+        }
+        for (BlockPos p : cables) {
+            level.setBlockAndUpdate(p, net.minecraft.world.level.block.Block.updateFromNeighbourShapes(
+                    level.getBlockState(p), level, p));
+        }
         command(server, "tp @a 0 150 -3 0 15");
 
         ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
