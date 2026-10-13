@@ -135,6 +135,19 @@ public final class Syntax {
         return canonical(a, new HashMap<>(), 0).equals(canonical(b, new HashMap<>(), 0));
     }
 
+    /**
+     * A key that is equal for statements that differ only in variable names, free or bound:
+     * "Even(Double(n))" and "Even(Double(m))" are the same design property.
+     */
+    public static String key(Formula f) {
+        Map<String, String> renaming = new HashMap<>();
+        int i = 0;
+        for (String v : freeVars(f)) {
+            renaming.put(v, "$" + i++);
+        }
+        return canonical(f, renaming, 0).toString();
+    }
+
     private static Formula canonical(Formula f, Map<String, String> renaming, int depth) {
         return switch (f) {
             case Eq e -> new Eq(rename(e.left(), renaming), rename(e.right(), renaming));
