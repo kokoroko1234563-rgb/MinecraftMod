@@ -39,6 +39,12 @@ public final class MathState {
         this.kernel = new Kernel(new Signature());
         this.deciders = new Deciders(kernel.signature());
         this.library = new Library();
+        library.onNamed(this::refreshArithmetic);
+    }
+
+    /** Native binary arithmetic follows the Library: on once binary is proven. */
+    public void refreshArithmetic() {
+        kernel.signature().setNativeArithmetic(library.binaryProven(kernel.signature()));
     }
 
     /**
@@ -262,6 +268,7 @@ public final class MathState {
             Map<String, BigInteger> cex = in.readBoolean() ? readAssignment(in) : null;
             state.library.restoreConjecture(name, f, cs, cex);
         }
+        state.refreshArithmetic();
         return state;
     }
 

@@ -35,7 +35,35 @@ public final class Signature {
         Signature out = new Signature();
         out.definitions.putAll(definitions);
         out.implementations.putAll(implementations);
+        out.nativeArithmetic = nativeArithmetic;
         return out;
+    }
+
+    /**
+     * Once binary is proven (see the Library), the Evaluator computes the canonical + and × on
+     * binary numbers, paying steps per digit. Derived from the Library, so it is not saved.
+     */
+    private boolean nativeArithmetic;
+
+    public boolean nativeArithmetic() {
+        return nativeArithmetic;
+    }
+
+    public void setNativeArithmetic(boolean on) {
+        nativeArithmetic = on;
+    }
+
+    /** a × 0 = 0, a × S(b) = (a × b) + a, with canonical +. */
+    public boolean isMultiplication(String name) {
+        return definitions.get(name) instanceof Definition.PrimitiveRecursive r && r.params().size() == 2
+                && r.base() instanceof Zero
+                && r.step() instanceof App add && isAddition(definitions.get(add.function())) && add.args().size() == 2
+                && add.args().get(0).equals(new App(name, List.of(new Var(r.params().get(0)), new Var(r.params().get(1)))))
+                && add.args().get(1).equals(new Var(r.params().get(0)));
+    }
+
+    public boolean isAddition(String name) {
+        return isAddition(definitions.get(name));
     }
 
     /** The function that actually computes {@code name}: its proven-equal implementation, if any. */
@@ -216,7 +244,7 @@ public final class Signature {
      * it is called. Termination obligations are stated with it. Returns its name, or null.
      */
     private static boolean isAddition(Definition d) {
-        return d instanceof Definition.PrimitiveRecursive r && r.params().size() == 2
+        return d != null && d instanceof Definition.PrimitiveRecursive r && r.params().size() == 2
                 && r.base().equals(new Var(r.params().get(0)))
                 && r.step().equals(new Succ(new App(r.name(), List.of(new Var(r.params().get(0)), new Var(r.params().get(1))))));
     }

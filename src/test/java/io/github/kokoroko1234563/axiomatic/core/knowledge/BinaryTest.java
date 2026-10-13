@@ -190,4 +190,24 @@ class BinaryTest {
         assertFalse(Library.isBinaryDecomposition(Formula.and(f.left(),
                 Formula.pred(le.name(), le.args().get(0), succ(one))), state.signature()));
     }
+
+    @Test
+    void binaryMakesArithmeticFast() throws java.io.IOException {
+        var three = java.math.BigInteger.valueOf(3000);
+        var slow = new io.github.kokoroko1234563.axiomatic.core.logic.Evaluator(state.signature(), Long.MAX_VALUE);
+        var unary = slow.apply("mul", List.of(three, three));
+        assertTrue(slow.steps() > 1_000_000, "unary multiplication: " + slow.steps());
+        state.library().name("binary", binary());
+        var fast = new io.github.kokoroko1234563.axiomatic.core.logic.Evaluator(state.signature(), Long.MAX_VALUE);
+        assertTrue(fast.apply("mul", List.of(three, three)).equals(unary));
+        assertTrue(fast.steps() < 1_000, "binary multiplication: " + fast.steps());
+        // Saved worlds keep it, and copies for worker threads too.
+        MathState loaded = MathState.fromBytes(state.toBytes());
+        assertTrue(loaded.signature().nativeArithmetic() && loaded.signature().copy().nativeArithmetic());
+        // Prime(997) by trial division is now within a machine's budget.
+        var ev = new io.github.kokoroko1234563.axiomatic.core.logic.Evaluator(loaded.signature(), 200_000_000);
+        var truth = new Truth(loaded.signature(), loaded.deciders(), ev, java.math.BigInteger.valueOf(997));
+        assertTrue(truth.property("Prime", List.of(java.math.BigInteger.valueOf(997))) == Truth.Value.TRUE,
+                "steps " + ev.steps());
+    }
 }

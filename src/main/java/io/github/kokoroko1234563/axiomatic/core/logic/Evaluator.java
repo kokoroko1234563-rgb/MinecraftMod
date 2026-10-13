@@ -77,6 +77,21 @@ public final class Evaluator {
 
     /** Applies a defined function to concrete inputs (through its implementation, if proven). */
     public BigInteger apply(String function, List<BigInteger> args) {
+        if (signature.nativeArithmetic() && args.size() == 2) {
+            // Binary is proven: canonical + and × run on binary numbers, one step per digit.
+            boolean add = signature.isAddition(function);
+            if (add || signature.isMultiplication(function)) {
+                BigInteger x = args.get(0);
+                BigInteger y = args.get(1);
+                BigInteger result = add ? x.add(y) : x.multiply(y);
+                long digits = add ? Math.max(x.bitLength(), y.bitLength()) + 1
+                        : (long) Math.max(1, x.bitLength()) * Math.max(1, y.bitLength());
+                for (long i = 0; i < digits; i++) {
+                    tick();
+                }
+                return result;
+            }
+        }
         Definition def = signature.get(signature.implementation(function));
         Map<String, BigInteger> env = new HashMap<>();
         for (int i = 0; i < args.size(); i++) {

@@ -118,7 +118,10 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   ∀n. n = (h(n) + h(n)) + p(n) ∧ p(n) ≤ 1 (any functions h, p; canonical + and ≤). The
   Duplicator then costs bit count + 1, not value + 1. `BinaryTest` proves it with kernel rules
   (flip/par/half by primitive recursion, flip∘flip∘par = par, par + flip(par) = 1, then induction).
-  Option for later: also let the Evaluator compute canonical + and × natively once binary is proven.
+  Binary also switches on `Signature.nativeArithmetic` (kept in sync by `MathState.refreshArithmetic`
+  via `Library.onNamed`; not saved, recomputed on load): the Evaluator then computes the canonical
+  + and × with BigInteger, charging max bit length + 1 steps for + and the product of bit lengths
+  for ×. Prime(997) by trial division drops from > 2·10⁹ steps to within 2·10⁸.
   (An earlier version unlocked this by implementing add, which a renamed copy of add could do.)
 - **Starter definitions**: new worlds come with `add`, `mul`, `pow`, `Even`, `le` (≤), `Divides`
   (|), `Mersenne` (∃p. n + 1 = 2^p) and `Prime` defined exactly as in the design doc (definitions only, nothing proven), because the

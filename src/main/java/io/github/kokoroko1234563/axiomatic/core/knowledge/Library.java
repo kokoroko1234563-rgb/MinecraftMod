@@ -82,6 +82,12 @@ public final class Library {
 
     private final Map<String, Entry> statuses = new LinkedHashMap<>();
     private final Map<String, Theorem> named = new LinkedHashMap<>();
+    private Runnable onNamed = () -> {};
+
+    /** Called whenever a theorem is named (or restored), e.g. to notice that binary is proven. */
+    public void onNamed(Runnable listener) {
+        onNamed = listener;
+    }
     private final Map<String, Conjecture> conjectures = new LinkedHashMap<>();
 
     // ---- Statuses -------------------------------------------------------------------------
@@ -143,6 +149,7 @@ public final class Library {
     /** Puts back a saved named theorem without re-recording its status. */
     public void restoreTheorem(String name, Theorem thm) {
         named.put(name, thm);
+        onNamed.run();
     }
 
     // ---- Structure certificates -----------------------------------------------------------
@@ -190,6 +197,7 @@ public final class Library {
         }
         named.put(name, thm);
         recordProof(thm);
+        onNamed.run();
     }
 
     public Theorem theorem(String name) {
