@@ -25,7 +25,7 @@ public class FactorizationVaultBlockEntity extends MachineBlockEntity {
     static {
         SLOTS.add(MachineLayout.input(26, 31, "slot.axiomatic.vault_in"));
         for (int i = 0; i < KINDS_SHOWN; i++) {
-            SLOTS.add(MachineLayout.output(98 + 18 * (i % 4), 22 + 18 * (i / 4), null));
+            SLOTS.add(MachineLayout.output(116 + 18 * (i % 3), 22 + 18 * (i / 3), null));
         }
     }
 

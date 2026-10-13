@@ -73,6 +73,12 @@ public class StructureBenchBlockEntity extends ReasoningBlockEntity {
         markChanged();
     }
 
+    /** Showing an axiom or t = t is not proving anything: no "Q.E.D." advancement. */
+    @Override
+    protected List<String> milestones(List<ItemStack> out) {
+        return List.of();
+    }
+
     @Override
     protected List<Integer> consumed() {
         return List.of();

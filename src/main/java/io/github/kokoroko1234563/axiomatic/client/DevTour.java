@@ -103,7 +103,8 @@ public final class DevTour {
         STEPS.add(new Step(20, mc -> hover(mc, 0)));
         STEPS.add(new Step(10, mc -> shot(mc, "inventory")));
         String[] machines = {"test_bench", "drafting_chamber", "assumption_chamber", "rewriter", "compiled_machine",
-                "coal_dynamo", "structure_bench", "conjecture_bench"};
+                "coal_dynamo", "structure_bench", "conjecture_bench", "zero_source", "successor", "duplicator",
+                "factorization_vault", "infinite_prime_well", "network_surveyor", "equivalence_bench", "prime_forge"};
         for (int i = 0; i < machines.length; i++) {
             int index = i;
             String name = machines[i];
@@ -137,9 +138,11 @@ public final class DevTour {
         ROW.addAll(List.of(ModRegistries.TEST_BENCH.get(), ModRegistries.DRAFTING_CHAMBER.get(),
                 ModRegistries.ASSUMPTION_CHAMBER.get(), ModRegistries.REWRITER.get(), ModRegistries.COMPILED_MACHINE.get(),
                 ModRegistries.COAL_DYNAMO.get(), ModRegistries.STRUCTURE_BENCH.get(), ModRegistries.CONJECTURE_BENCH.get(),
-                ModRegistries.ZERO_SOURCE.get(), ModRegistries.SUCCESSOR.get(), ModRegistries.DUPLICATOR.get()));
+                ModRegistries.ZERO_SOURCE.get(), ModRegistries.SUCCESSOR.get(), ModRegistries.DUPLICATOR.get(),
+                ModRegistries.FACTORIZATION_VAULT.get(), ModRegistries.PRIME_WELL.get(), ModRegistries.NETWORK_SURVEYOR.get(),
+                ModRegistries.EQUIVALENCE_BENCH.get(), ModRegistries.PRIME_FORGE.get()));
         for (int i = 0; i < ROW.size(); i++) {
-            level.setBlockAndUpdate(ORIGIN.offset(i - 5, 0, 3), ROW.get(i).defaultBlockState());
+            level.setBlockAndUpdate(position(i), ROW.get(i).defaultBlockState());
         }
         level.setBlockAndUpdate(ORIGIN.offset(-5, 1, 3), ModRegistries.COPPER_CABLE.get().defaultBlockState());
         level.setBlockAndUpdate(ORIGIN.offset(-3, 1, 3), ModRegistries.LIBRARY.get().defaultBlockState());
@@ -168,6 +171,7 @@ public final class DevTour {
         give(player, new ItemStack(ModRegistries.TABLET_SUCC_INJECTIVE.get()));
         give(player, new ItemStack(ModRegistries.PARADOX_JUNK.get()));
         give(player, new ItemStack(Items.COAL, 16));
+        give(player, new ItemStack(ModRegistries.PERFECT_CORE.get()));
         for (int i = 0; i < ROW.size(); i++) {
             give(player, new ItemStack(ROW.get(i)));
         }
@@ -187,15 +191,23 @@ public final class DevTour {
         if (level.getBlockEntity(ORIGIN.offset(0, 0, 3)) instanceof MachineBlockEntity dynamo) {
             dynamo.setItem(0, new ItemStack(Items.COAL, 5));
         }
+        if (level.getBlockEntity(position(11)) instanceof MachineBlockEntity vault) {
+            vault.setItem(0, new ItemStack(Items.COAL, 5));
+        }
     }
 
     private static void give(ServerPlayer player, ItemStack stack) {
         player.getInventory().add(stack);
     }
 
+    /** Machines stand in two rows of eleven in front of the player. */
+    private static BlockPos position(int i) {
+        return i < 11 ? ORIGIN.offset(i - 5, 0, 3) : ORIGIN.offset(i - 13, 0, 4);
+    }
+
     private static void open(MinecraftServer server, int index) {
         ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
-        BlockPos pos = ORIGIN.offset(index - 5, 0, 3);
+        BlockPos pos = position(index);
         if (server.overworld().getBlockEntity(pos) instanceof MachineBlockEntity machine) {
             player.openMenu(machine, pos);
         }
