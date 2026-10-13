@@ -83,6 +83,9 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   from kernel rules): the equation's free variables match any subterm, except variables locked
   by its assumptions. The occurrence button picks a match in reading order (or all). The
   kernel's own `rewrite` is literal and skips positions where an ∃ binds an equation variable.
+  Given s ≡ t for a relation with an Equivalence certificate it rewrites inside u ≡ v or u = v
+  (`core/logic/EquivalenceRewriting`, also only kernel rules): each function around the match
+  needs a congruence law named in the Library (game test `rewriter_uses_certified_equivalences`).
 - **Equation Bench** gives the proven "t = t" when both circuits are the same (reflexivity).
 - **Instantiator** substitutes several variables simultaneously (so a := b, b := a swaps).
 - **Discharge** may discharge an assumption the conclusion never used (still valid).
@@ -198,7 +201,7 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
 
 ## Suggested next steps
 
-2. The Rewriter using a certified equivalence (≡ mod n) at prime path stage 5; monoids over a
-   subset (closure + relativised laws).
+2. Monoids over a subset (closure + relativised laws). A worked ≡ mod n example (laws proven in
+   game) would make a good game test.
 3. Notebook (Modonomicon) given on first join: needs `maven.blamejared.com`/`modmaven.dev` allowed.
 4. Theorem cards and compact blocks; Prime Core recipe; Graph Lens.

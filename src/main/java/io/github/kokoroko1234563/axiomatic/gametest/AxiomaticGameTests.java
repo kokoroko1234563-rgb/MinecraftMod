@@ -62,6 +62,7 @@ public final class AxiomaticGameTests {
         test("factorization_vault_stores_as_a_number", AxiomaticGameTests::vaultStoresAsANumber);
         test("mersenne_and_the_perfect_core", AxiomaticGameTests::mersenneAndThePerfectCore);
         test("foreign_energy_powers_machines", AxiomaticGameTests::foreignEnergyPowersMachines);
+        test("rewriter_uses_certified_equivalences", EquivalenceGameTest::rewritesUnderSuccessor);
     }
 
     private static void test(String name, Consumer<GameTestHelper> body) {
