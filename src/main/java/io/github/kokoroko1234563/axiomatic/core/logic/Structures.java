@@ -54,8 +54,12 @@ public final class Structures {
 
         for (Structure s : out.values()) {
             for (Definition.Abstract sym : s.symbols()) {
-                if (signature.get(sym.name()) == null) {
+                Definition existing = signature.get(sym.name());
+                if (existing == null) {
                     signature.defineInternal(sym);
+                } else if (!existing.equals(sym)) {
+                    // A concrete definition under a structure's name would make its axioms false.
+                    throw new ProofException(sym.name() + " is already defined as something else");
                 }
             }
         }
@@ -254,9 +258,10 @@ public final class Structures {
                 return n;
             }
             String instName = n + suffix;
-            if (signature.get(instName) == null) {
+            Definition existing = signature.get(instName);
+            {
                 Definition def = signature.get(n);
-                // Reserve the name first so a recursive definition's self-call maps to itself.
+                // A recursive definition's self-call maps to the instance's own name.
                 Definition instance = switch (def) {
                     case Definition.Explicit e -> new Definition.Explicit(instName, e.params(), map(e.body()), e.symbol());
                     case Definition.PrimitiveRecursive r -> new Definition.PrimitiveRecursive(instName, r.params(),
@@ -266,8 +271,13 @@ public final class Structures {
                             mapSelf(g.body(), n, instName), map(g.measure()), g.symbol());
                     case Definition.Abstract a -> throw new ProofException("Unmapped abstract symbol " + a.name());
                 };
-                signature.defineInternal(instance);
-                created.add(instName);
+                if (existing == null) {
+                    signature.defineInternal(instance);
+                    created.add(instName);
+                } else if (!existing.equals(instance)) {
+                    // Only the very instance this mapping computes may stand under its name.
+                    throw new ProofException(instName + " is already defined as something else");
+                }
             }
             return instName;
         }

@@ -560,9 +560,21 @@ public final class Kernel {
 
     private static List<Hypothesis> merge(List<Hypothesis> a, List<Hypothesis> b) {
         TreeMap<Long, Hypothesis> byId = new TreeMap<>();
-        a.forEach(h -> byId.put(h.id(), h));
-        b.forEach(h -> byId.put(h.id(), h));
+        for (Hypothesis h : a) {
+            putHypothesis(byId, h);
+        }
+        for (Hypothesis h : b) {
+            putHypothesis(byId, h);
+        }
         return new ArrayList<>(byId.values());
+    }
+
+    /** Two different assumptions under one stamp (from another world, say) must not merge. */
+    private static void putHypothesis(TreeMap<Long, Hypothesis> byId, Hypothesis h) {
+        Hypothesis prev = byId.putIfAbsent(h.id(), h);
+        if (prev != null && !Syntax.alphaEquals(prev.formula(), h.formula())) {
+            throw new ProofException("Two different assumptions carry the same stamp #" + h.id());
+        }
     }
 
     private static Set<String> union(Set<String> a, Set<String> b) {

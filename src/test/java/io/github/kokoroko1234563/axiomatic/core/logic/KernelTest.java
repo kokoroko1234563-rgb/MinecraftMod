@@ -237,4 +237,44 @@ class KernelTest {
         assertEquals(1, addZero.steps());
         assertTrue(zeroAdd().steps() > 6);
     }
+
+    // ---- Holes found by an adversarial audit ------------------------------------------------
+
+    /** sel(t, c) := t in both cases is no selector: a call inside it is always made. */
+    @Test
+    void sameInputSelectorGuardsNothing() {
+        kernel.define(new Definition.PrimitiveRecursive("sel", List.of("t", "c"), var("t"), var("t"), null));
+        assertEquals(null, kernel.signature().selector("sel"));
+        Term x = var("x");
+        Definition.GeneralRecursive f = new Definition.GeneralRecursive("f", List.of("x"),
+                app("sel", succ(app("f", x)), zero()), x, null);
+        // The call f(x) on measure x must shrink unconditionally: x < x, which is unprovable.
+        Formula ob = kernel.terminationObligation(f);
+        assertFalse(ob instanceof Formula.Implies, ob.toString());
+        // The old exploit: an obligation guarded by ¬(0 = 0), proven by ex falso, is refused.
+        Formula guarded = Formula.implies(Formula.not(eq(zero(), zero())), ob);
+        Theorem notZ = kernel.assume(((Formula.Implies) guarded).premise());
+        Theorem bogus = kernel.discharge(kernel.exFalso(kernel.modusPonens(notZ, kernel.reflexivity(zero())), ob),
+                notZ.hypotheses().get(0));
+        assertThrows(ProofException.class, () -> kernel.defineRecursive(f, bogus));
+    }
+
+    /** One stamp, two different assumptions (items from two worlds): refused, not merged. */
+    @Test
+    void stampCollisionsAreRefused() {
+        Kernel other = new Kernel(new Signature());
+        Theorem h1 = kernel.assume(new Formula.Bottom());
+        Theorem h2 = other.assume(eq(zero(), zero()));
+        assertEquals(h1.hypotheses().get(0).id(), h2.hypotheses().get(0).id());
+        assertThrows(ProofException.class, () -> kernel.andIntro(h1, h2));
+    }
+
+    /** A concrete definition under a structure's symbol would make the structure's axioms false. */
+    @Test
+    void structureSymbolsCannotBeHijacked() {
+        Signature sig = new Signature();
+        sig.defineInternal(new Definition.Explicit("Monoid.op", List.of("a", "b"), zero(), null));
+        Kernel k = new Kernel(sig);
+        assertThrows(ProofException.class, () -> k.structureAxiom(Structures.MONOID, 1));
+    }
 }

@@ -84,6 +84,16 @@ Mod ID `axiomatic`, package `io.github.kokoroko1234563.axiomatic`.
   copied by the loot table), offers the first six kinds that still have items, and computes its
   digit count from logarithms instead of building the number each tick.
 
+## Kernel audit (adversarial, this session)
+
+Fixed, with `KernelTest` regressions: a "selector" whose two cases pick the same input guarded
+general-recursive calls it always makes (players could prove 0 = 1 through General recursion
+mode); pre-existing definitions under structure symbol names or template-instance names were
+trusted; hypotheses from different kernels with the same stamp merged silently. Accepted by
+design (single player, out-of-scope multiplayer): theorems on items are rebuilt from item data
+without re-checking (`Kernel.restoreSaved`), so someone who edits item components (creative,
+/give) can forge a proven statement. A server-side theorem registry or an HMAC would close it.
+
 ## Fuzz tests (unit tests, fixed seeds)
 
 - `KernelFuzzTest`: random kernel derivations (instantiate, rewrite, ∧, assume, discharge, modus

@@ -233,7 +233,9 @@ public final class Signature {
             return null;
         }
         List<String> fixed = r.fixedParams();
-        if (r.base() instanceof Var e && r.step() instanceof Var t && fixed.contains(e.name()) && fixed.contains(t.name())) {
+        // Two different inputs: sel(t, t) picks the same one either way, so it guards nothing.
+        if (r.base() instanceof Var e && r.step() instanceof Var t && !e.equals(t)
+                && fixed.contains(e.name()) && fixed.contains(t.name())) {
             return new int[] {fixed.indexOf(e.name()), fixed.indexOf(t.name())};
         }
         return null;
