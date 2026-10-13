@@ -30,8 +30,8 @@ import net.minecraft.world.level.storage.ValueOutput;
  */
 public class AssumptionChamberBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.assumption"), MachineLayout.input(44, 35, "slot.axiomatic.discharge"),
-            MachineLayout.output(116, 35, null), MachineLayout.output(134, 35, null)),
+            MachineLayout.input(26, 31, "slot.axiomatic.assumption"), MachineLayout.input(44, 31, "slot.axiomatic.discharge"),
+            MachineLayout.output(116, 31, null), MachineLayout.output(134, 31, null)),
             List.of("button.axiomatic.release", "button.axiomatic.copy"));
 
     /** The hypothesis theorem this chamber holds, or null when empty. */

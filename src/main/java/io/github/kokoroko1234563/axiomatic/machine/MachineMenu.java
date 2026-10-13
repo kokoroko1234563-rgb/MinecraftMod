@@ -11,6 +11,9 @@ import net.minecraft.world.item.ItemStack;
 
 /** The one menu used by every machine. Its slots follow the machine's {@link MachineLayout}. */
 public class MachineMenu extends AbstractContainerMenu {
+    /** Top of the player inventory in every machine screen (see MachineScreen's layout). */
+    public static final int INVENTORY_Y = 110;
+
     private final MachineBlockEntity machine;
     private final int machineSlots;
 
@@ -29,7 +32,7 @@ public class MachineMenu extends AbstractContainerMenu {
                 }
             });
         }
-        addStandardInventorySlots(inventory, 8, 84);
+        addStandardInventorySlots(inventory, 8, INVENTORY_Y);
     }
 
     /** Client side: the block entity is looked up from the position the server sent. */

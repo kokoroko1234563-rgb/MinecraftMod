@@ -23,8 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ConjectureBenchBlockEntity extends ReasoningBlockEntity {
     public static final long FEE = 200;
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.conjecture_statement"),
-            MachineLayout.output(116, 35, null), MachineLayout.output(134, 35, null)), List.of());
+            MachineLayout.input(26, 31, "slot.axiomatic.conjecture_statement"),
+            MachineLayout.output(116, 31, null), MachineLayout.output(134, 31, null)), List.of());
 
     public ConjectureBenchBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.CONJECTURE_BENCH.type(), pos, state);

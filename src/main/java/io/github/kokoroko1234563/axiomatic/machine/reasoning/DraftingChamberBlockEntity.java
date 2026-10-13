@@ -48,9 +48,9 @@ public class DraftingChamberBlockEntity extends ReasoningBlockEntity {
     public enum Mode { ASSEMBLE, DEFINE, NAME, TABLET }
 
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.drafting_1"), MachineLayout.input(44, 35, "slot.axiomatic.drafting_2"),
-            MachineLayout.input(62, 35, "slot.axiomatic.drafting_3"),
-            MachineLayout.output(116, 35, null), MachineLayout.output(134, 35, null)),
+            MachineLayout.input(26, 31, "slot.axiomatic.drafting_1"), MachineLayout.input(44, 31, "slot.axiomatic.drafting_2"),
+            MachineLayout.input(62, 31, "slot.axiomatic.drafting_3"),
+            MachineLayout.output(116, 31, null), MachineLayout.output(134, 31, null)),
             List.of("button.axiomatic.mode", "button.axiomatic.function"));
 
     private Mode mode = Mode.ASSEMBLE;

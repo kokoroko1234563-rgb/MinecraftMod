@@ -24,8 +24,8 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class WitnessBenchBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.target"), MachineLayout.input(44, 35, "slot.axiomatic.witness"),
-            MachineLayout.input(62, 35, "slot.axiomatic.instance"), MachineLayout.output(116, 35, null)), List.of());
+            MachineLayout.input(26, 31, "slot.axiomatic.target"), MachineLayout.input(44, 31, "slot.axiomatic.witness"),
+            MachineLayout.input(62, 31, "slot.axiomatic.instance"), MachineLayout.output(116, 31, null)), List.of());
 
     public WitnessBenchBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.WITNESS_BENCH.type(), pos, state);

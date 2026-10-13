@@ -390,7 +390,7 @@ LANG = {
     "tooltip.axiomatic.depends": "Depends on %s unproven conjecture(s)",
     "item.axiomatic.conjecture_block.named": "Conjecture: %s",
     "label.axiomatic.conjecture": "Conjecture %s",
-    "label.axiomatic.no_design": "Insert a circuit f(…) as the design",
+    "label.axiomatic.no_design": "Needs a design f(…)",
     "label.axiomatic.computes": "Computes %s",
     "slot.axiomatic.design": "Design: a circuit f(…)",
     "slot.axiomatic.port_1": "Input 1",

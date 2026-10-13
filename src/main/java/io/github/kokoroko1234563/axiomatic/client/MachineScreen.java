@@ -10,8 +10,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
- * The screen for every machine, drawn with plain rectangles so it needs no texture: slots from
- * the layout, an energy bar on the left, a progress arrow, the status line and any buttons.
+ * The screen for every machine, drawn with plain rectangles so it needs no texture. Layout:
+ * <pre>
+ *   y   6  title
+ *   y  17  info line (selected property, mode, …)
+ *   y  31  main slot row (inputs left, arrow, outputs right)
+ *   y  51  second slot row, left side (only some machines)
+ *   y  72  status, two lines, left of the buttons
+ *   y  52+ buttons, stacked in the right column under the outputs
+ *   y  99  "Inventory", then the player inventory at y 110
+ * </pre>
  */
 public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private static final int PANEL = 0xFFC6C6C6;
@@ -22,18 +30,19 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private static final int PROGRESS = 0xFF3F76E4;
 
     public MachineScreen(MachineMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, 176, 166);
+        super(menu, inventory, title, 176, 194);
     }
 
     @Override
     protected void init() {
         super.init();
+        inventoryLabelY = MachineMenu.INVENTORY_Y - 11;
         var buttons = menu.machine().layout().buttons();
         for (int i = 0; i < buttons.size(); i++) {
             int id = i;
             addRenderableWidget(Button.builder(Component.translatable(buttons.get(i)),
                             b -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id))
-                    .bounds(leftPos + 108, topPos + 58 - 14 * (buttons.size() - 1 - i), 62, 14).build());
+                    .bounds(leftPos + 108, topPos + 52 + 14 * i, 62, 14).build());
         }
     }
 
@@ -47,21 +56,22 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         for (MachineLayout.SlotSpec s : m.layout().slots()) {
             slot(g, x + s.x() - 1, y + s.y() - 1);
         }
+        int inv = MachineMenu.INVENTORY_Y;
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                slot(g, x + 7 + col * 18, y + 83 + row * 18);
+                slot(g, x + 7 + col * 18, y + inv - 1 + row * 18);
             }
         }
         for (int col = 0; col < 9; col++) {
-            slot(g, x + 7 + col * 18, y + 141);
+            slot(g, x + 7 + col * 18, y + inv + 57);
         }
         // Energy bar.
         bevel(g, x + 8, y + 17, 10, 52, PANEL_DARK, PANEL_LIGHT, 0xFF2B2B2B);
         int filled = m.capacity() == 0 ? 0 : (int) (50 * Math.min(1.0, (double) m.energy() / m.capacity()));
         g.fill(x + 9, y + 68 - filled, x + 17, y + 68, ENERGY);
         // Progress arrow between input and output columns.
-        g.fill(x + 79, y + 38, x + 103, y + 48, PANEL_DARK);
-        g.fill(x + 79, y + 38, x + 79 + (int) (24 * m.progress()), y + 48, PROGRESS);
+        g.fill(x + 84, y + 35, x + 108, y + 45, PANEL_DARK);
+        g.fill(x + 84, y + 35, x + 84 + (int) (24 * m.progress()), y + 45, PROGRESS);
     }
 
     private static void slot(GuiGraphicsExtractor g, int x, int y) {
@@ -80,11 +90,14 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         super.extractLabels(g, mouseX, mouseY);
         MachineBlockEntity m = menu.machine();
-        g.text(font, m.info(), 22, 18, 0xFF404040, false);
-        // Status sits left of the buttons, under the slots.
+        var info = font.split(m.info(), 150);
+        if (!info.isEmpty()) {
+            g.text(font, info.get(0), 22, 18, 0xFF404040, false);
+        }
+        // Status sits left of the buttons, under the slot rows.
         var wrapped = font.split(m.status(), 84);
-        for (int i = 0; i < Math.min(2, wrapped.size()); i++) {
-            g.text(font, wrapped.get(i), 22, 54 + i * 9, 0xFF404040, false);
+        for (int i = 0; i < Math.min(3, wrapped.size()); i++) {
+            g.text(font, wrapped.get(i), 22, 71 + i * 9, 0xFF404040, false);
         }
     }
 

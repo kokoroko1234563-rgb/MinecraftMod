@@ -22,8 +22,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class RewriterBlockEntity extends ReasoningBlockEntity {
     private static final int MAX_OCCURRENCE = 8;
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.statement"), MachineLayout.input(44, 35, "slot.axiomatic.equation"),
-            MachineLayout.output(116, 35, null)),
+            MachineLayout.input(26, 31, "slot.axiomatic.statement"), MachineLayout.input(44, 31, "slot.axiomatic.equation"),
+            MachineLayout.output(116, 31, null)),
             List.of("button.axiomatic.direction", "button.axiomatic.occurrence"));
 
     private boolean rightToLeft;

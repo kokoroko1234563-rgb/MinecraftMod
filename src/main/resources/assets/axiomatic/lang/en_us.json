@@ -58,7 +58,7 @@
   "label.axiomatic.mode.define": "Define",
   "label.axiomatic.mode.name": "Name theorem",
   "label.axiomatic.mode.tablet": "Axiom tablet",
-  "label.axiomatic.no_design": "Insert a circuit f(…) as the design",
+  "label.axiomatic.no_design": "Needs a design f(…)",
   "label.axiomatic.property": "Property: %s",
   "label.axiomatic.rewrite_ltr": "Left → right, %s",
   "label.axiomatic.rewrite_rtl": "Right → left, %s",

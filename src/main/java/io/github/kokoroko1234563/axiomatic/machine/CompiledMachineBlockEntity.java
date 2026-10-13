@@ -42,10 +42,10 @@ public class CompiledMachineBlockEntity extends MachineBlockEntity {
     public static final int OUTPUT = 5;
     private static final long MAX_STEPS = 5_000_000;
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 17, "slot.axiomatic.design"),
-            MachineLayout.input(26, 35, "slot.axiomatic.port_1"), MachineLayout.input(44, 35, "slot.axiomatic.port_2"),
-            MachineLayout.input(62, 35, "slot.axiomatic.port_3"),
-            MachineLayout.input(62, 17, "slot.axiomatic.card"), MachineLayout.output(116, 35, null)), List.of());
+            MachineLayout.input(26, 51, "slot.axiomatic.design"),
+            MachineLayout.input(26, 31, "slot.axiomatic.port_1"), MachineLayout.input(44, 31, "slot.axiomatic.port_2"),
+            MachineLayout.input(62, 31, "slot.axiomatic.port_3"),
+            MachineLayout.input(62, 51, "slot.axiomatic.card"), MachineLayout.output(116, 31, null)), List.of());
 
     public CompiledMachineBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.COMPILED_MACHINE.type(), pos, state, 100_000);

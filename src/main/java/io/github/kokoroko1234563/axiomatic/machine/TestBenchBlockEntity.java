@@ -37,8 +37,8 @@ public class TestBenchBlockEntity extends MachineBlockEntity {
     /** Hard limit on one search, so a huge numeral cannot freeze the server. */
     public static final long MAX_STEPS = 20_000_000;
     private static final MachineLayout LAYOUT = new MachineLayout(
-            List.of(MachineLayout.input(44, 35, "slot.axiomatic.test_subject"), MachineLayout.output(116, 35, null),
-                    MachineLayout.input(62, 35, "slot.axiomatic.test_bound")),
+            List.of(MachineLayout.input(44, 31, "slot.axiomatic.test_subject"), MachineLayout.output(116, 31, null),
+                    MachineLayout.input(62, 31, "slot.axiomatic.test_bound")),
             List.of("button.axiomatic.next_property"));
     /** Range mode: at most this many cases per run, so testing cannot stall the server. */
     public static final long MAX_CASES = 100_000;

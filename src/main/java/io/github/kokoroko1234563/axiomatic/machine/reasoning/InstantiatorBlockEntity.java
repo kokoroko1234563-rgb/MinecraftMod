@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 /** Instantiator: a proven statement, a variable and a circuit give the statement with the circuit put in. */
 public class InstantiatorBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.statement"), MachineLayout.input(44, 35, "slot.axiomatic.variable"),
-            MachineLayout.input(62, 35, "slot.axiomatic.circuit"), MachineLayout.output(116, 35, null)), List.of());
+            MachineLayout.input(26, 31, "slot.axiomatic.statement"), MachineLayout.input(44, 31, "slot.axiomatic.variable"),
+            MachineLayout.input(62, 31, "slot.axiomatic.circuit"), MachineLayout.output(116, 31, null)), List.of());
 
     public InstantiatorBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.INSTANTIATOR.type(), pos, state);

@@ -39,8 +39,8 @@ public class StructureBenchBlockEntity extends ReasoningBlockEntity {
 
     private static final List<String> STRUCTURES = List.of(Structures.MONOID, Structures.EQUIVALENCE, Structures.ORDER);
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.structure_1"), MachineLayout.input(44, 35, "slot.axiomatic.structure_2"),
-            MachineLayout.input(62, 35, "slot.axiomatic.structure_3"), MachineLayout.output(116, 35, null)),
+            MachineLayout.input(26, 31, "slot.axiomatic.structure_1"), MachineLayout.input(44, 31, "slot.axiomatic.structure_2"),
+            MachineLayout.input(62, 31, "slot.axiomatic.structure_3"), MachineLayout.output(116, 31, null)),
             List.of("button.axiomatic.mode", "button.axiomatic.structure", "button.axiomatic.axiom"));
 
     private Mode mode = Mode.AXIOMS;

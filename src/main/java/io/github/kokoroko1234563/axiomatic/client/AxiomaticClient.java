@@ -12,6 +12,10 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 @Mod(value = Axiomatic.MODID, dist = Dist.CLIENT)
 @EventBusSubscriber(modid = Axiomatic.MODID, value = Dist.CLIENT)
 public class AxiomaticClient {
+    public AxiomaticClient() {
+        DevTour.registerIfEnabled();
+    }
+
     @SubscribeEvent
     static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModRegistries.MACHINE_MENU.get(), MachineScreen::new);

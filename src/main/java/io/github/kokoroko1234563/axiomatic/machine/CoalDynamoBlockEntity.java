@@ -19,7 +19,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class CoalDynamoBlockEntity extends MachineBlockEntity {
     public static final int ENERGY_PER_TICK = 10;
     private static final MachineLayout LAYOUT = new MachineLayout(
-            List.of(MachineLayout.fuel(80, 35, "slot.axiomatic.fuel")), List.of());
+            List.of(MachineLayout.fuel(80, 31, "slot.axiomatic.fuel")), List.of());
 
     private int burnLeft;
     private List<MachineBlockEntity> consumers = List.of();

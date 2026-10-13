@@ -14,8 +14,8 @@ import io.github.kokoroko1234563.axiomatic.core.logic.Formula;
 /** Equation Bench: two circuits give the (unproven) statement "left = right". */
 public class EquationBenchBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.left"), MachineLayout.input(44, 35, "slot.axiomatic.right"),
-            MachineLayout.output(116, 35, null)), List.of());
+            MachineLayout.input(26, 31, "slot.axiomatic.left"), MachineLayout.input(44, 31, "slot.axiomatic.right"),
+            MachineLayout.output(116, 31, null)), List.of());
 
     public EquationBenchBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.EQUATION_BENCH.type(), pos, state);

@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 /** Induction Engine (axiom 5): base case P(0), step P(n) → P(S(n)) and the variable n give P(n) for all n. */
 public class InductionEngineBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.base"), MachineLayout.input(44, 35, "slot.axiomatic.step"),
-            MachineLayout.input(62, 35, "slot.axiomatic.variable"), MachineLayout.output(116, 35, null)), List.of());
+            MachineLayout.input(26, 31, "slot.axiomatic.base"), MachineLayout.input(44, 31, "slot.axiomatic.step"),
+            MachineLayout.input(62, 31, "slot.axiomatic.variable"), MachineLayout.output(116, 31, null)), List.of());
 
     public InductionEngineBlockEntity(BlockPos pos, BlockState state) {
         super(ModRegistries.INDUCTION_ENGINE.type(), pos, state);

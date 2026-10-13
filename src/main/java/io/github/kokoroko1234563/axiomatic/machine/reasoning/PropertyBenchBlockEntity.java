@@ -25,9 +25,9 @@ import net.minecraft.world.level.storage.ValueOutput;
  */
 public class PropertyBenchBlockEntity extends ReasoningBlockEntity {
     private static final MachineLayout LAYOUT = new MachineLayout(List.of(
-            MachineLayout.input(26, 35, "slot.axiomatic.circuit_or_statement"),
-            MachineLayout.input(44, 35, "slot.axiomatic.second_circuit"),
-            MachineLayout.input(62, 35, "slot.axiomatic.variable_to_seal"), MachineLayout.output(116, 35, null)),
+            MachineLayout.input(26, 31, "slot.axiomatic.circuit_or_statement"),
+            MachineLayout.input(44, 31, "slot.axiomatic.second_circuit"),
+            MachineLayout.input(62, 31, "slot.axiomatic.variable_to_seal"), MachineLayout.output(116, 31, null)),
             List.of("button.axiomatic.next_property", "button.axiomatic.mode"));
 
     private String property = "Even";

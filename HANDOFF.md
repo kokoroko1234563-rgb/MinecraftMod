@@ -10,6 +10,10 @@ alone. The full game design is in [docs/design.md](docs/design.md). Update this 
 - `./gradlew test` runs only the unit tests (fast, no game needed).
 - `./gradlew runClient` starts Minecraft with the mod (local machine only).
 - `./gradlew runGameTestServer` runs the in-world game tests headless (works in the cloud too).
+- `./gradlew runClient -Pdevtour` runs a scripted tour (client/DevTour.java): makes a world,
+  places every machine, opens their screens and saves `run/screenshots/tour_*.png`, then quits.
+  In the cloud it works headless: `Xvfb :42 -screen 0 1280x720x24 -nolisten tcp &` then
+  `DISPLAY=:42 ./gradlew runClient -Pdevtour` (Mesa software rendering; no sound device is fine).
 - `python3 tools/gen_assets.py` regenerates placeholder textures, models, blockstates, lang,
   loot tables, recipes and the empty game-test stage. Edit the script, not the generated files.
 - In IntelliJ: open the folder as a Gradle project and set the project SDK to JDK 25.
